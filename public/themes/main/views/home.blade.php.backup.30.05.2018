@@ -1,0 +1,504 @@
+<?
+	if(!empty($channel['info']->getSeo->channel_attribute_value)){
+		$seoJson=json_decode($channel['info']->getSeo->channel_attribute_value); 
+		if(!empty($seoJson->metaTitle)){
+			$metaTitle=$seoJson->metaTitle; 
+		}else{
+			$metaTitle=$channel['info']->channel_name; 
+		}
+		if(!empty($seoJson->metaDescription)){
+			$metaDescription=$seoJson->metaDescription; 
+		}else{
+			$metaDescription=$channel['info']->channel_description;
+		}
+	}else{
+		$metaTitle=$channel['info']->channel_name; 
+		$metaDescription=$channel['info']->channel_description;
+	} 
+	$channel['theme']->setTitle(html_entity_decode($metaTitle));
+	if(!empty($channel['info']->channel_keywords)){
+		$channel['theme']->setKeywords($channel['info']->channel_keywords);
+	}else{
+		$channel['theme']->setKeywords(html_entity_decode($metaTitle));
+	}
+	$channel['theme']->setDescription(str_limit(strip_tags(html_entity_decode($metaDescription),""), $limit = 250, $end='...')); 
+	//$channel['theme']->setCanonical(route("channel.home",$channel["domainPrimary"]));
+	if(count($channel['info']->channelAttributeBanner)>0 && !empty($channel['info']->channelAttributeBanner[0]->media->media_name)){
+		$channel['theme']->setImage(config('app.link_media').$channel['info']->channelAttributeBanner[0]->media->media_path.'thumb/'.$channel['info']->channelAttributeBanner[0]->media->media_name);
+	}else{
+		$channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap.png')); 
+	}
+?>
+{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('swiper.min', 'library/swiper/js/swiper.min.js', array('core-script'))!!}
+@if(Auth::check())
+	
+@endif
+@if($channel['security']==true)
+	{!!Theme::asset()->add('summernote', 'assets/js/summernote/dist/summernote.css', array('core-style'))!!}
+	{!!Theme::asset()->usePath()->add('jquery.tagsinput', 'css/jquery.tagsinput.css', array('core-style'))!!}
+	{!!Theme::asset()->container('footer')->add('summernote', 'assets/js/summernote/dist/summernote.js', array('core-script'))!!}
+	{!!Theme::asset()->container('footer')->add('summernote-vi-VN', 'assets/js/summernote/lang/summernote-vi-VN.js', array('core-script'))!!}
+	{!!Theme::asset()->container('footer')->usePath()->add('jquery.tagsinput.min', 'js/jquery.tagsinput.min.js', array('core-script'))!!}
+	<?
+		$dependencies = array(); 
+		$channel['theme']->asset()->writeScript('changeChannel','
+			jQuery(document).ready(function(){
+				"use strict"; 
+				$(".groupChannelName").on("click",".btnChannelNameEdit",function() {
+					var channelNameText=$(this).parent().closest(".groupChannelName").find(".channelNameText"); 
+					var channelDescriptionText=$(this).parent().closest(".groupChannelName").find(".channelDescriptionText"); 
+					var channelKeywordsInput=$(this).parent().closest(".groupChannelName").find(".channelKeywordsInput"); 
+					var changeChannelNameText=$(this).parent().closest(".groupChannelName").find(".changeChannelNameText"); 
+					var channelName=$(this).attr("data-name"); 
+					var channelDescription=channelDescriptionText.html(); 
+					var channelKeywords=channelKeywordsInput.val(); 
+					channelNameText.hide(); 
+					changeChannelNameText.show(); 
+					changeChannelNameText.append("<form id=\"changeChannelName\">"
+						+"<div class=\"form-group\">"
+							+"<input type=\"phone\" style=\"font-size:18px;\" name=\"channelName\" value=\""+channelName+"\" class=\"form-control\" placeholder=\"Nhập tên công ty, cửa hàng, tên website...\" required />"
+							+"<label class=\"error\" for=\"channelName\"></label>"
+						+"</div>"
+						+"<div class=\"form-group\">"
+							+"<textarea name=\"channelDescription\" id=\"summernote\" class=\"form-control\" placeholder=\"Mô tả kênh website...\" required >"+channelDescription+"</textarea>"
+							+"<label class=\"error\" for=\"channelDescription\"></label>"
+						+"</div>"
+						+"<div class=\"form-group\">"
+							+"<input name=\"channelKeywords\" id=\"channelKeywords\" class=\"form-control\" value=\""+channelKeywords+"\" placeholder=\"Từ khóa...\" >"
+							+"<label class=\"error\" for=\"channelKeywords\"></label>"
+						+"</div>"
+						+"<div class=\"form-group\">"
+							+"<button type=\"submit\" class=\"btn btn-xs btn-primary btnSaveChannelName\" data-id=\"\"><i class=\"fa fa-check\"></i> Lưu</button> "
+							+"<button type=\"button\" class=\"btn btn-xs btn-default btnCancelChannelname\">Hủy</button>"
+						+"</div>"
+						+"</form>"); 
+					jQuery(".groupChannelName #changeChannelName #channelKeywords").tagsInput({
+						placeholderColor:"#999",
+						width:"auto",
+						height:"auto",
+						"defaultText":"thêm từ..."
+					}); 
+					var $validator = jQuery(".groupChannelName #changeChannelName").validate({
+						highlight: function(element) {
+						  jQuery(element).closest(".form-group").removeClass("has-success").addClass("has-error");
+						},
+						success: function(element) {
+						  jQuery(element).closest(".form-group").removeClass("has-error");
+						}
+					});
+					$(".groupChannelName").on("click",".btnSaveChannelName",function() {
+						var $valid = jQuery(".groupChannelName #changeChannelName").valid();
+						if(!$valid) {
+							$validator.focusInvalid();
+							return false;
+						}else{
+							$(".groupChannelName #preloaderInBox").css("display", "block"); 
+							var formData = new FormData();
+							formData.append("channelName", $(".groupChannelName #changeChannelName input[name=channelName]").val()); 
+							formData.append("channelDescription", $(".groupChannelName #changeChannelName textarea[name=channelDescription]").val()); 
+							formData.append("channelKeywords", $(".groupChannelName #changeChannelName input[name=channelKeywords]").val()); 
+							$.ajax({
+								url: "'.route("channel.name.save",$channel["domain"]->domain).'",
+								headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+								type: "post",
+								cache: false,
+								contentType: false,
+								processData: false,
+								data: formData,
+								dataType:"json",
+								success:function(result){
+									$(".groupChannelName #preloaderInBox").css("display", "none"); 
+									if(result.success==true){
+										jQuery.gritter.add({
+											title: "Thông báo!",
+											text: result.msg, 
+											class_name: "growl-success",
+											sticky: false,
+											time: ""
+										});
+										location.reload(); 
+									}else{
+										jQuery.gritter.add({
+											title: "Thông báo!",
+											text: result.msg, 
+											class_name: "growl-danger",
+											sticky: false,
+											time: ""
+										});
+									}
+								},
+								error: function(result) {
+								}
+							});
+						}
+						return false;
+					});
+					$(".groupChannelName #summernote").summernote(
+						{
+							popover: {
+								image: [
+									["custom", ["imageAttributes"]],
+									["imagesize", ["imageSize100", "imageSize50", "imageSize25"]],
+									["float", ["floatLeft", "floatRight", "floatNone"]],
+									["remove", ["removeMedia"]]
+								],
+							},
+							lang: "vi-VN", 
+							imageAttributes:{
+								imageDialogLayout:"default", // default|horizontal
+								icon:"<i class=\"note-icon-pencil\"/>",
+								removeEmpty:false // true = remove attributes | false = leave empty if present
+							},
+							displayFields:{
+								imageBasic:true,  // show/hide Title, Source, Alt fields
+								imageExtra:false, // show/hide Alt, Class, Style, Role fields
+								linkBasic:true,   // show/hide URL and Target fields for link
+								linkExtra:false   // show/hide Class, Rel, Role fields for link
+							},
+							placeholder: "Bạn đang viết gì? ", 
+							dialogsInBody: true, 
+							focus: true,
+							minHeight: 150,   //set editable area"s height 
+							enterHtml: "<br>",
+							//height:250,
+							//minHeight:null,
+							//maxHeight:null,
+							toolbar: [
+								["font", ["bold", "italic", "underline", "clear"]],
+							],
+							codemirror: { // codemirror options
+								theme: "monokai"
+							}, 
+							callbacks: {
+								onImageUpload: function (files){
+										uploadImage(files[0]);
+								}
+							}
+					});
+					return false;
+				}); 
+				$(".groupChannelName").on("click",".btnCancelChannelname",function() {
+					var channelNameText=$(this).parent().closest(".groupChannelName").find(".channelNameText"); 
+					var changeChannelNameText=$(this).parent().closest(".groupChannelName").find(".changeChannelNameText"); 
+					channelNameText.show(); 
+					changeChannelNameText.empty(); 
+				}); 
+			}); 
+		', $dependencies);
+	?>
+@endif
+<section>
+<div class="mainpanel">
+{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+	<div class="pageheader hidden-xs">
+		<div class="groupChannelName">
+			<div id="preloaderInBox">
+				<div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+			</div>
+			<div class="channelNameText">
+				<h1>
+					{!!$channel['info']->channel_name!!}
+					@if($channel['security']==true)<span><a href="" data-name="{!!$channel['info']->channel_name!!}" class="btnChannelNameEdit"><i class="fa fa-pencil"></i> sửa</a></span>@endif
+				</h1>
+				<span class="channelDescriptionText">{!!html_entity_decode($channel['info']->channel_description)!!}</span>
+				<input type="hidden" class="channelKeywordsInput" value="{!!$channel['info']->channel_keywords!!}">
+			</div>
+			<div class="changeChannelNameText"></div>
+		</div>
+	</div>
+	<?
+		$region=\App\Model\Regions::find(704); 
+		$getAllSubRegion=\App\Model\Subregions::where('region_id','=',$region->id)->get(); 
+	?>
+	<div class="contentpanel section-content">
+		<!--<div class="form-group">
+			<video class="img-responsive" controls="" autoplay=""><source src="//img.cungcap.net/media/videos/2017/11/21/gPzih1511252868.mp4" type="video/mp4">Your browser does not support the video tag.</video>
+		</div>-->
+		<form id="formCheckDomain" class="form-group">
+			<div class="panelNewRegisterDomain">
+				<div class="checkDomain"></div>
+				<div class="domainResult"></div>
+				<div class="messageDomain"></div>
+				<div class="btnAddDomain"></div>
+			</div>
+		</form>
+		<div class="row row-pad-5">
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default panelFirstPrimary">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-danger" href="{{route('channel.add',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Tạo website</a></h3>
+					<p class="mb15">Tạo website cực nhanh, cực rẻ và có gói <strong>miễn phí</strong> cho người mới bắt đầu. </p>
+					<a href="{{route('channel.add',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/website.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-primary" href="{{route('pages.web.design',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Thiết kế website</a></h3>
+					<p class="mb15">Thiết kế website chuyên nghiệp và theo yêu cầu chất lượng cao</p>
+					<a href="{{route('pages.web.design',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/webdesign.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-primary" href="{{route('pages.domain',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Tên miền</a></h3>
+					<p class="mb15">Cung cấp tên miền, bảo vệ thương hiệu của bạn trên Internet! </p>
+					<a href="{{route('pages.domain',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/domain.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-primary" href="{{route('pages.email',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Email tên miền</a></h3>
+					<p class="mb15">Cung cấp email, chuyên nghiệp hơn khi sử dụng email theo tên miền riêng! </p>
+					<a href="{{route('pages.email',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/emaildomain.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-primary" href="{{route('pages.hosting',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Hosting</a></h3>
+					<p class="mb15">Cung cấp Hosting chất lượng cao, Ổ cứng SSD cho tốc độ xử lý nhanh gấp 4 lần! </p>
+					<a href="{{route('pages.hosting',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/hosting.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+					<h3 class="subtitle mb5"><a class="btn btn-xs btn-primary" href="{{route('pages.cloud',$channel["domainPrimary"])}}"><i class="fa fa-hand-o-right"></i> Cloud Server</a></h3>
+					<p class="mb15">Cung cấp Cloud, Khởi tạo nhanh chóng, Hạ tầng mạnh mẽ -100% SSD, Tối ưu chi phí! </p>
+					<a href="{{route('pages.cloud',$channel["domainPrimary"])}}"><img class="img-responsive" src="{{'http://'.$channel["domainPrimary"].Theme::asset()->url('img/cloud.jpg')}}"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row row-pad-5">
+			<div class="col-md-4">
+				<div class="panel panel-default mb5">
+					<div class="panel-heading"><div class="panel-title">Site mới cập nhật</div></div>
+					<ul class="list-group">
+						@foreach($getSite as $site)
+							<li class="list-group-item"><a href="http://{{$site->domain}}.{{config('app.url')}}" target="_blank">{{$site->domain}}</a> <small><span class="time-update"><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($site->updated_at)!!}</span> - {{$site->view}} xem</small>@if(!empty($site->title->attribute_value))<p>{{str_limit($site->title->attribute_value, 100)}}</p>@if(!empty($site->rank))<p>Xếp hạng <span class="label label-primary"><i class="glyphicon glyphicon-globe"></i> {{Site::price($site->rank)}}</span> @if(!empty($site->country_code)&&!empty($site->rank_country))
+								<?
+									$getRegion=\App\Model\Regions::where('iso','=',$site->country_code)->first(); 
+								?>
+								@if(!empty($getRegion->id))
+									<span class="label label-primary"><i class="flag flag-{{mb_strtolower($getRegion->iso)}}"></i> {{$getRegion->country}} {{Site::price($site->rank_country)}}</span>
+								@endif
+							@endif</p>@endif @endif</li>
+						@endforeach
+					</ul>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading"><div class="panel-title">Từ khóa mới</div></div>
+					<ul class="list-group">
+						@foreach($Keywords as $keyword)
+							<li class="list-group-item"><a href="{{route('keyword.show',array($channel['domainPrimary'],str_replace(' ', '+', $keyword->keyword)))}}">{!!$keyword->keyword!!}</a> <small><span class="time-update"><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($keyword->created_at)!!}</span> - Xem {{$keyword->view}}</small></li>
+						@endforeach
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-heading"><div class="panel-title">Công ty mới cập nhật</div></div>
+					<div class="panel-body">
+						@foreach($getCompany->chunk(1) as $chunk)
+								{!!Theme::partial('listCompany', array('chunk' => $chunk))!!}
+						@endforeach
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div><!-- mainpanel -->
+</section>
+<?
+	$getService=\App\Model\Services::find(4); 
+	$listLtd=''; 
+	foreach($getService->attributeAll as $serviceDomain){
+	$listLtd.='
+	+"<div class=\"col-lg-3 col-md-3 col-sm-6 col-xs-6\">"
+		+"<div class=\"form-group text-left\">"
+			+"<div class=\"ckbox ckbox-success\">"
+				+"<input type=\"checkbox\" class=\"filled-in\" name=\"ltdDomain\" data-type=\"register\" value=\"'.$serviceDomain->attribute_type.'\" id=\"'.$serviceDomain->attribute_type.'\" checked=\"\" >"
+				+"<label for=\"'.$serviceDomain->attribute_type.'\"> .'.$serviceDomain->attribute_type.'</label>"
+			+"</div>"
+		+"</div>"
+	+"</div>"'; 
+	}
+	$dependencies = array(); 
+	$channel['theme']->asset()->writeScript('loadLazy','
+		$(function() {
+			$(".lazy").lazy();
+		}); 
+		var swiper = new Swiper(".swiper-container", {
+			navigation: {
+				nextEl: ".carousel_control_right",
+				prevEl: ".carousel_control_left",
+			},
+		});
+		var swiper = new Swiper("#carousel-2", {
+			navigation: {
+				nextEl: ".carousel_control_right_2",
+				prevEl: ".carousel_control_left_2",
+			},
+		});
+		function convertToSlug(title)
+			{
+			  //Đổi chữ hoa thành chữ thường
+				var slug = title.toLowerCase();
+			 
+				//Đổi ký tự có dấu thành không dấu
+				slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, "a");
+				slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, "e");
+				slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, "i");
+				slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, "o");
+				slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, "u");
+				slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, "y");
+				slug = slug.replace(/đ/gi, "d");
+				//Xóa các ký tự đặt biệt
+				slug = slug.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\"|\"|\:|\;|_/gi, "");
+				//Đổi khoảng trắng thành ký tự gạch ngang
+				slug = slug.replace(/ /gi, "");
+				//Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
+				//Phòng trường hợp người nhập vào quá nhiều ký tự trắng
+				slug = slug.replace(/\-\-\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-/gi, "-");
+				//Xóa các ký tự gạch ngang ở đầu và cuối
+				slug = "@" + slug + "@";
+				slug = slug.replace(/\@\-|\-\@|\@/gi, "");
+				//In slug ra textbox có id “slug”
+				
+			  return slug;
+			}
+		getCheckDomain(); 
+		function getCheckDomain(){
+			$(".panelNewRegisterDomain .checkDomain").append("<div class=\"form-group\"><div class=\"input-group\">"      
+				+"<input type=\"text\" class=\"form-control\" name=\"domainNewRegister\" placeholder=\"Nhập tên miền cần kiểm tra\" required>"
+				+"<span class=\"input-group-btn\">"
+					+"<button class=\"btn btn-primary\" type=\"submit\" id=\"btnCheckDomain\"><span class=\"glyphicon glyphicon-retweet\"></span> Kiểm tra</button>"
+				+"</span>"
+			+"</div>"
+			+"<label class=\"error\" for=\"domainNewRegister\"></label>"
+			+"</div>"
+			+"<div class=\"row\">"
+				'.$listLtd.'
+			+"</div>");
+		}
+		var $validator = jQuery("#formCheckDomain").validate({
+			highlight: function(element) {
+			  jQuery(element).closest(".form-group").removeClass("has-success").addClass("has-error");
+			},
+			success: function(element) {
+			  jQuery(element).closest(".form-group").removeClass("has-error");
+			}
+		});
+		$(".panelNewRegisterDomain").on("click","#btnCheckDomain",function() {
+			$(".panelNewRegisterDomain input[name=ltdDomain]:checked").each(function () {
+				$(".domainResult").empty(); 
+				var ltdDomain=$(this).val(); 
+				var Domain=convertToSlug($(".panelNewRegisterDomain input[name=domainNewRegister]").val()); 
+				var formData = new FormData();
+				formData.append("domain", Domain); 
+				formData.append("ltdDomain", ltdDomain); 
+				formData.append("domainType", $(this).attr("data-type")); 
+				formData.append("checkType", "status"); 
+				$.ajax({
+					url: "'.route("channel.domain.check",$channel["domain"]->domain).'",
+					type: "POST",
+					cache: false,
+					contentType: false,
+					processData: false,
+					dataType:"json",
+					data:formData,
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					success: function (result) {
+						console.log(result); 
+						if(result.success==true){
+							if(result.domainInfo.code==1){
+								if(result.serviceAttribute.price_re_order==0){
+									$(".domainResult").append("<li class=\"list-group-item list-group-item-info\">"
+										+"<div class=\"pull-right\">"
+											+"<div class=\"form-group\"><strong class=\"text-info\">Miễn phí</strong> <button type=\"button\" class=\"btn btn-xs btn-success selectDomain\" domain-data=\""+result.domain+"\" domain-type=\""+result.domainType+"\" data-check=\"\"><i class=\"glyphicon glyphicon-unchecked\"></i> chọn</button></div>"
+										+"</div> "
+										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>" 
+									+"</li>"); 
+								}else{
+									$(".domainResult").append("<li class=\"list-group-item list-group-item-success\">"
+										+"<div class=\"pull-right\">"
+											+"<div class=\"form-group\"><strong class=\"text-danger\">"+(parseInt(result.serviceAttribute.price_re_order)+parseInt(result.serviceAttribute.price_order)).toLocaleString()+"<sup>VND</sup></strong> <button type=\"button\" class=\"btn btn-xs btn-success selectDomain\" domain-data=\""+result.domain+"\" domain-type=\""+result.domainType+"\" data-check=\"\"><i class=\"glyphicon glyphicon-unchecked\"></i> chọn</button></div>"
+										+"</div> "
+										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>" 
+									+"</li>"); 
+								}
+							}else if(result.domainInfo.code==0){
+								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><button type=\"button\" class=\"btn btn-xs btn-default pull-right btnDetail\" data-domainName=\""+result.domainInfo.domainName+"\" data-registrar=\""+result.domainInfo.registrar+"\" data-nameServer=\""+result.domainInfo.nameServer+"\" data-creationDate=\""+result.domainInfo.creationDate+"\" data-expirationDate=\""+result.domainInfo.expirationDate+"\" data-registrantName=\""+result.domainInfo.registrantName+"\"><i class=\"glyphicon glyphicon-eye-open\"></i> Xem</button> <strong>"+result.domainInfo.domainName+"</strong> <small class=\"text-danger hidden-xs\">(tên miền này đã được đăng ký)</small> </li>"); 
+							}else{
+								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><strong>"+result.domainInfo.domainName+"</strong> </li>"); 
+							}
+						}else{
+							$(".domainResult").empty(); 
+							$(".domainResult").append("<div class=\"alert alert-danger alert-dismissable\" id=\"alertError\"><a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"+result.message+"</div>"); 
+						}
+					}
+				});
+			});
+			return false; 
+		});
+		$(".panelNewRegisterDomain").on("click",".btnDetail",function() {
+			var domainName=$(this).attr("data-domainName"); 
+			var dateCreated=$(this).attr("data-creationDate"); 
+			var dateExpiration=$(this).attr("data-expirationDate"); 
+			var domainRegistar=$(this).attr("data-registrar"); 
+			var nameServer=$(this).attr("data-nameServer"); 
+			var registrantName=$(this).attr("data-registrantName"); 
+			$("#modalViewDomain .modal-title").empty(); 
+			$("#modalViewDomain .modal-body").empty(); 
+			$("#modalViewDomain .modal-title").text(domainName); 
+			$("#modalViewDomain .modal-body").html(""
+			+"<strong>Ngày đăng ký: </strong>"+dateCreated+"<br>" 
+			+"<strong>Ngày hết hạn: </strong>"+dateExpiration+"<br>" 
+			+"<strong>Chủ sở hữu: </strong>"+registrantName+"<br>" 
+			+"<strong>Name Server: </strong>"+nameServer+"<br>" 
+			+"<strong>Nhà đăng ký: </strong>"+domainRegistar+"<br>" 
+			+"");
+			$("#modalViewDomain").modal("show"); 
+			
+		});
+	', $dependencies);
+?>
+<div id="modalViewDomain" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>

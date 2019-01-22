@@ -1,0 +1,316 @@
+<?
+	$getAllSubRegion=\App\Model\Subregions::where('region_id','=',$region->id)->get(); 
+	//$getAllRegionDistrict=\App\Model\Region_district::where('subregions_id','=',$getDistrict->subregions_id)->get(); 
+	//
+	$getOneDistrict=\App\Model\Region_district::where('id','=',$getWard->region_district_id)->first(); 
+	$getOneSubRegion=\App\Model\Subregions::where('id','=',$getOneDistrict->subregions_id)->first(); 
+	$getAllRegionDistrict=\App\Model\Region_district::where('subregions_id','=',$getOneSubRegion->id)->get(); 
+	$getAllWard=\App\Model\Region_ward::where('region_district_id','=',$getOneDistrict->id)->get(); 
+?>
+<?
+	$channel['theme']->setTitle($channel['info']->channel_name.((!empty($getField->name)) ? ' '.$getField->name : '').' tại '.$getWard->ward_name);
+	$channel['theme']->setKeywords($channel['info']->channel_name.((!empty($getField->name)) ? ' '.$getField->name : '').' tại '.$getWard->ward_name);
+	$channel['theme']->setDescription($getWard->ward_name.', '.$getOneDistrict->district_name.', '.$getOneSubRegion->subregions_name.', '.$region->country); 
+	if(!empty($channel['info']->channelAttributeBanner[0]->media->media_url)){$channel['theme']->setImage($channel['info']->channelAttributeBanner[0]->media->media_url);}
+?>
+<?
+	if($channel['info']->domainJoinPrimary->domain->domain_primary!='default'){
+		if(count($channel['info']->domainAll)>0){
+			foreach($channel['info']->domainAll as $domain){
+				if($domain->domain->domain_primary=='default'){
+					$domainPrimaryParent=$domain->domain->domain; 
+				}
+			}
+		}else{
+			$domainPrimaryParent=$channel['info']->domainJoinPrimary->domain->domain; 
+		}
+	}else{
+		$domainPrimaryParent=$channel['info']->domainJoinPrimary->domain->domain; 
+	}
+?>
+{!!Theme::partial('header')!!}
+<div class="section-breadcrumb">
+	<div class="container">
+		<div class="row">
+			<div id="modalSubRegion" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								@foreach($getAllSubRegion as $subRegion)
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+										<div class="form-group">
+											<a href="{{route('channel.slug',array($channel['domain']->domain,str_replace('/VN/','',$subRegion->SolrID)))}}" class="list-group-item"><i class="glyphicon glyphicon-map-marker"></i> {!!$subRegion->subregions_name!!}</a>
+										</div>
+									</div>
+								@endforeach
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="modalRegionDistrict" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								@foreach($getAllRegionDistrict as $district)
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+										<div class="form-group">
+											<a href="{{route('channel.slug',array($channel['domain']->domain,str_replace('/VN/','',$district->SolrID)))}}" class="list-group-item"><i class="glyphicon glyphicon-map-marker"></i> {!!$district->district_name!!}</a>
+										</div>
+									</div>
+								@endforeach
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="modalRegionWard" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								@foreach($getAllWard as $ward)
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+										<div class="form-group">
+											<a href="{{route('channel.slug',array($channel['domain']->domain,str_replace('/VN/','',$ward->SolrID)))}}" class="list-group-item"><i class="glyphicon glyphicon-map-marker"></i> {!!$ward->ward_name!!}</a>
+										</div>
+									</div>
+								@endforeach
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<ol class="breadcrumb" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+				<li class="breadcrumb-item" itemprop="itemListElement"><i class="flag flag-16 flag-{{mb_strtolower($region->iso)}}"></i> <a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalSubRegion"><span itemprop="name">{!!$getOneSubRegion->subregions_name!!}</span> <span class="glyphicon glyphicon-menu-down"></span></a></li>
+				<li class="breadcrumb-item" itemprop="itemListElement"><a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalRegionDistrict"><span itemprop="name">{!!$getOneDistrict->district_name!!}</span> <span class="glyphicon glyphicon-menu-down"></span></a></li>
+				<li class="breadcrumb-item active" itemprop="itemListElement"><a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalRegionWard"><span itemprop="name">{!!$getWard->ward_name!!}</span> <span class="glyphicon glyphicon-menu-down"></span></a></li>
+			</ol>
+		</div>
+	</div>
+</div>
+@if(count($channelList)>0)
+	<div class="section-channelList group-section-content">
+		<div class="container">
+			<div class="row listItem">
+				@foreach($channelList as $channelJoin)
+				<?
+					$channel=\App\Model\Channel::find($channelJoin->id); 
+					if($channel->domainJoinPrimary->domain->domain_primary!='default'){
+						if(count($channel->domainAll)>0){
+							foreach($channel->domainAll as $domain){
+								if($domain->domain->domain_primary=='default'){
+									$domainPrimary=$domain->domain->domain; 
+								}
+							}
+						}else{
+							$domainPrimary=$channel->domainJoinPrimary->domain->domain; 
+						}
+					}else{
+						$domainPrimary=$channel->domainJoinPrimary->domain->domain; 
+					}
+					$channelColor=(!empty($channel->channelAttributeColor->channel_attribute_value)) ? json_decode($channel->channelAttributeColor->channel_attribute_value) : false; 
+				?>
+				@if($channel->service_attribute_id==3)
+					<?
+						$getPostJoinChannel=\App\Model\Posts_join_channel::where('posts_join_channel.channel_id','=',$channel->id)
+						->join('posts','posts.id','=','posts_join_channel.posts_id')
+						->where('posts.posts_status','=','active')
+						->orderBy('posts.posts_updated_at','desc')
+						->get(); 
+					?>
+					@if(count($getPostJoinChannel)>3)
+						<div class="panel panel-primary" @if(!empty($channelColor->channelTitle)) style="border-color:{{$channelColor->channelTitle}};" @endif>
+							<div class="panel-heading" @if(!empty($channelColor->channelTitle)) style="background:{{$channelColor->channelTitle}};" @endif>
+								<h3 class="panel-title">
+								<a href="{{route('channel.home',$domainPrimary)}}" @if(!empty($channelColor->channelTitle)) style="color:{{$channelColor->channelTitleText}};" @endif>
+									<img src="@if(!empty($channel->channelAttributeLogo->media->media_url_xs)){{$channel->channelAttributeLogo->media->media_url_xs}} @else {{asset('assets/img/logo-default.jpg')}} @endif" alt="" style="max-height:22px;"> {!!$channel->channel_name!!}
+								</a>
+								</h3>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									@foreach($getPostJoinChannel->take(4) as $post)
+										@if(!empty($post->getPost->gallery[0]->media->media_url) && !empty($post->getPost->getSlug->slug_value))
+										<div class="col-xs-12 col-sm-6 col-md-3">
+											<div class="form-group content-list-post">
+												<a class="image img-thumbnail form-group" href="{{route('channel.slug',array($domainPrimary,$post->getSlug->slug_value))}}">
+												@if($post->getPost->gallery[0]->media->media_storage=='youtube')
+													<img src="//img.youtube.com/vi/{{$post->getPost->gallery[0]->media->media_name}}/hqdefault.jpg" class="img-responsive imgThumb" alt="" title="" >
+												@else
+													<img src="@if(!empty($post->getPost->gallery[0]->media->media_url_xs)){{$post->getPost->gallery[0]->media->media_url_xs}}@else{{$post->getPost->gallery[0]->media->media_url}}@endif" class="img-responsive imgThumb" alt="" title="" >
+												@endif
+												</a>
+												<h4><a class="title" href="{{route('channel.slug',array($domainPrimary,$post->getSlug->slug_value))}}">{!!$post->getPost->posts_title!!}</a></h4>
+												<div class="attribute-2">
+													<small>
+													<span class="time-update"><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($post->getPost->posts_updated_at)!!}</span> 
+													<span class="post-view">{{$post->getPost->posts_view}} lượt xem</span>  
+													</small> 
+												</div>
+												<div class="form-group attribute-1">
+													<span class="author"><i class="glyphicon glyphicon-user"></i> {{$post->getPost->author->user->name}}</span>
+												</div>
+											</div>
+										</div>
+										@endif
+									@endforeach
+								</div>
+							</div>
+						</div>
+					@else 
+						<div class="list-group">
+							<li class="list-group-item @if($channel->service_attribute_id==3) list-group-item-info @else list-group-item-default @endif">
+								@if($channel->service_attribute_id==3)<button type="button" class="btn btn-xs btn-primary pull-right"><i class="glyphicon glyphicon-star"></i> Cao cấp</button>@endif
+								<h3 class="list-group-item-heading"><img src="@if(!empty($channel->channelAttributeLogo->media->media_url_xs)){{$channel->channelAttributeLogo->media->media_url_xs}} @else {{asset('assets/img/logo-default.jpg')}} @endif" alt="" style="max-height:22px;"> <a href="{{route('channel.view.slug',array($domainPrimaryParent,$channel->id.'-'.Str::slug($channel->channel_name)))}}">{!!$channel->channel_name!!}</a></h3>
+								<div class="list-group-item-text">
+										<p>
+											@if(!empty($channel->channelJoinWard->ward->id))
+												<span id="wardName"><i class="glyphicon glyphicon-map-marker"></i> {!!$channel->channelJoinWard->ward->ward_name!!}
+												</span>
+											@endif 
+											@if(!empty($channel->channelJoinDistrict->district->id))
+												<span id="districtName"><i class="glyphicon glyphicon-map-marker"></i> 
+												<a href="{{route('channel.slug',array($domainPrimaryParent,str_replace('/VN/','',$channel->channelJoinDistrict->district->SolrID)))}}">{!!$channel->channelJoinDistrict->district->district_name!!}</a>
+												</span>
+											@endif 
+											@if(!empty($channel->channelJoinSubRegion->subregion->id))
+												<span id="subRegionName"><i class="glyphicon glyphicon-map-marker"></i> 
+												<a href="{{route('channel.slug',array($domainPrimaryParent,str_replace('/VN/','',$channel->channelJoinSubRegion->subregion->SolrID)))}}">{!!$channel->channelJoinSubRegion->subregion->subregions_name!!}</a>
+												</span>
+											@endif 
+											@if($channel->channelJoinRegion->region!=false)
+												<span id="flagIso"><i class="flag flag-16 flag-{{mb_strtolower($channel->channelJoinRegion->region->iso)}}"></i></span> <span id="channelRegionName">{!!$channel->channelJoinRegion->region->country!!}</span> 
+											@endif 
+										</p>
+									@if(!empty($channel->companyJoin->company->company_address))<p><i class="glyphicon glyphicon-map-marker"></i> {!!$channel->companyJoin->company->company_address!!}</p>@endif
+									@if(isset($channel->phoneJoin->phone))
+										@if(Auth::check())
+											<p><i class="glyphicon glyphicon-earphone"></i> <a href="tel:{{$channel->phoneJoin->phone->phone_number}}">{{$channel->phoneJoin->phone->phone_number}}</a></p>
+										@else 
+											<p><span class="text-danger"><i class="glyphicon glyphicon-lock"></i> Đăng nhập để xem điện thoại</span></p>
+										@endif
+									@endif
+									@if(isset($channel->emailJoin->email))
+										@if(Auth::check())
+											<p><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:{{$channel->emailJoin->email->email_address}}" target="_blank">{{$channel->emailJoin->email->email_address}}</a></p>
+										@else 
+											<p><span class="text-danger"><i class="glyphicon glyphicon-lock"></i> Đăng nhập để xem email</span></p>
+										@endif
+									@endif
+									<p><a href="{{route('channel.home',$domainPrimary)}}"><i class="glyphicon glyphicon-globe"></i> {{$domainPrimary}}</a></p>
+									<small><span class="time-update"><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($channel->channel_updated_at)!!}</span> <span class="post-view">{{$channel->channel_view}} lượt xem</span></small>
+									@if(count($channel->author)>0)
+										@foreach($channel->author as $author)
+											<small><span class="author"><i class="glyphicon glyphicon-user"></i> {!!\App\User::find($author->channel_attribute_value)->name!!}</span></small>
+										@endforeach
+									@endif
+								</div>
+							</li>
+						</div>
+					@endif
+				@else 
+					<div class="list-group">
+						<li class="list-group-item @if($channel->service_attribute_id==3) list-group-item-info @else list-group-item-default @endif">
+							@if($channel->service_attribute_id==3)<button type="button" class="btn btn-xs btn-primary pull-right"><i class="glyphicon glyphicon-star"></i> Cao cấp</button>@endif
+							<h3 class="list-group-item-heading"><img src="@if(!empty($channel->channelAttributeLogo->media->media_url_xs)){{$channel->channelAttributeLogo->media->media_url_xs}} @else {{asset('assets/img/logo-default.jpg')}} @endif" alt="" style="max-height:22px;"> <a href="{{route('channel.view.slug',array($domainPrimaryParent,$channel->id.'-'.Str::slug($channel->channel_name)))}}">{!!$channel->channel_name!!}</a></h3>
+							<div class="list-group-item-text">
+								@if($channel->channelJoinSubRegion->subregion!=false || $channel->channelJoinRegion->region!=false)
+									<p>
+										@if(!empty($channel->channelJoinWard->ward->id))
+											<span id="wardName"><i class="glyphicon glyphicon-map-marker"></i> {!!$channel->channelJoinWard->ward->ward_name!!}
+											</span>
+										@endif 
+										@if(!empty($channel->channelJoinDistrict->district->id))
+											<span id="districtName"><i class="glyphicon glyphicon-map-marker"></i> 
+											<a href="{{route('channel.slug',array($domainPrimaryParent,str_replace('/VN/','',$channel->channelJoinDistrict->district->SolrID)))}}">{!!$channel->channelJoinDistrict->district->district_name!!}</a>
+											</span>
+										@endif 
+										@if(!empty($channel->channelJoinSubRegion->subregion->id))
+											<span id="subRegionName"><i class="glyphicon glyphicon-map-marker"></i> 
+											<a href="{{route('channel.slug',array($domainPrimaryParent,str_replace('/VN/','',$channel->channelJoinSubRegion->subregion->SolrID)))}}">{!!$channel->channelJoinSubRegion->subregion->subregions_name!!}</a>
+											</span>
+										@endif 
+										@if($channel->channelJoinRegion->region!=false)
+											<span id="flagIso"><i class="flag flag-16 flag-{{mb_strtolower($channel->channelJoinRegion->region->iso)}}"></i></span> <span id="channelRegionName">{!!$channel->channelJoinRegion->region->country!!}</span> 
+										@endif 
+									</p>
+								@endif
+								@if(!empty($channel->companyJoin->company->company_address))<p><i class="glyphicon glyphicon-map-marker"></i> {!!$channel->companyJoin->company->company_address!!}</p>@endif
+								@if(isset($channel->phoneJoin->phone))
+									@if(Auth::check())
+										<p><i class="glyphicon glyphicon-earphone"></i> <a href="tel:{{$channel->phoneJoin->phone->phone_number}}">{{$channel->phoneJoin->phone->phone_number}}</a></p>
+									@else 
+										<p><span class="text-danger"><i class="glyphicon glyphicon-lock"></i> Đăng nhập để xem điện thoại</span></p>
+									@endif
+								@endif
+								@if(isset($channel->emailJoin->email))
+									@if(Auth::check())
+										<p><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:{{$channel->emailJoin->email->email_address}}" target="_blank">{{$channel->emailJoin->email->email_address}}</a></p>
+									@else 
+										<p><span class="text-danger"><i class="glyphicon glyphicon-lock"></i> Đăng nhập để xem email</span></p>
+									@endif
+								@endif
+								<p><a href="{{route('channel.home',$domainPrimary)}}"><i class="glyphicon glyphicon-globe"></i> {{$domainPrimary}}</a></p>
+								<small><span class="time-update"><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($channel->channel_updated_at)!!}</span> <span class="post-view">{{$channel->channel_view}} lượt xem</span></small>
+								@if(count($channel->author)>0)
+									@foreach($channel->author as $author)
+										<small><span class="author"><i class="glyphicon glyphicon-user"></i> {!!\App\User::find($author->channel_attribute_value)->name!!}</span></small>
+									@endforeach
+								@endif
+							</div>
+						</li>
+					</div>
+				@endif
+				@endforeach
+			</div>
+			<div id="load_item_page" class="text-center">
+				<input id="curentPage" class="curentPage" type="hidden" value="{{$channelList->currentPage()}}" autocomplete="off"/>
+				<input id="totalPage" class="totalPage" type="hidden" value="{{$channelList->total()}}" autocomplete="off"/>
+				<input id="urlPage" class="urlPage" type="hidden" value="{{Request::url()}}" autocomplete="off"/>
+				<input id="nextPage" class="nextPage" type="hidden" value="{{$channelList->nextPageUrl()}}" autocomplete="off"/>
+				<input id="perPage" class="perPage" type="hidden" value="{{$channelList->perPage()}}" autocomplete="off"/>
+				<input id="lastPage" class="lastPage" type="hidden" value="{{$channelList->lastPage()}}" autocomplete="off"/>
+				@if(strlen($channelList->nextPageUrl())>0)
+					<div class="text-center">
+						<div class="click-more">
+							<button class="btn btn-success btn-xs" id="loading-page"><i class="fa fa-spinner fa-spin"></i> Loading</button> 
+							<a href="{{$channelList->nextPageUrl()}}"><i class="glyphicon glyphicon-hand-right viewMore"></i> Xem thêm...</a>
+						</div>
+					</div>
+				@endif
+			</div>
+		</div>
+	</div>
+@else 
+	<div class="section-empty">
+		<div class="container">
+			<div class="row">
+				<div class="alert alert-info">
+					<strong>{!!$channel['info']->channel_name.((!empty($getField->name)) ? ' '.$getField->name : '').' tại '.$getWard->ward_name!!}</strong> chưa có thông tin nào! 
+				</div>
+			</div>
+		</div>
+	</div>
+@endif
+{!! Theme::partial('footer') !!}

@@ -1,0 +1,459 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
+use Request;
+use Illuminate\Support\Str;
+use Auth;
+use App\Permission;
+use App\Role;
+use Carbon\Carbon;
+use App\Model\History; 
+use App\Model\Media; 
+use App\Model\Media_join; 
+use App\Model\Media_join_post; 
+use App\Model\Media_join_channel;
+use App\Model\Posts;
+use App\Model\Posts_join;
+use App\Model\Posts_attribute; 
+use File;
+use Youtube; 
+use Theme;
+use WebService; 
+use Route; 
+use Redirect; 
+use Response; 
+use Input; 
+use Validator; 
+use Hash; 
+use Imagick;
+class MediaController extends Controller
+{
+	protected $_domain; 
+	protected $_channel; 
+	protected $_channelColor; 
+	protected $_theme; 
+	protected $_parame; 
+	protected $_security; 
+	public function __construct(){
+		$this->_security=false; 
+		$this->_parame=Route::current()->parameters(); 
+		$this->_domain=WebService::getDomain($this->_parame['domain']); 
+		$this->beforeFilter(function()
+		{
+			if(empty($this->_domain->domain)){
+				return Redirect::to('//'.config('app.url'));
+			}elseif($this->_domain->domain_primary!='default'){
+				foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
+					if($domain->domain->domain_primary=='default'){
+						return Redirect::to('//'.$domain->domain->domain);
+					}
+				}
+			}else{
+				$this->_channel=$this->_domain->domainJoinChannel->channel; 
+				$this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default'); 
+				//$this->_channel->increment('channel_view',1);
+				if(Auth::check()){
+					foreach($this->_channel->author as $author){
+						if($author->channel_attribute_value==Auth::user()->id){
+							$this->_security=true;
+						}
+					}
+					$user=Auth::user(); 
+					if($user->hasRole(['admin', 'manage'])){
+						$this->_security=true;
+					}
+				}
+				view()->share(
+					'channel',array(
+						'domain'=>$this->_domain, 
+						'info'=>$this->_channel, 
+						'security'=>$this->_security, 
+						'category'=>$this->_channel->getCategory, 
+						'theme'=>$this->_theme, 
+						'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
+					)
+				);
+			}
+		});
+	}
+	public function uploadFile(){
+		$fileupload = Input::file('file'); 
+		$postTitle=Input::get('postTitle'); 
+		$postId=Input::get('postId'); 
+		$postType=Input::get('postType'); 
+		$description=Input::get('description'); 
+		$mime = $fileupload->getMimeType();
+		$file_size = $fileupload->getSize();
+		$day = date('d', strtotime(Carbon::now()->format('Y-m-d H:i:s'))); 
+		$month = date('m', strtotime(Carbon::now()->format('Y-m-d H:i:s'))); 
+		$year = date('Y', strtotime(Carbon::now()->format('Y-m-d H:i:s')));
+		$path = public_path(). '/media/'.$year.'/'.$month.'/'.$day; 
+		if(!File::exists($path)) {
+			File::makeDirectory($path, $mode = 0777, true, true); 
+		}
+		if(!File::exists($path.'/thumb')) {
+			File::makeDirectory($path.'/thumb', $mode = 0777, true, true);
+		}
+		if(!File::exists($path.'/small')) {
+			File::makeDirectory($path.'/small', $mode = 0777, true, true);
+		}
+		if(!File::exists($path.'/xs')) {
+			File::makeDirectory($path.'/xs', $mode = 0777, true, true);
+		}
+		if ($mime == "image/jpeg" || $mime == "image/jpg" || $mime == "image/png" || $mime == "image/gif") {
+			// File info
+			//$nameFile=pathinfo($fileupload->getClientOriginalName(), PATHINFO_FILENAME); 
+			$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
+			$keyRandom=substr(str_shuffle(str_repeat($pool, 5)), 0, 5); 
+			$filename = time().'-'.Str::slug(!empty($postTitle) ? $keyRandom.'-'.$postTitle : $keyRandom.'-'.$this->_channel->channel_name).".".$fileupload->getClientOriginalExtension();
+			$destinationPath='media/'.$year.'/'.$month.'/'.$day.'/'; 
+			$file_path = $destinationPath.$filename;
+			$fileupload->move($destinationPath, $filename);
+			//Crop Image upload
+			$demention = getimagesize($file_path);
+			$im = new Imagick($file_path);
+			if($mime == "image/gif"){
+				$im = $im->coalesceImages(); 
+				if($demention[0] >1280){
+					foreach ($im as $frame) { 
+						$frame->resizeImage( 1280 , null , Imagick::FILTER_LANCZOS, 1, TRUE);
+					} 
+				}else{
+					foreach ($im as $frame) { 
+						$w = $frame->getImageWidth();
+						$h = $frame->getImageHeight();
+						$frame->resizeImage($w,$h, Imagick::FILTER_LANCZOS, 1, TRUE);
+					}
+				}
+				$im = $im->deconstructImages(); 
+			}else{
+				if($demention[0] >1280){
+					$im->resizeImage(1280, null, Imagick::FILTER_LANCZOS, 1);
+				}
+				$im->setImageCompression(Imagick::COMPRESSION_JPEG);
+				$im->setImageCompressionQuality(80);
+				$im->writeImage();
+			}
+			if($postType=='post'){
+				$widthMd=720; $heightMd=480; 
+				$widthSm=480; $heightSm=321; 
+				$widthXs=320; $heightXs=214; 
+				$scale=true; 
+			}else if($postType=='banner'){
+				$widthMd=1170; $heightMd=350; 
+				$widthSm=720; $heightSm=215; 
+				$widthXs=480; $heightXs=143;  
+				$scale=false; 
+			}else if($postType=='logo'){
+				$widthMd=600; $heightMd=null; 
+				$widthSm=300; $heightSm=null; 
+				$widthXs=150; $heightXs=null; 
+				$scale=false; 
+			}else{
+				$widthMd=720; $heightMd=null; 
+				$widthSm=480; $heightSm=null; 
+				$widthXs=320; $heightXs=null; 
+				$scale=false; 
+			}
+			$imgThumbnail=new Imagick($file_path); 
+			if($scale==false){
+				if($mime == "image/gif"){
+					$imgThumbnail = $imgThumbnail->coalesceImages(); 
+					foreach ($imgThumbnail as $frame) { 
+						$frame->resizeImage($widthMd, null, Imagick::FILTER_LANCZOS, 1); 
+						if($heightMd!=null){
+							$frame->setImageBackgroundColor('white');
+							$w = $frame->getImageWidth();
+							$h = $frame->getImageHeight();
+							$frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+						}
+					} 
+					$imgThumbnail = $imgThumbnail->deconstructImages(); 
+				}else{
+					$imgThumbnail->resizeImage($widthMd, null, Imagick::FILTER_LANCZOS, 1); 
+					if($heightMd!=null){
+						$imgThumbnail->setImageBackgroundColor('white');
+						$w = $imgThumbnail->getImageWidth();
+						$h = $imgThumbnail->getImageHeight();
+						$imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+					}
+					$imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgThumbnail->setImageCompressionQuality(85); 
+				}
+			}else{
+				if($mime == "image/gif"){
+					$imgThumbnail = $imgThumbnail->coalesceImages(); 
+					foreach ($imgThumbnail as $frame) { 
+						$frame->scaleImage($widthMd,$heightMd,true); 
+						$frame->setImageBackgroundColor('white');
+						$w = $frame->getImageWidth();
+						$h = $frame->getImageHeight();
+						$frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+					} 
+					$imgThumbnail = $imgThumbnail->deconstructImages(); 
+				}else{
+					$imgThumbnail->scaleImage($widthMd,$heightMd,true); 
+					$imgThumbnail->setImageBackgroundColor('white');
+					$w = $imgThumbnail->getImageWidth();
+					$h = $imgThumbnail->getImageHeight();
+					$imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+					$imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgThumbnail->setImageCompressionQuality(85); 
+				}
+			}
+			$imgThumbnail->writeImages($destinationPath.'thumb/'.$filename,true); 
+			$imgSmall=new Imagick($file_path); 
+			if($scale==false){
+				if($mime == "image/gif"){
+					$imgSmall = $imgSmall->coalesceImages(); 
+					foreach ($imgSmall as $frame) { 
+						$frame->resizeImage($widthSm, null, Imagick::FILTER_LANCZOS, 1); 
+						if($heightSm!=null){
+							$frame->setImageBackgroundColor('white');
+							$w = $frame->getImageWidth();
+							$h = $frame->getImageHeight();
+							$frame->extentImage($widthSm,$heightSm,($w-$widthSm)/2,($h-$heightSm)/2); 
+						}
+					} 
+					$imgSmall = $imgSmall->deconstructImages(); 
+				}else{
+					$imgSmall->resizeImage($widthSm, null, Imagick::FILTER_LANCZOS, 1); 
+					if($heightSm!=null){
+						$imgSmall->setImageBackgroundColor('white');
+						$w = $imgSmall->getImageWidth();
+						$h = $imgSmall->getImageHeight();
+						$imgSmall->extentImage($widthSm,$heightSm,($w-$widthSm)/2,($h-$heightSm)/2); 
+					}
+					$imgSmall->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgSmall->setImageCompressionQuality(85);
+				}
+			}else{
+				if($mime == "image/gif"){
+					$imgSmall = $imgSmall->coalesceImages(); 
+					foreach ($imgSmall as $frame) { 
+						$frame->scaleImage($widthSm,$heightSm,true); 
+						$frame->setImageBackgroundColor('white');
+						$w = $frame->getImageWidth();
+						$h = $frame->getImageHeight();
+						$frame->extentImage($widthSm,$heightSm,($w-$widthSm)/2,($h-$heightSm)/2); 
+					} 
+					$imgSmall = $imgSmall->deconstructImages(); 
+				}else{
+					$imgSmall->scaleImage($widthSm,$heightSm,true); 
+					$imgSmall->setImageBackgroundColor('white');
+					$w = $imgSmall->getImageWidth();
+					$h = $imgSmall->getImageHeight();
+					$imgSmall->extentImage($widthSm,$heightSm,($w-$widthSm)/2,($h-$heightSm)/2); 
+					$imgSmall->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgSmall->setImageCompressionQuality(85);
+				}
+			}
+			$imgSmall->writeImages($destinationPath.'small/'.$filename,true); 
+			
+			$imgXS=new Imagick($file_path); 
+			if($scale==false){
+				if($mime == "image/gif"){
+					$imgXS = $imgXS->coalesceImages(); 
+					foreach ($imgXS as $frame) { 
+						$frame->resizeImage($widthXs, null, Imagick::FILTER_LANCZOS, 1); 
+						if($heightXs!=null){
+							$frame->setImageBackgroundColor('white');
+							$w = $frame->getImageWidth();
+							$h = $frame->getImageHeight();
+							$frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2); 
+						}
+					} 
+					$imgXS = $imgXS->deconstructImages(); 
+				}else{
+					$imgXS->resizeImage($widthXs, null, Imagick::FILTER_LANCZOS, 1); 
+					if($heightXs!=null){
+						$imgXS->setImageBackgroundColor('white');
+						$w = $imgXS->getImageWidth();
+						$h = $imgXS->getImageHeight();
+						$imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2); 
+					}
+					$imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgXS->setImageCompressionQuality(85);
+				} 
+			}else{
+				if($mime == "image/gif"){
+					$imgXS = $imgXS->coalesceImages(); 
+					foreach ($imgXS as $frame) { 
+						$frame->scaleImage($widthXs,$heightXs,true); 
+						$frame->setImageBackgroundColor('white');
+						$w = $frame->getImageWidth();
+						$h = $frame->getImageHeight();
+						$frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);  
+					} 
+					$imgXS = $imgXS->deconstructImages(); 
+				}else{
+					$imgXS->scaleImage($widthXs,$heightXs,true); 
+					$imgXS->setImageBackgroundColor('white');
+					$w = $imgXS->getImageWidth();
+					$h = $imgXS->getImageHeight();
+					$imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2); 
+					$imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+					$imgXS->setImageCompressionQuality(85);
+				}
+			}
+			$imgXS->writeImages($destinationPath.'xs/'.$filename,true); 
+			
+			$url_file = '//img.'.config('app.url').'/'.$file_path;//change this URL 
+			$url_file_thumb = '//img.'.config('app.url').'/'.$destinationPath.'thumb/'.$filename;//change this URL 
+			$url_file_small = '//img.'.config('app.url').'/'.$destinationPath.'small/'.$filename;//change this URL 
+			$url_file_xs = '//img.'.config('app.url').'/'.$destinationPath.'xs/'.$filename;//change this URL 
+			$data_file_insert = array(
+				'member_id' => Auth::user()->id,
+				'media_name' => $filename,
+				'media_path' => $destinationPath,
+				'media_url' 	=> $url_file, 
+				'media_url_thumb' 	=> $url_file_thumb,
+				'media_url_small' 	=> $url_file_small,
+				'media_url_xs' 	=> $url_file_xs,
+				'media_size' => $file_size, 
+				'media_type' =>$mime, 
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				'media_storage'=>'local'
+			);
+			$id_media=Media::insertGetId($data_file_insert); 
+			if($id_media){
+				Media_join_channel::insertGetId(array(
+					'media_id'=>$id_media, 
+					'channel_id'=>$this->_channel->id
+				)); 
+				if($postType=='post'){
+					$getPost=Posts::find($postId); 
+					if(!empty($getPost->id)){
+						Media_join_post::insertGetId(array(
+							'post_id'=>$postId, 
+							'media_id'=>$id_media
+						)); 
+					}
+				}
+			}
+			return response()->json(['success'=>true,
+				'msg'=>'Upload ảnh thành công!', 
+				'id'=>$id_media,
+				'MimeType'=>$mime,
+				'url'=>$url_file, 
+				'url_thumb'=>$url_file_thumb,
+				'url_small'=>$url_file_small,
+				'url_xs'=>$url_file_xs,
+				'filename'=>$filename, 
+				'file_type'=>$fileupload->getClientOriginalExtension(), 
+				'media_storage'=>'local'
+			]);
+		}else if ($mime == "video/x-flv" || $mime == "video/mp4" || $mime == "application/x-mpegURL" || $mime == "video/MP2T" || $mime == "video/3gpp" || $mime == "video/quicktime" || $mime == "video/x-quicktime" || $mime == "image/mov" || $mime == "video/avi" || $mime == "video/x-msvideo" || $mime == "video/x-ms-wmv") {
+			if(!empty($postTitle)){
+				$path_video=$fileupload->getRealPath();
+				$youtube = new Youtube();
+				$params = [
+					'title' => $postTitle,
+					'description' =>'Đăng bởi http://'.$this->_domain->domain,
+				];
+				$videos = Youtube::upload($path_video, $params);
+				$url_file='//www.youtube.com/embed/'.$videos->getVideoId(); 
+				$data_file_insert = array(
+					'member_id' => Auth::user()->id,
+					'media_name' => $videos->getVideoId(),
+					'media_path' => $url_file,
+					'media_url' 	=> $url_file,
+					'media_size' => $file_size, 
+					'media_type' =>$mime, 
+					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+					'media_storage'=>'youtube'
+				);
+				// Save to media and get id
+				$id_media=Media::insertGetId($data_file_insert); 
+				if($id_media){
+					Media_join_channel::insertGetId(array(
+						'media_id'=>$id_media, 
+						'channel_id'=>$this->_channel->id
+					)); 
+					if($postType=='post'){
+						$getPost=Posts::find($postId); 
+						if(!empty($getPost->id)){
+							Media_join_post::insertGetId(array(
+								'post_id'=>$postId, 
+								'media_id'=>$id_media
+							)); 
+						}
+					} 
+				}
+				return response()->json(['success'=>true,
+					'msg'=>'Upload video thành công', 
+					'id'=>$id_media,
+					'MimeType'=>$mime,
+					'url'=>$url_file,
+					'file_type'=>$fileupload->getClientOriginalExtension(), 
+					'id_video'=>$videos->getVideoId(), 
+					'title'=>$postTitle, 
+					'media_storage'=>'youtube'
+				]);
+			}else{
+				return response()->json(['success'=>false,
+					'msg'=>'Bạn chưa nhập tiêu đề bài đăng',
+					'MimeType'=>$fileupload->getMimeType(),
+					'file_type'=>$fileupload->getClientOriginalExtension()
+				]);
+			}
+		}else if ($mime == "application/x-compressed" || $mime == "application/x-zip-compressed" || $mime == "application/zip" || $mime == "multipart/x-zip" || $mime == "application/pdf" || $mime == "application/msword" || $mime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || $mime == "application/vnd.ms-excel" || $mime == "application/vnd.ms-powerpoint" || $mime == "application/vnd.ms-powerpoint" || $mime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+			$pathFiles = public_path(). '/media/files/'.$year.'/'.$month.'/'.$day; 
+			if(!File::exists($pathFiles)) {
+				File::makeDirectory($pathFiles, $mode = 0777, true, true); 
+			}
+			$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
+			$keyRandom=substr(str_shuffle(str_repeat($pool, 5)), 0, 5); 
+			$filename = time().'-'.Str::slug(!empty($postTitle) ? $keyRandom.'-'.$postTitle : $keyRandom.'-'.$this->_channel->channel_name).".".$fileupload->getClientOriginalExtension();
+			
+			$destinationPathFiles='media/files/'.$year.'/'.$month.'/'.$day.'/'; 
+			$file_path = $destinationPathFiles.$filename;
+			$fileupload->move($destinationPathFiles, $filename); 
+			$url_file = '//files.'.config('app.url').'/'.$destinationPathFiles.$filename;//change this URL 
+			$data_file_insert = array(
+				'member_id' => Auth::user()->id,
+				'media_name' => $filename,
+				'media_path' => $destinationPathFiles,
+				'media_url' 	=> $url_file, 
+				'media_size' => $file_size, 
+				'media_type' =>$mime, 
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				'media_storage'=>'files'
+			);
+			$id_media=Media::insertGetId($data_file_insert); 
+			if($id_media){
+				Media_join_channel::insertGetId(array(
+					'media_id'=>$id_media, 
+					'channel_id'=>$this->_channel->id
+				)); 
+				if($postType=='post'){
+					$getPost=Posts::find($postId); 
+					if(!empty($getPost->id)){
+						Media_join_post::insertGetId(array(
+							'post_id'=>$postId, 
+							'media_id'=>$id_media
+						)); 
+					}
+				}
+			}
+			return response()->json(['success'=>true,
+				'msg'=>'Upload file thành công!', 
+				'id'=>$id_media,
+				'MimeType'=>$mime,
+				'url'=>$url_file, 
+				'filename'=>$filename, 
+				'file_type'=>$fileupload->getClientOriginalExtension(), 
+				'media_storage'=>'files'
+			]);
+		}else{
+			return response()->json(['success'=>false,
+			'msg'=>'File '.$fileupload->getClientOriginalName().' (định dạng '.$fileupload->getMimeType().') không được chấp nhận!', 
+			'MimeType'=>$fileupload->getMimeType(),
+			'file_type'=>$fileupload->getClientOriginalExtension()
+			]);
+		}
+    }
+}

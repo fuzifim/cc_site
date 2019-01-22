@@ -1,0 +1,776 @@
+<?
+	$channel['theme']->setTitle('Tạo website');
+	$channel['theme']->setKeywords('Tạo kênh, tạo website');
+	$channel['theme']->setDescription('Cực nhanh, cực rẻ, tiết kiệm thời gian, tăng số lượng khách hàng chỉ trong 5 phút! '); 
+	$channel['theme']->setImage('http://'.config('app.url').'/themes/control/assets/img/cungcap.jpg');
+?>
+{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('bootstrap-wizard', 'js/bootstrap-wizard.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
+<section>
+<div class="mainpanel">
+{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+	<div class="pageheader">
+		<h1>{!! Theme::get('title') !!}</h1>
+		<span><small>{!! Theme::get('description') !!}</small></span>
+	</div>
+	<div class="contentpanel">
+		{!!Theme::asset()->container('footer')->usePath()->add('bootstrap-wizard', 'js/bootstrap-wizard.min.js', array('core-script'))!!}
+		{!!Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'))!!}
+		<div class="formRegisterChannel mb10">
+			<div id="validationWizard" class="basic-wizard" style="position:relative;">
+				<div id="preloaderInBox" style="display:none;">
+					<div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+				</div>
+				<ul class="stepwizard-row">
+					<li class="stepwizard-step">
+						<a class="btn btn-default btn-circle disabled" href="#vtab1" data-toggle="tab">1</a>
+					</li>
+					<li class="stepwizard-step">
+						<a class="btn btn-default btn-circle disabled"href="#vtab2" data-toggle="tab">2</a>
+					</li>
+					<li class="stepwizard-step">
+						<a class="btn btn-default btn-circle disabled"  href="#vtab3" data-toggle="tab">3</a>
+					</li> 
+					
+					<li class="stepwizard-step">
+						<a class="btn btn-default btn-circle disabled"href="#vtab4" data-toggle="tab">4</a>
+					</li>
+					<li class="stepwizard-step">
+						<a class="btn btn-default btn-circle disabled"href="#vtab5" data-toggle="tab">5</a>
+					</li>
+				</ul>
+				<form class="form" id="form1" method="post" action="{{route('channel.create.request',$channel['domain']->domain)}}">
+					<div class="tab-content">
+						<div class="tab-pane" id="vtab1">
+							<?
+								if(Session::has('channelDomain')){
+									$channelDomain=Session::get('channelDomain'); 
+								}
+							?>
+							<div class="form-group">
+								<div class="input-group">
+								  <input type="text" name="channelDomain" id="channelDomain" class="form-control" value="@if(!empty($channelDomain)){!!$channelDomain!!}@endif" placeholder="Nhập địa chỉ tên miền" required >
+								  <span class="input-group-addon">.{{$channel['domainPrimary']}}</span>
+								</div>
+								<code id="changeDomain">@if(!empty($channelDomain))http://{!!$channelDomain!!}.{{$channel['domainPrimary']}}@endif</code>
+								<label class="error" for="channelDomain"></label>
+							</div>
+						</div>
+						<div class="tab-pane" id="vtab2">
+							<?
+								if(Session::has('channelInfo')){
+									$channelInfo=Session::get('channelInfo'); 
+								}
+							?>
+							<div class="form-group">
+								<input type="text" id="channelName" name="channelName" value="@if(!empty($channelInfo['channelName'])){!!$channelInfo['channelName']!!}@endif" class="form-control" placeholder="Tên website..." required />
+							</div>
+							<div class="form-group">
+								<input type="text" name="channelDescription" value="@if(!empty($channelInfo['channelDescription'])){!!$channelInfo['channelDescription']!!}@endif" class="form-control" placeholder="Mô tả website, cửa hàng..." required />
+							</div>
+						</div>
+						<div class="tab-pane" id="vtab3">
+							<?
+								if(Session::has('channelRegion')){
+									$channelRegion=Session::get('channelRegion'); 
+								}
+							?>
+							<div class="form-group">
+								<div class="addFields"></div>
+							</div>
+							<div class="row mb5">
+								<div class="col-sm-12">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+										<input type="text" name="channelAddress" value="@if(!empty($channelRegion['channelAddress'])){!!$channelRegion['channelAddress']!!}@endif" class="form-control" placeholder="Địa chỉ đường, số nhà công ty, cửa hàng..." required />
+									</div>
+									<label class="error" for="channelAddress"></label>
+								</div>
+							</div>
+							<div class="row mb5">
+								<div class="col-sm-6">
+									<input type="hidden" name="idRegion" value="@if(!empty($channelRegion['channelRegion'])){!!$channelRegion['channelRegion']!!}@else{{$channel['info']->channelJoinRegion->region->id}}@endif">
+									<input type="hidden" name="regionIso" value="{{mb_strtolower($channel['info']->channelJoinRegion->region->iso)}}">
+									<div class="addSelectRegion"></div>
+									<div class="mb10"></div>
+								</div>
+								<div class="col-sm-6">
+									<input type="hidden" name="idSubRegion" value="@if(!empty($channelRegion['channelSubRegion'])){!!$channelRegion['channelSubRegion']!!}@else{{$channel['info']->channelJoinSubRegion->subregion->id}}@endif">
+									<div class="addSelectSubRegion"></div>
+									<div class="mb10"></div>
+								</div>
+							</div>
+							<div class="row mb5">
+								<div class="col-sm-6">
+									<input type="hidden" name="idDistrict" value="">
+									<div class="addSelectDistrict"></div>
+									<div class="mb10"></div>
+								</div>
+								<div class="col-sm-6">
+									<input type="hidden" name="idWard" value="">
+									<div class="addSelectWard"></div>
+									<div class="mb10"></div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="vtab4">
+							<div class="row mb5">
+								<div class="col-sm-6">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-phone"></i></span>
+										<input type="phone" class="form-control" name="channelPhone" value="@if(!empty($sessionChannel['channelPhone'])){!!$sessionChannel['channelPhone']!!}@elseif(Auth::check()){{Auth::user()->phone}}@endif" placeholder="Số điện thoại..." required>
+									</div>
+									<label class="error" for="channelPhone"></label>
+									<div class="mb10"></div>
+								</div>
+								<div class="col-sm-6">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+										<input type="email" class="form-control" name="channelEmail" value="@if(!empty($sessionChannel['channelEmail'])){!!$sessionChannel['channelEmail']!!}@elseif(Auth::check()){{Auth::user()->email}}@endif" placeholder="Địa chỉ email..." required>
+									</div>
+									<label class="error" for="channelEmail"></label>
+									<div class="mb10"></div>
+								</div>
+								@if(!Auth::check())
+								<div class="col-sm-6">
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+											<input placeholder="Mật khẩu" id="password" name="password" type="password" class="form-control" required>
+										</div>
+										<label class="error" for="password"></label>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+											<input placeholder="Nhập lại mật khẩu" id="password_confirmation" name="password_confirmation" type="password"  class="form-control" required>
+										</div>
+										<label class="error" for="password_confirmation"></label>
+									</div>
+								</div>
+								@endif
+							</div>
+						</div>
+						<div class="tab-pane" id="vtab5">
+							<div class="row-pad-5 pricingGroup">
+								<?
+									$getQuanlity=[
+										'1'=>array('per'=>'1 tháng','price'=>80000), 
+										'6'=>array('per'=>'6 tháng','price'=>480000), 
+										'12'=>array('per'=>'1 năm','price'=>960000), 
+									]; 
+									
+								?>
+								@foreach($getQuanlity as $key=>$quanllity)
+								<div class="col-xs-12 col-sm-6 col-md-4 appendpricing">
+										<div class="list-group-item btn pricingPackge @if($key==1) active @endif">
+											<div class="text-center">
+												<h3 class="">{{$quanllity['per']}}</h3>
+											</div>
+											<div class="text-center">
+												<h1 class="nopadding nomargin"><strong>{{Site::price($quanllity['price'])}} <sup>đ</sup></strong></h1>
+												
+											</div>
+											<div class="rdio rdio-primary">
+												<input type="radio" name="channelQuanlity" value="{{$key}}" id="radioPrimary{{$key}}" @if($key==1)checked="checked"@endif>
+												<label for="radioPrimary{{$key}}">Chọn</label>
+											</div>
+										</div>
+									</div>
+								@endforeach
+							</div>
+							<div class="form-group text-right">
+								<input type="checkbox" class="filled-in" name="accept_term" id="accept-term"/>
+								<label for="filled-in-box">
+									Đồng ý <a href="http://cungcap.net/vi/dieu-khoan-su-dung">Điều khoản của chúng tôi</a>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="text-right">
+						<ul class="pager wizard">
+							<li class="previous hidden"><a href="javascript:void(0)"><i class="fa fa-chevron-left"></i> Quay lại</a></li>
+							<li class="next"><button type="button" class="btn btn-sm btn-danger btn-next pull-right"><span class="textNext">Tiếp tục</span> <i class="fa fa-chevron-right"></i></button></li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		</div><!-- panel -->
+		<?
+			$dependencies = array(); 
+			$channel['theme']->asset()->writeScript('custom',' 
+			function convertToSlug(title)
+			{
+			  //Đổi chữ hoa thành chữ thường
+				slug = title.toLowerCase();
+			 
+				//Đổi ký tự có dấu thành không dấu
+				slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, "a");
+				slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, "e");
+				slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, "i");
+				slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, "o");
+				slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, "u");
+				slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, "y");
+				slug = slug.replace(/đ/gi, "d");
+				//Xóa các ký tự đặt biệt
+				slug = slug.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\"|\"|\:|\;|_/gi, "");
+				//Đổi khoảng trắng thành ký tự gạch ngang
+				slug = slug.replace(/ /gi, "");
+				//Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
+				//Phòng trường hợp người nhập vào quá nhiều ký tự trắng
+				slug = slug.replace(/\-\-\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-\-/gi, "-");
+				slug = slug.replace(/\-\-/gi, "-");
+				//Xóa các ký tự gạch ngang ở đầu và cuối
+				slug = "@" + slug + "@";
+				slug = slug.replace(/\@\-|\-\@|\@/gi, "");
+				//In slug ra textbox có id “slug”
+				
+			  return slug;
+			}
+			$("#channelDomain").keyup(function () {
+				if($(this).val().length>=3){
+					var appendDomain="'.$channel['domainPrimary'].'";
+					$("#changeDomain").html("http://"+convertToSlug($(this).val())+"."+appendDomain);
+				}else{
+					$("#changeDomain").empty(); 
+				}
+			});
+			$(".appendpricing").on("click",".pricingPackge",function() {
+				$(".appendpricing .pricingPackge").not(this).removeClass("active"); 
+				$(".appendpricing .pricingPackge").not(this).find("input").prop("checked",false);
+				$(this).addClass("active");
+				$(this).find("input").prop("checked",true);
+			}); 
+			function getPackge(){
+				$.ajax({
+					url: "'.route('channel.packge.json',$channel['domainPrimary']).'",
+					type: "GET",
+					dataType: "json",
+					success: function (result) {
+						$.each(JSON.parse(result.data), function(i, item) {
+							if(item.id==26){
+								$(".appendPackge").append("<div class=\"col-lg-4 col-md-4 col-sm-6 col-xs-12\">"
+								+"<div class=\"form-group\">"
+									+"<div class=\"list-group-item text-center active btn packgeCheck\">"
+										+"<h4 class=\"list-group-item-heading\">"+item.name+"</h4>"
+										+"<div class=\"list-group-item-text\">"
+											+"<p>Phí Đăng ký: <strong>"+(parseInt(item.price_re_order)+parseInt(item.price_order)).toLocaleString()+"<sup>đ</sup></strong>/ năm</p>"
+											+"<p>Phí Duy trì: <strong>"+parseInt(item.price_re_order).toLocaleString()+"<sup>đ</sup></strong>/ năm</p>"
+											+"<p><i class=\"glyphicon glyphicon-cloud\"></i> "+parseInt($.parseJSON(item.attribute_value).limit_cloud).toLocaleString()+" MB</p>"
+											+"<p><i class=\"glyphicon glyphicon-check\"></i> "+parseInt($.parseJSON(item.attribute_value).limit_post).toLocaleString()+" Bài viết</p>"
+										+"</div>"
+										+"<input type=\"radio\" class=\"hidden\" value=\""+item.id+"\" name=\"channelPackge\" checked>"
+									+"</div>"
+								+"</div>"
+							+"</div>"); 
+							}else{
+								$(".appendPackge").append("<div class=\"col-lg-4 col-md-4 col-sm-6 col-xs-12\">"
+								+"<div class=\"form-group\">"
+									+"<div class=\"list-group-item text-center btn packgeCheck\">"
+										+"<h4 class=\"list-group-item-heading\">"+item.name+"</h4>"
+										+"<div class=\"list-group-item-text\">"
+											+"<p>Phí Đăng ký: <strong>"+(parseInt(item.price_re_order)+parseInt(item.price_order)).toLocaleString()+"<sup>đ</sup></strong>/ năm</p>"
+											+"<p>Phí Duy trì: <strong>"+parseInt(item.price_re_order).toLocaleString()+"<sup>đ</sup></strong>/ năm</p>"
+											+"<p><i class=\"glyphicon glyphicon-cloud\"></i> "+parseInt($.parseJSON(item.attribute_value).limit_cloud).toLocaleString()+" MB</p>"
+											+"<p><i class=\"glyphicon glyphicon-check\"></i> "+parseInt($.parseJSON(item.attribute_value).limit_post).toLocaleString()+" Bài viết</p>"
+										+"</div>"
+										+"<input type=\"radio\" class=\"hidden\" value=\""+item.id+"\" name=\"channelPackge\">"
+									+"</div>"
+								+"</div>"
+							+"</div>"); 
+							}
+						}); 
+					}
+				});
+			}
+			getPackge(); 
+			$(".appendPackge").on("click",".packgeCheck",function() {
+				$(".appendPackge .packgeCheck").not(this).removeClass("active"); 
+				$(".appendPackge .packgeCheck").not(this).find("input").prop("checked",false);
+				$(this).addClass("active");
+				$(this).find("input").prop("checked",true);
+			}); 
+			getFields(); 
+			getRegions(); 
+			$(".addSelectRegion").on("change",".selectRegion",function() {
+				getSubregion($(this).val()); 
+				getDistrict(0); 
+				getWard(0); 
+				$("input[name=regionIso]").val($(this).find("option:selected").attr("data-iso")); 
+				$("input[name=idRegion]").val($(this).val()); 
+				$("input[name=idSubRegion]").val(0); 
+				$("input[name=idDistrict]").val(0); 
+			});
+			$(".addSelectSubRegion").on("change",".selectSubRegion",function() {
+				getDistrict($(this).val()); 
+				getWard(0);
+				$("input[name=idSubRegion]").val($(this).val()); 
+				$("input[name=idDistrict]").val(0); 
+			});
+			$(".addSelectDistrict").on("change",".selectDistrict",function() {
+				getWard($(this).val()); 
+				$("input[name=idDistrict]").val($(this).val()); 
+				$("input[name=idWard]").val(0); 
+			});
+			$(".addSelectWard").on("change",".selectWard",function() {
+				$("input[name=idWard]").val($(this).val()); 
+			});
+			function getFields(){
+				$(".addFields").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải lĩnh vực, vui lòng chờ...</small></div>"); 
+				$.ajax({
+					url: "'.route('channel.json.fields',$channel['domainPrimary']).'",
+					type: "GET",
+					dataType: "json",
+					success: function (result) {
+						$(".addFields .loading").empty(); 
+						$(".addFields").append("<select class=\"selectField\" data-placeholder=\"Chọn lĩnh vực hoạt động...\" name=\"channelFields\" multiple required>"
+							+"<option value=\"\"></option></select><label class=\"error\" for=\"channelFields\"></label>"); 
+						$.each(result.fields, function(i, item) {
+							$(".addFields .selectField").append("<option value="+item.id+">"+item.name+"</option>");
+						}); 
+						jQuery(".addFields .selectField").select2({
+							width: "100%"
+						});
+					}
+				});
+			}
+			function getRegions(){
+				$(".addSelectRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quốc gia, vui lòng chờ...</small></div>"); 
+				$.ajax({
+					url: "'.route("regions.json.list",$channel["domainPrimary"]).'",
+					type: "GET",
+					dataType: "json",
+					success: function (result) {
+						$(".addSelectRegion .loading").empty(); 
+						if(result.success==true){
+							getSubregion($("input[name=idRegion]").val()); 
+							$(".addSelectRegion").append("<div class=\"input-group\"><span class=\"input-group-addon\"><i class=\"flag flag-"+$("input[name=regionIso]").val()+"\"></i></span><select class=\"selectRegion\" data-placeholder=\"Chọn quốc gia...\" name=\"channelRegion\" required>"
+							+"<option value=\"\"></option></select></div><label class=\"error\" for=\"channelRegion\"></label>"); 
+							$.each(result.region, function(i, item) {
+								if(item.id==$("input[name=idRegion]").val()){
+									$(".addSelectRegion .selectRegion").append("<option value="+item.id+" data-icon=\"flag-"+item.iso.toLowerCase()+"\"  data-iso="+item.iso.toLowerCase()+" selected>"+item.country+"</option>");
+								}else{
+									$(".addSelectRegion .selectRegion").append("<option value="+item.id+"  data-icon=\"flag-"+item.iso.toLowerCase()+"\"  data-iso="+item.iso.toLowerCase()+" >"+item.country+"</option>");
+								}
+							}); 
+							function format(icon) {
+								var originalOption = icon.element;
+								return "<i class=\"flag " + $(originalOption).data("icon") + "\"></i> " + icon.text;
+							}
+							jQuery(".addSelectRegion .selectRegion").select2({
+								width: "100%",
+								formatResult: format
+							});
+						}else{
+							
+						}
+					}
+				});
+			} 
+			function getSubregion(idRegion){
+				$(".addSelectSubRegion").empty(); 
+				$(".addSelectSubRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải thành phố, vui lòng chờ...</small></div>"); 
+				var formData = new FormData();
+				formData.append("idRegion", idRegion); 
+				$.ajax({
+					url: "'.route("subregion.json.list.post",$channel["domainPrimary"]).'",
+					type: "POST",
+					cache: false,
+					contentType: false,
+					processData: false,
+					dataType:"json",
+					data:formData,
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					success: function (result) {
+						$(".addSelectSubRegion .loading").empty(); 
+						$(".addSelectRegion .input-group-addon").html("<i class=\"flag flag-"+$("input[name=regionIso]").val()+"\"></i>"); 
+						if(result.success==true){
+							getDistrict($("input[name=idSubRegion]").val()); 
+							$(".addSelectSubRegion").append("<select class=\"selectSubRegion\" data-placeholder=\"Chọn thành phố...\" name=\"channelSubRegion\">"
+							+"<option value=\"\"></option></select><label class=\"error\" for=\"channelSubRegion\"></label>"); 
+							$.each(result.subregion, function(i, item) {
+								if(item.id==$("input[name=idSubRegion]").val()){
+									$(".addSelectSubRegion .selectSubRegion").append("<option value="+item.id+" selected>"+item.subregions_name+"</option>");
+								}else{
+									$(".addSelectSubRegion .selectSubRegion").append("<option value="+item.id+">"+item.subregions_name+"</option>");
+								}
+							}); 
+							function format(icon) {
+								var originalOption = icon.element;
+								return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
+							}
+							jQuery(".addSelectSubRegion .selectSubRegion").select2({
+								width: "100%",
+								formatResult: format
+							});
+						}else{
+							$(".addSelectSubRegion").empty(); 
+						}
+					}
+				});
+			}
+			function getDistrict(idSubRegion){
+				$(".addSelectDistrict").empty(); 
+				$(".addSelectDistrict").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quận huyện, vui lòng chờ...</small></div>"); 
+				var formData = new FormData();
+				formData.append("idSubRegion", idSubRegion); 
+				$.ajax({
+					url: "'.route("district.json.list.post",$channel["domainPrimary"]).'",
+					type: "POST",
+					cache: false,
+					contentType: false,
+					processData: false,
+					dataType:"json",
+					data:formData,
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					success: function (result) {
+						$(".addSelectDistrict .loading").empty(); 
+						if(result.success==true){
+							getWard($("input[name=idDistrict]").val()); 
+							$(".addSelectDistrict").append("<select class=\"selectDistrict\" data-placeholder=\"Chọn quận huyện...\" name=\"channelDistrict\">"
+								+"<option value=\"\"></option></select><label class=\"error\" for=\"channelDistrict\"></label>"); 
+							$.each(result.district, function(i, item) {
+								if(item.id=='.$channel['info']->channelJoinSubRegion->subregion->id.'){
+									$(".addSelectDistrict .selectDistrict").append("<option value="+item.id+" selected>"+item.district_name+"</option>");
+								}else{
+									$(".addSelectDistrict .selectDistrict").append("<option value="+item.id+">"+item.district_name+"</option>");
+								}
+							}); 
+							function format(icon) {
+								var originalOption = icon.element;
+								return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
+							}
+							jQuery(".addSelectDistrict .selectDistrict").select2({
+								width: "100%",
+								formatResult: format
+							});
+						}else{
+							$(".addSelectDistrict").empty(); 
+						}
+					}
+				});
+			}
+			function getWard(idDistrict){
+				$(".addSelectWard").empty(); 
+				$(".addSelectWard").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải phường xã, vui lòng chờ...</small></div>"); 
+				var formData = new FormData();
+				formData.append("idDistrict", idDistrict); 
+				$.ajax({
+					url: "'.route("ward.json.list.post",$channel["domainPrimary"]).'",
+					type: "POST",
+					cache: false,
+					contentType: false,
+					processData: false,
+					dataType:"json",
+					data:formData,
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					success: function (result) {
+						//console.log(result); 
+						$(".addSelectWard .loading").empty(); 
+						if(result.success==true){
+							$(".addSelectWard").append("<select class=\"selectWard\" data-placeholder=\"Chọn phường xã...\" name=\"channelWard\">"
+								+"<option value=\"\"></option></select><label class=\"error\" for=\"channelWard\"></label>"); 
+							$.each(result.ward, function(i, item) {
+								if(item.id=='.$channel['info']->channelJoinSubRegion->subregion->id.'){
+									$(".addSelectWard .selectWard").append("<option value="+item.id+" selected>"+item.ward_name+"</option>");
+								}else{
+									$(".addSelectWard .selectWard").append("<option value="+item.id+">"+item.ward_name+"</option>");
+								}
+							}); 
+							function format(icon) {
+								var originalOption = icon.element;
+								return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
+							}
+							jQuery(".addSelectWard .selectWard").select2({
+								width: "100%",
+								formatResult: format
+							});
+						}else{
+							$(".addSelectWard").empty(); 
+						}
+					}
+				});
+			}
+			jQuery(document).ready(function(){
+				"use strict";
+				// With Form Validation Wizard
+				var $validator = jQuery("#form1").validate({
+					highlight: function(element) {
+					  jQuery(element).closest(".form-group").removeClass("has-success").addClass("has-error");
+					},
+					success: function(element) {
+					  jQuery(element).closest(".form-group").removeClass("has-error");
+					}
+				});
+				jQuery("#validationWizard").bootstrapWizard({
+					withVisible:      false,
+					tabClass:         "stepwizard",
+					onNext: function(tab, navigation, index) {
+						var $valid = jQuery("#form1").valid();
+						if(!$valid) {
+							$validator.focusInvalid();
+							return false;
+						}else{
+							var move = false; 
+							if(index==1){
+								$(".previous").removeClass("hidden"); 
+								$(".textNext").text("Tiếp tục"); 
+								var channelDomain=$("input[name=channelDomain]").val(); 
+								var formData = new FormData();
+								formData.append("channelDomain", channelDomain); 
+								$("#validationWizard #preloaderInBox").css("display", "block"); 
+								$.ajax({
+									url: "'.route("channel.add.step1",$channel["domainPrimary"]).'",
+									type: "POST",
+									cache: false,
+									contentType: false,
+									processData: false,
+									dataType:"json",
+									data:formData,
+									headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+									success: function (result) {
+										console.log(result); 
+										if(result.success==true){
+											move= true; 
+											$("#validationWizard #preloaderInBox").css("display", "none"); 
+											$("#validationWizard").bootstrapWizard("show",index); 
+											$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
+										}else{
+											$("#validationWizard #preloaderInBox").css("display", "none");  
+											move=false; 
+											jQuery.gritter.add({
+												title: "Thông báo!",
+												text: result.message, 
+												class_name: "growl-danger",
+												sticky: false,
+												time: ""
+											});
+										}
+									}
+								});
+							}else if(index==2){
+								$(".textNext").text("Tiếp tục"); 
+								
+								var channelName=$("input[name=channelName]").val(); 
+								var channelDescription=$("input[name=channelDescription]").val(); 
+								var formData = new FormData();
+								formData.append("channelName", channelName); 
+								formData.append("channelDescription", channelDescription); 
+								$("#validationWizard #preloaderInBox").css("display", "block"); 
+								$.ajax({
+									url: "'.route("channel.add.step2",$channel["domainPrimary"]).'",
+									type: "POST",
+									cache: false,
+									contentType: false,
+									processData: false,
+									dataType:"json",
+									data:formData,
+									headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+									success: function (result) {
+										console.log(result); 
+										if(result.success==true){
+											move= true; 
+											$("#validationWizard #preloaderInBox").css("display", "none"); 
+											$("#validationWizard").bootstrapWizard("show",index); 
+											$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
+										}else{
+											$("#validationWizard #preloaderInBox").css("display", "none");  
+											move=false; 
+											jQuery.gritter.add({
+												title: "Thông báo!",
+												text: result.message, 
+												class_name: "growl-danger",
+												sticky: false,
+												time: ""
+											});
+										}
+									}
+								});
+							}else if(index==3){
+								$(".textNext").text("Tiếp tục"); 
+								var channelAddress=$("input[name=channelAddress]").val(); 
+								var channelFields=$("select[name=channelFields]").select2("val"); 
+								var channelRegion=$("select[name=channelRegion]").select2("val");
+								var channelSubRegion=$("select[name=channelSubRegion]").select2("val"); 
+								var channelDistrict=$("select[name=channelDistrict]").select2("val");
+								var channelWard=$("select[name=channelWard]").select2("val");
+								var formData = new FormData();
+								formData.append("channelAddress", channelAddress); 
+								formData.append("channelFields", channelFields); 
+								formData.append("channelRegion", channelRegion); 
+								formData.append("channelSubRegion", channelSubRegion); 
+								formData.append("channelDistrict", channelDistrict); 
+								formData.append("channelWard", channelWard); 
+								$("#validationWizard #preloaderInBox").css("display", "block"); 
+								$.ajax({
+									url: "'.route("channel.add.step3",$channel["domainPrimary"]).'",
+									type: "POST",
+									cache: false,
+									contentType: false,
+									processData: false,
+									dataType:"json",
+									data:formData,
+									headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+									success: function (result) {
+										console.log(result); 
+										if(result.success==true){
+											move= true; 
+											$("#validationWizard #preloaderInBox").css("display", "none"); 
+											$("#validationWizard").bootstrapWizard("show",index); 
+											$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+										}else{
+											$("#validationWizard #preloaderInBox").css("display", "none");  
+											move=false; 
+											jQuery.gritter.add({
+												title: "Thông báo!",
+												text: result.message, 
+												class_name: "growl-danger",
+												sticky: false,
+												time: ""
+											});
+										}
+									}
+								});
+							}else if(index==4){
+								$(".textNext").text("Tiếp tục"); 
+								var channelPhone=$("input[name=channelPhone]").val(); 
+								var channelEmail=$("input[name=channelEmail]").val(); 
+								var channelPassword=$("input[name=password]").val(); 
+								var channelRePassword=$("input[name=password_confirmation]").val(); 
+								var formData = new FormData();
+								formData.append("channelPhone", channelPhone); 
+								formData.append("channelEmail", channelEmail); 
+								formData.append("password", channelPassword); 
+								formData.append("password_confirmation", channelRePassword); 
+								$("#validationWizard #preloaderInBox").css("display", "block"); 
+								$.ajax({
+									url: "'.route("channel.add.step4",$channel["domainPrimary"]).'",
+									type: "POST",
+									cache: false,
+									contentType: false,
+									processData: false,
+									dataType:"json",
+									data:formData,
+									headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+									success: function (result) {
+										console.log(result); 
+										if(result.success==true){
+											if(result.type=="free"){
+												$("#validationWizard #preloaderInBox").css("display", "none"); 
+												$("#validationWizard").bootstrapWizard("show",index); 
+												$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+												window.location.href = "'.route("channel.me",$channel["domainPrimary"]).'";
+											}else{
+												$("#validationWizard #preloaderInBox").css("display", "none"); 
+												$("#validationWizard").bootstrapWizard("show",index); 
+												$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+												window.location.href = "'.route("pay.cart",$channel["domainPrimary"]).'";
+											}
+										}else{
+											$("#validationWizard #preloaderInBox").css("display", "none");  
+											move=false; 
+											jQuery.gritter.add({
+												title: "Thông báo!",
+												text: result.message, 
+												class_name: "growl-danger",
+												sticky: false,
+												time: ""
+											});
+										}
+									}
+								});
+							}else if(index==5){
+								$(".textNext").text("Tiếp tục"); 
+								var channelQuanlity=$("input[name=channelQuanlity]").val(); 
+								var formData = new FormData();
+								formData.append("channelQuanlity", channelQuanlity); 
+								$("#validationWizard #preloaderInBox").css("display", "block"); 
+								$.ajax({
+									url: "'.route("channel.add.step5",$channel["domainPrimary"]).'",
+									type: "POST",
+									cache: false,
+									contentType: false,
+									processData: false,
+									dataType:"json",
+									data:formData,
+									headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+									success: function (result) {
+										console.log(result); 
+										if(result.success==true){
+											if(result.type=="free"){
+												$("#validationWizard #preloaderInBox").css("display", "none"); 
+												$("#validationWizard").bootstrapWizard("show",index); 
+												$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+												window.location.href = "'.route("channel.me",$channel["domainPrimary"]).'";
+											}else{
+												$("#validationWizard #preloaderInBox").css("display", "none"); 
+												$("#validationWizard").bootstrapWizard("show",index); 
+												$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+												window.location.href = "'.route("pay.cart",$channel["domainPrimary"]).'";
+											}
+										}else{
+											$("#validationWizard #preloaderInBox").css("display", "none");  
+											move=false; 
+											jQuery.gritter.add({
+												title: "Thông báo!",
+												text: result.message, 
+												class_name: "growl-danger",
+												sticky: false,
+												time: ""
+											});
+										}
+									}
+								});
+							}
+							return move;
+						}
+					}
+				});
+			});
+			', $dependencies);
+		?>
+		<div class="form-group">
+			<div class="channelAbout">Tiếp cận khách hàng nhiều hơn và tăng uy tín cho doanh nghiệp của bạn. </div>
+			<div class="channelPrice">80.000đ/ tháng</div>
+			<h3 class="text-center">Tính năng chính</h3>
+		</div>
+		<div class="row-pad-5">
+			<div class="col-md-12">
+				<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Có 1 website, miễn phí tên miền dạng .cungcap.net và có thể sử dụng tên miền riêng dạng .com/ .net/ .com.vn/ .vn...</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-download-alt text-success"></i> Backup hàng ngày</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-heart text-success"></i> Hỗ trợ 24/7</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-search text-success"></i> Giao diện chuẩn SEO, Responsive</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-phone text-success"></i> Hỗ trợ trên Điện thoại, máy tính bảng, Desktop</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-user text-success"></i> Không giới hạn tài khoản quản lý</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-cog text-success"></i> Cài đặt thay đổi màu sắc, logo, ảnh đại diện, thông tin công ty</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-list text-success"></i> Quản lý danh mục, Tạo Menu</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-edit text-success"></i> Đăng bài, quản lý, sửa xóa</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-tags text-success"></i> Tạo, quản lý và dễ dàng lấy ý tưởng từ khóa cho bài viết</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-shopping-cart text-success"></i> Đăng sản phẩm, giá bán, đặt hàng</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-envelope text-success"></i> Nhận thông báo đơn hàng qua Email</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-thumbs-up text-success"></i> Thích, bình luận, chia sẻ thông tin lên các trang mạng Xã Hội</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-share text-success"></i> Tự động đăng lên Cung Cấp, trên các Fanpage Facebook, Google, Twitter, Linkedin... tiếp cận 10.000 khách hàng mỗi tháng</li>
+				<li class="list-group-item"><i class="glyphicon glyphicon-stats text-success"></i> Thống kê lượt xem</li>
+			</div>
+		</div>
+	</div>
+
+</div><!-- mainpanel -->
+</section>
+<?
+	$dependencies = array(); 
+	$channel['theme']->asset()->writeScript('onload',' 
+	', $dependencies);
+?>

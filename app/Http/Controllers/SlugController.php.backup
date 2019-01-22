@@ -1,0 +1,322 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
+use Request;
+use Illuminate\Support\Str;
+use Auth;
+use App\Permission;
+use App\Role; 
+use App\Model\Channel_role;
+use App\User;
+use App\Model\Posts;
+use App\Model\Posts_join;
+use App\Model\Posts_join_channel;
+use App\Model\Posts_join_category;
+use App\Model\Posts_attribute; 
+use App\Model\Category;
+use App\Model\Category_join;
+use App\Model\Slug;
+use App\Model\Channel; 
+use App\Model\Channel_join;
+use App\Model\Channel_join_region;
+use App\Model\Channel_join_subregion;
+use App\Model\Channel_join_district;
+use App\Model\Channel_join_ward;
+use App\Model\Channel_join_field;
+use App\Model\Regions;
+use App\Model\Subregions;
+use App\Model\Region_district;
+use App\Model\Region_ward;
+use App\Model\Fields;
+use Carbon\Carbon;
+use File;
+use Theme;
+use WebService; 
+use Route; 
+use Redirect; 
+use Response; 
+use Input; 
+use Validator; 
+use Lang; 
+class SlugController extends Controller
+{
+	protected $_domain; 
+	protected $_channel; 
+	protected $_channelColor; 
+	protected $_theme; 
+	protected $_parame; 
+	protected $_security; 
+	public function __construct(){
+		$this->_security=false; 
+		$this->_parame=Route::current()->parameters(); 
+		$this->_domain=WebService::getDomain($this->_parame['domain']); 
+		$this->beforeFilter(function()
+		{
+			if(empty($this->_domain->domain)){
+				return Redirect::to('//'.config('app.url'));
+			}elseif($this->_domain->domain_primary!='default'){
+				foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
+					if($domain->domain->domain_primary=='default'){
+						return Redirect::to('//'.$domain->domain->domain);
+					}
+				}
+			}else{
+				$this->_channel=$this->_domain->domainJoinChannel->channel; 
+				$this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default'); 
+				//$this->_channel->increment('channel_view',1);
+				if(Auth::check()){
+					$user=Auth::user(); 
+					if($user->hasRole(['admin', 'manage'])){
+						$this->_security=true;
+					} 
+					$getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first(); 
+					if(!empty($getRoleChannel->id)){
+						$getRole=Role::findOrFail($getRoleChannel->role_id); 
+						$role_permissions = $getRole->perms()->get();
+						foreach ($role_permissions as $permission) {
+							if ($permission->name == 'manager_channel') {
+								$this->_security=true;
+							}
+						}
+					}
+				}
+				view()->share(
+					'channel',array(
+						'domain'=>$this->_domain, 
+						'info'=>$this->_channel, 
+						'security'=>$this->_security, 
+						'category'=>$this->_channel->getCategory, 
+						'theme'=>$this->_theme, 
+						'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
+					)
+				);
+			}
+		});
+	}
+	public function slug()
+    {
+		if(!empty($this->_parame['slug'])){
+			$this->_channel->increment('channel_view',1);
+			$slug=Slug::where('slug.slug_value','=',$this->_parame['slug'])
+				->where('slug_channel','=',$this->_channel->id)
+				->first(); 
+			if(!empty($slug->slug_table)){
+				if($slug->slug_table=='posts'){
+					$post=Posts::where('posts.id','=',$slug->slug_table_id)
+						->where('posts.posts_status','=','active')
+						->join('posts_attribute','posts_attribute.posts_parent_id','=','posts.id')
+						->where('posts_attribute.posts_attribute_type','=','gallery')
+						->whereNotNull('posts_attribute.posts_attribute_value')
+						->groupBy('posts.id')
+						->select('posts.*')
+						->first(); 
+					$post->increment('posts_view',1);
+					$postsRelate = Posts::where('posts.id','!=',$post->id)
+					->where('posts.posts_status','=','active')
+					->join('posts_join_category','posts_join_category.posts_id','=','posts.id')
+					->join('category_join','category_join.category_parent_id','=','posts_join_category.category_id')
+					->where('category_join.category_join_table','channel')
+					->where('category_join.table_parent_id','=',$this->_channel->id)
+					->orderBy('posts.posts_updated_at','DESC')
+					->groupBy('posts.id')
+					->select('posts.*')
+					->take(10)->get(); 
+					$return = array(
+						'post'=>$post, 
+						'postsRelate'=>$postsRelate
+					);
+					return $this->_theme->scope('posts.show', $return)->render();
+				}else if($slug->slug_table=='category'){
+					$category=Category::where('id','=',$slug->slug_table_id)
+						->where('category_status','=','active')
+						->first(); 
+					$categoryId[]=$category->id; 
+					if(count($category->children)>0){
+						foreach($category->children as $catChild) {
+							$categoryId[]=$catChild->id; 
+						}
+					}
+					$postsJoin=\App\Model\Posts_join_category::whereIn('posts_join_category.category_id',$categoryId)
+						->join('posts','posts.id','=','posts_join_category.posts_id')
+						->orderBy('posts.posts_updated_at','desc')
+						->where('posts.posts_status','=','active')
+						->join('posts_attribute','posts_attribute.posts_parent_id','=','posts.id')
+						->where('posts_attribute.posts_attribute_type','=','gallery')
+						->whereNotNull('posts_attribute.posts_attribute_value')
+						->groupBy('posts.id')
+						->paginate(9);
+					if(count($postsJoin)>0){
+						if(count($postsJoin)==1){
+							if(isset($postsJoin[0]->getPost)){
+								$postsJoin[0]->getPost->increment('posts_view',1);
+								$postsRelate = Posts::where('posts.id','!=',$postsJoin[0]->getPost->id)
+								->where('posts.posts_status','=','active')
+								->join('posts_attribute','posts_attribute.posts_parent_id','=','posts.id')
+								->where('posts_attribute.posts_attribute_type','=','gallery')
+								->whereNotNull('posts_attribute.posts_attribute_value')
+								->join('posts_join_category','posts_join_category.posts_id','=','posts.id')
+								->join('category_join','category_join.category_parent_id','=','posts_join_category.category_id')
+								->where('category_join.category_join_table','channel')
+								->where('category_join.table_parent_id','=',$this->_channel->id)
+								->orderBy('posts.posts_updated_at','DESC')
+								->groupBy('posts.id')
+								->select('posts.*')
+								->take(10)->get();
+								$return = array(
+									'post'=>$postsJoin[0]->getPost, 
+									'postsRelate'=>$postsRelate
+								);
+								return $this->_theme->scope('posts.show', $return)->render();
+							}else{
+								$return=array(
+									'postsJoin'=>$postsJoin, 
+									'data'=>array(
+										'category'=>$category, 
+									), 
+								); 
+								return $this->_theme->scope('category.showEmpty', $return)->render();
+							}
+						}else{ 
+							$return=array(
+								'postsJoin'=>$postsJoin, 
+								'data'=>array(
+									'category'=>$category, 
+								), 
+							); 
+							return $this->_theme->scope('category.showMany', $return)->render();
+						}
+					}else{
+						$return=array(
+							'data'=>array(
+								'category'=>$category, 
+							), 
+						); 
+						return $this->_theme->scope('category.showEmpty', $return)->render();
+					}
+				}
+			}
+			else{
+				$getRegion=Regions::where('languages','=',Lang::locale())->first(); 
+				$getRegionWard=Region_ward::where('SolrID','=','/'.$getRegion->iso.'/'.$this->_parame['slug'])->first(); 
+				$getRegionDistrict=Region_district::where('SolrID','=','/'.$getRegion->iso.'/'.$this->_parame['slug'])->first(); 
+				$getSubRegion=Subregions::where('SolrID','=','/'.$getRegion->iso.'/'.$this->_parame['slug'])->first(); 
+				if(!empty($getRegionWard->id)){
+					$getField=array(); 
+					if(!empty($_GET['field'])){
+						$field=explode('-',$_GET['field']); 
+						$getField=Fields::find($field[0]); 
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('channel_join_field','channel_join_field.channel_id','=','channel.id')
+						->where('channel_join_field.field_id','=',$getField->id)
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_ward','channel_join_ward.channel_id','=','channel.id')
+						->where('channel_join_ward.ward_id','=',$getRegionWard->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}else{
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_ward','channel_join_ward.channel_id','=','channel.id')
+						->where('channel_join_ward.ward_id','=',$getRegionWard->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}
+					$return=array(
+						'region'=>$getRegion, 
+						'getWard'=>$getRegionWard, 
+						'getField'=>$getField, 
+						'channelList'=>$channelList
+					); 
+					return $this->_theme->scope('regions.ward', $return)->render();
+				}elseif(!empty($getRegionDistrict->id)){
+					$getField=array(); 
+					if(!empty($_GET['field'])){
+						$field=explode('-',$_GET['field']); 
+						$getField=Fields::find($field[0]); 
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('channel_join_field','channel_join_field.channel_id','=','channel.id')
+						->where('channel_join_field.field_id','=',$getField->id)
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_district','channel_join_district.channel_id','=','channel.id')
+						->where('channel_join_district.district_id','=',$getRegionDistrict->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}else{
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_district','channel_join_district.channel_id','=','channel.id')
+						->where('channel_join_district.district_id','=',$getRegionDistrict->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}
+					$return=array(
+						'region'=>$getRegion, 
+						'getDistrict'=>$getRegionDistrict, 
+						'channelList'=>$channelList
+					); 
+					return $this->_theme->scope('regions.district', $return)->render();
+				}elseif(!empty($getSubRegion->id)){
+					$getField=array(); 
+					if(!empty($_GET['field'])){
+						$field=explode('-',$_GET['field']); 
+						$getField=Fields::find($field[0]); 
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('channel_join_field','channel_join_field.channel_id','=','channel.id')
+						->where('channel_join_field.field_id','=',$getField->id)
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_subregion','channel_join_subregion.channel_id','=','channel.id')
+						->where('channel_join_subregion.subregion_id','=',$getSubRegion->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}else{
+						$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+						->where('channel.channel_status','=','active')
+						->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+						->join('channel_join_subregion','channel_join_subregion.channel_id','=','channel.id')
+						->where('channel_join_subregion.subregion_id','=',$getSubRegion->id)
+						->groupBy('channel.id')
+						->select('channel.*')
+						->orderBy('channel.service_attribute_id','desc')
+						->orderBy('channel.channel_updated_at','desc')
+						->paginate(8); 
+					}
+					$return=array(
+						'region'=>$getRegion, 
+						'subregion'=>$getSubRegion, 
+						'channelList'=>$channelList
+					); 
+					return $this->_theme->scope('regions.subregion', $return)->render();
+				}else{
+					$view = array(
+						'channel'=>$this->_channel, 
+						'domain'=>$this->_domain, 
+					); 
+					return redirect()->route('channel.home',$this->_domain->domain);
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,1570 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
+use Request;
+use Illuminate\Support\Str;
+use App\User;
+use App\Model\Users_attribute;  
+use App\Permission;
+use App\Role; 
+use App\Model\Channel_role;
+use App\Model\History; 
+use App\Model\Services; 
+use App\Model\Services_attribute; 
+use App\Model\Keywords;
+use App\Model\Company; 
+use App\Model\Company_join; 
+use App\Model\Company_join_channel; 
+use App\Model\Company_attribute; 
+use App\Model\Channel; 
+use App\Model\Channel_join; 
+use App\Model\Channel_join_region;
+use App\Model\Channel_join_subregion;
+use App\Model\Channel_join_district;
+use App\Model\Channel_join_ward;
+use App\Model\Channel_join_field;
+use App\Model\Channel_attribute; 
+use App\Model\Channel_join_address;
+use App\Model\Channel_join_email;
+use App\Model\Channel_join_phone;
+use App\Model\Domain;
+use App\Model\Domain_join;
+use App\Model\Domain_join_channel;
+use App\Model\Domain_attribute;
+use App\Model\Domain_whois;
+use App\Model\Fields;
+use App\Model\Posts;
+use App\Model\Posts_join;
+use App\Model\Posts_attribute; 
+use App\Model\Posts_join_keywords;
+use App\Model\Category;
+use App\Model\Category_join;
+use App\Model\Slug;
+use App\Model\Media; 
+use App\Model\Media_join; 
+use App\Model\Media_join_post; 
+use App\Model\Media_join_channel;
+use App\Model\Users_join; 
+use App\Model\Address;
+use App\Model\Address_join_region;
+use App\Model\Address_join_subregion;
+use App\Model\Address_join_district;
+use App\Model\Address_join_ward;
+use App\Model\Email;
+use App\Model\Email_join;
+use App\Model\Phone;
+use App\Model\Phone_join; 
+use App\Model\Messages; 
+use App\Model\Region_district;
+use App\Model\Region_ward;
+use App\Model\Regions;
+use App\Model\Subregions; 
+use App\Model\News;
+use Agent;
+use Auth;
+use Input;
+use DB;
+use Closure;
+use Validator;
+use Redirect;
+use Mail;
+use WebService;
+use Site;
+use Response;
+use Carbon\Carbon;
+use Theme;
+use URL;
+use Route;
+use FFMpeg; 
+use Pdp\PublicSuffixListManager; 
+use Pdp\Parser; 
+use App\Http\Controllers\DomainController;
+use App\Http\Controllers\KeywordsController; 
+use DonatelloZa\RakePlus\RakePlus;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client; 
+use File;
+use App\Model\Domain_info; 
+use App\Model\Domain_data; 
+use App\Model\Affiliate_feed; 
+use Session; 
+use Cache; 
+use Lullabot\AMP\AMP;
+class SitePublicController extends ConstructController
+{
+	public $_site=array(); 
+	public $_domainAddNew; 
+	public $_domainAddNewId; 
+	public $_dateFolder; 
+	public $_postSearch=array();  
+	public $_getPostSearch=array(); 
+	public $_getVideoSearch=array(); 
+	public $_videoSearch=array(); 
+	public $_domain_h1=array(); 
+	public $_domain_h2=array(); 
+	public $_domain_h3=array(); 
+	public $_domain_h4=array(); 
+	public $_domain_a=array(); 
+	public $_domain_ip=''; 
+	public $_domainWhois; 
+	public $_domain_title; 
+	public $_domain_description; 
+	public $_domain_keywords; 
+	public $_setKeyword=array(); 
+	public $_affiliate=array(); 
+	public $_domainSearch=array(); 
+	public $_newsSearch=array(); 
+	public $_postsSearch=array(); 
+	public $_ipDetail=array(); 
+	public function __construct(){
+		parent::__construct(); 
+	}
+	public function index()
+    {
+		if($this->_siteSuccess==true){
+			$error=''; 
+			if(Session::has('view_channel')){
+				$sessionHistory=Session::get('view_channel'); 
+				if(!empty($sessionHistory['created_at'])){
+					if(Carbon::parse($sessionHistory['created_at'])->addMinutes(5) > Carbon::now()->format('Y-m-d H:i:s')){
+						$error='Mỗi lượt xem cách nhau 5 phút. Lần xem gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']); 
+					}
+				}
+			}
+			if(empty($error)){
+				$this->_channel->increment('channel_view',1); 
+				if(Session::has('view_channel')){
+					Session::forget('view_channel');
+				}
+				Session::put('view_channel', [ 
+					'ip' => Request::ip(), 
+					'created_at' => Carbon::now()->format('Y-m-d H:i:s')
+				]); 
+			}
+			if($this->_channel->channel_parent_id==0){
+				$posts=Posts::where('posts.posts_status','=','active')
+				//->join('posts_join_channel','posts_join_channel.posts_id','=','posts.id')
+				//->where('posts_join_channel.channel_id','=',$this->_channel->id)
+				->orderBy('posts.posts_updated_at','desc')
+				->select('posts.*')
+				->paginate(18); 
+				$news = News::where('news.status','=','active')
+						->orderBy('news.updated_at','DESC')
+						->select('news.*')
+						->take(10)->get(); 
+				$return = array(
+					'posts'=>$posts, 
+					'news'=>$news
+				);
+				return $this->_theme->scope('home', $return)->render();
+			}else{
+				$postListNew=array(); 
+				$return = array(
+					'postListNew'=>$postListNew, 
+				);
+				return $this->_theme->scope('home', $return)->render();
+			}
+		}else{
+			$parsedUrl=parse_url(Request::url()); 
+			$checkDomain=str_replace('.'.config('app.url'),'',$parsedUrl['host']); 
+			//$domainName = $this->_parser->parseUrl($this->_domainName->host->host); 
+			//$domainParser=$this->_parser->parseUrl($domainName->host->subdomain); 
+			$pieces = explode("-", $parsedUrl['host']); 
+			if(!empty($pieces[0]) && $pieces[0]=='post'){
+				$post=Posts::find($pieces[1]); 
+				if(!empty($post->id)){
+					$error=''; 
+					if(Session::has('view_post')){
+						$sessionHistory=Session::get('view_post'); 
+						if(!empty($sessionHistory['created_at']) && !empty($sessionHistory['post_id']) && $sessionHistory['post_id']==$post->id){
+							if(Carbon::parse($sessionHistory['created_at'])->addMinutes(5) > Carbon::now()->format('Y-m-d H:i:s')){
+								$error='Mỗi lượt xem cách nhau 5 phút. Lần xem gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']); 
+							}
+						}
+					}
+					if(empty($error)){
+						$post->increment('posts_view',1); 
+						if(Session::has('view_post')){
+							Session::forget('view_post');
+						}
+						Session::put('view_post', [ 
+							'ip' => Request::ip(), 
+							'created_at' => Carbon::now()->format('Y-m-d H:i:s'), 
+							'post_id'=>$post->id, 
+						]); 
+					}
+					$postsRelate = Posts::where('posts.id','!=',$post->id)
+						->where('posts.posts_status','=','active')
+						//->join('posts_join_field','posts_join_field.post_id','=','posts.id')
+						->join('posts_join_channel','posts_join_channel.posts_id','=','posts.id')
+						->where('posts_join_channel.channel_id','=',$this->_channel->id)
+						->orderBy('posts.posts_updated_at','DESC')
+						->groupBy('posts.id')
+						->select('posts.*')
+						->take(10)->get(); 
+					$postSearch=Posts::searchByQuery([
+						'multi_match' => [
+							'query' => $post->posts_title,
+							'fields' => ['posts_title','posts_title_convert'], 
+							//'type'=>'phrase', 
+							//'slop'=>3
+						]
+					], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null); 
+					$newsSearch=News::searchByQuery([
+						'multi_match' => [
+							'query' => $post->posts_title,
+							'fields' => ['title','title_convert'], 
+							//'type'=>'phrase', 
+							//'slop'=>3
+						]
+					], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null); 
+					$return = array(
+						'post'=>$post, 
+						'postsRelate'=>$postsRelate, 
+						'postSearch'=>$postSearch, 
+						'newsSearch'=>$newsSearch
+					);
+					return $this->_theme->scope('posts.p_show', $return)->render(); 
+				}
+			}else if(!empty($pieces[0]) && $pieces[0]=='news'){
+				$news=News::find($pieces[1]); 
+				if(!empty($news->id)){
+					if(Session::has('view_news')){
+						$sessionHistory=Session::get('view_news'); 
+						if(!empty($sessionHistory['created_at']) && !empty($sessionHistory['post_id']) && $sessionHistory['post_id']==$news->id){
+							if(Carbon::parse($sessionHistory['created_at'])->addMinutes(5) > Carbon::now()->format('Y-m-d H:i:s')){
+								$error='Mỗi lượt xem cách nhau 5 phút. Lần xem gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']); 
+							}
+						}
+					}
+					if(empty($error)){
+						$news->increment('view',1); 
+						if(Session::has('view_news')){
+							Session::forget('view_news');
+						}
+						Session::put('view_news', [ 
+							'ip' => Request::ip(), 
+							'created_at' => Carbon::now()->format('Y-m-d H:i:s'), 
+							'news_id'=>$news->id, 
+						]); 
+					}
+					$newsRelate = News::where('news.id','!=',$news->id)
+						->where('news.status','=','active')
+						->orderBy('news.updated_at','DESC')
+						->select('news.*')
+						->take(10)->get(); 
+					$newsSearch=News::searchByQuery([
+						'multi_match' => [
+							'query' => $news->title,
+							'fields' => ['title','title_convert'], 
+							//'type'=>'phrase', 
+							//'slop'=>3
+						]
+					], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null); 
+					$postSearch=Posts::searchByQuery([
+						'multi_match' => [
+							'query' => $news->title,
+							'fields' => ['posts_title','posts_title_convert'], 
+							//'type'=>'phrase', 
+							//'slop'=>3
+						]
+					], $aggregations = null, $sourceFields = null, $limit = 6, $offset = null, $sort = null); 
+					$return = array(
+						'news'=>$news, 
+						'newsRelate'=>$newsRelate, 
+						'newsSearch'=>$newsSearch, 
+						'postSearch'=>$postSearch
+					);
+					return $this->_theme->scope('news.show', $return)->render(); 
+				}
+			}else if($checkDomain==config('app.url')){
+				$checkSubdomain=Domain::where('domain','=',$checkDomain)->first(); 
+				if(!empty($checkSubdomain->domain)){
+					return Redirect::to('http://'.$checkSubdomain->domain);
+				}else{
+					return Redirect::to('https://'.config('app.url'), 301);
+				}
+			}
+			$this->_site=Domain::where('domain_encode','=',base64_encode($checkDomain))->first(); 
+			if(!empty($this->_site->id)){
+				$this->_site->increment('view', 1); 
+				if($this->_site->status!='active'){
+					$this->_site=$this->addInForByOutlook(); 
+					$return=array(
+						'region'=>$this->_region, 
+						'site'=>$this->_site, 
+					); 
+					//Cache::store('file')->put('domain_'.base64_encode($this->_site->domain),$return, 2592000);
+					return $this->_theme->scope('sitelink.showoutlook', $return)->render();
+				}else if($this->_site->status=='active' && $this->_site->craw_by=='outlook'){
+					$return=array(
+						'region'=>$this->_region, 
+						'site'=>$this->_site, 
+					); 
+					//Cache::store('file')->put('domain_'.base64_encode($this->_site->domain),$return, 2592000);
+					return $this->_theme->scope('sitelink.showoutlook', $return)->render();
+				}
+				if (Cache::store('file')->has('domain_'.base64_encode($this->_site->domain))) {
+					$return=Cache::store('file')->get('domain_'.base64_encode($this->_site->domain)); 
+					return $this->_theme->scope('sitelink.show', $return)->render();
+				}
+				$this->_domainAddNew=$this->_site->domain; 
+				$getDomainData=Domain_data::where('parent_id',$this->_site->id)->first(); 
+				if(!empty($getDomainData->parent_id)){
+					$getInfoDomain=json_decode($getDomainData->content); 
+				}else{
+					$getInfoDomain=Domain_info::where('parent_id',$this->_site->id)->first(); 
+				}
+				
+				if(empty($this->_site->path_data)){
+					$this->_dateFolder='domaininfo'; 
+				}else if(!empty($this->_site->path_data)){
+					$this->_dateFolder=$this->_site->path_data; 
+				}
+				if(!empty($this->_site->domain_title)){
+					$this->_domain_title=$this->_site->domain_title;
+					array_push($this->_setKeyword,$this->_site->domain_title);
+				}
+				if(!empty($this->_site->domain_description)){
+					$this->_domain_description=$this->_site->domain_description; 
+					array_push($this->_setKeyword,$this->_site->domain_description);
+				}
+				if(!empty($this->_site->domain_keywords)){
+					$this->_domain_keywords=$this->_site->domain_keywords; 
+					array_push($this->_setKeyword,$this->_site->domain_keywords);
+				}
+				if(!empty($this->_site->title->attribute_value) && empty($this->_site->domain_title)){
+					$this->_site->domain_title=$this->_site->title->attribute_value; 
+					array_push($this->_setKeyword,$this->_site->title->attribute_value);
+					$this->_site->title->delete(); 
+				}
+				if(!empty($this->_site->description->attribute_value) && empty($this->_site->domain_description)){
+					$this->_site->domain_description=$this->_site->description->attribute_value; 
+					$this->_site->description->delete(); 
+				}
+				if(!empty($this->_site->keywords->attribute_value) && empty($this->_site->domain_keywords)){
+					$this->_site->domain_keywords=$this->_site->keywords->attribute_value; 
+					array_push($this->_setKeyword,$this->_site->keywords->attribute_value);
+					$this->_site->keywords->delete(); 
+				}
+				if(!empty($this->_site->image->attribute_value) && empty($this->_site->domain_image)){
+					$this->_site->domain_image=$this->_site->image->attribute_value; 
+					$this->_site->image->delete(); 
+				}
+				if(!empty($getInfoDomain->h1) && count(json_decode($getInfoDomain->h1))>0){
+					$this->_domain_h1=json_decode($getInfoDomain->h1); 
+					array_push($this->_setKeyword,$getInfoDomain->h1);
+				}else if(file_exists($this->_dateFolder.'/domain_h1.json')){
+					$this->_domain_h1=json_decode(File::get($this->_dateFolder.'/domain_h1.json')); 
+					array_push($this->_setKeyword,File::get($this->_dateFolder.'/domain_h1.json'));
+					File::delete($this->_dateFolder.'/domain_h1.json'); 
+				}else if(!empty($this->_site->h1tag->attribute_value)){
+					$this->_domain_h1=json_decode($this->_site->h1tag->attribute_value); 
+					array_push($this->_setKeyword,$this->_site->h1tag->attribute_value);
+					$this->_site->h1tag->delete(); 
+				}
+				
+				if(!empty($getInfoDomain->h2) && count(json_decode($getInfoDomain->h2))>0){
+					$this->_domain_h2=json_decode($getInfoDomain->h2); 
+					array_push($this->_setKeyword,$getInfoDomain->h2);
+				}else if(file_exists($this->_dateFolder.'/domain_h2.json')){
+					$this->_domain_h2=json_decode(File::get($this->_dateFolder.'/domain_h2.json')); 
+					array_push($this->_setKeyword,File::get($this->_dateFolder.'/domain_h2.json'));
+					File::delete($this->_dateFolder.'/domain_h2.json'); 
+				}else if(!empty($this->_site->h2tag->attribute_value)){
+					$this->_domain_h2=json_decode($this->_site->h2tag->attribute_value); 
+					array_push($this->_setKeyword,$this->_site->h2tag->attribute_value);
+					$this->_site->h2tag->delete(); 
+				}
+				if(!empty($getInfoDomain->h3) && count(json_decode($getInfoDomain->h3))>0){
+					$this->_domain_h3=json_decode($getInfoDomain->h3); 
+					array_push($this->_setKeyword,$getInfoDomain->h3);
+				}else if(file_exists($this->_dateFolder.'/domain_h3.json')){
+					$this->_domain_h3=json_decode(File::get($this->_dateFolder.'/domain_h3.json')); 
+					array_push($this->_setKeyword,File::get($this->_dateFolder.'/domain_h3.json'));
+					File::delete($this->_dateFolder.'/domain_h3.json'); 
+				}else if(!empty($this->_site->h3tag->attribute_value)){
+					$this->_domain_h3=json_decode($this->_site->h3tag->attribute_value); 
+					array_push($this->_setKeyword,$this->_site->h3tag->attribute_value);
+					$this->_site->h3tag->delete(); 
+				} 
+				if(!empty($getInfoDomain->h4) && count(json_decode($getInfoDomain->h4))>0){
+					$this->_domain_h4=json_decode($getInfoDomain->h4); 
+					array_push($this->_setKeyword,$getInfoDomain->h4);
+				}else if(file_exists($this->_dateFolder.'/domain_h4.json')){
+					$this->_domain_h4=json_decode(File::get($this->_dateFolder.'/domain_h4.json')); 
+					array_push($this->_setKeyword,File::get($this->_dateFolder.'/domain_h4.json'));
+					File::delete($this->_dateFolder.'/domain_h4.json'); 
+				}else if(!empty($this->_site->h4tag->attribute_value)){
+					$this->_domain_h4=json_decode($this->_site->h4tag->attribute_value); 
+					array_push($this->_setKeyword,$this->_site->h4tag->attribute_value);
+					$this->_site->h4tag->delete(); 
+				}
+				if(!empty($getInfoDomain->a) && count(json_decode($getInfoDomain->a))>0){
+					$this->_domain_a=json_decode($getInfoDomain->a); 
+				}else if(file_exists($this->_dateFolder.'/domain_a.json')){
+					$this->_domain_a=json_decode(File::get($this->_dateFolder.'/domain_a.json')); 
+					File::delete($this->_dateFolder.'/domain_a.json'); 
+				}else if(!empty($this->_site->atag->attribute_value)){
+					$this->_domain_a=json_decode($this->_site->atag->attribute_value); 
+					$this->_site->atag->delete(); 
+				}
+				if(!empty($getInfoDomain->ip)){
+					$this->_domain_ip=$getInfoDomain->ip; 
+				}else if(file_exists($this->_dateFolder.'/domain_ip.json')){
+					$this->_domain_ip=File::get($this->_dateFolder.'/domain_ip.json'); 
+					File::delete($this->_dateFolder.'/domain_ip.json'); 
+				}else if(!empty($this->_site->ip->attribute_value)){
+					$this->_domain_ip=$this->_site->ip->attribute_value; 
+					$this->_site->ip->delete(); 
+				}
+				if(!empty($getInfoDomain->whois)){
+					$this->_domainWhois=$getInfoDomain->whois; 
+				}else if(!empty($this->_site->whois->content)){
+					$this->_domainWhois=$this->_site->whois->content; 
+					$this->_site->whois->delete(); 
+				}else if($this->_site->level==0){
+					$checkHistory=History::where('history_type','=','re_get_content')->first();
+					if(!empty($checkHistory->created_at)){
+						if(Carbon::parse($checkHistory->created_at)->addSecond(2)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+							History::where('history_type','=','re_get_content')->delete(); 
+							$listHistory=array(
+								'history_type'=>'re_get_content', 
+								'parent_id'=>0, 
+								'author'=>0,
+								'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							); 
+							History::insertGetId($listHistory); 
+							try {
+								Domain_whois::where('domain_id','=',$this->_site->id)->delete(); 
+								$client = new Client([
+									'headers' => [ 'Content-Type' => 'application/json' ]
+								]);
+								 
+								$postData='{
+									"domainName": "'.$this->_site->domain.'"
+								}';
+								$response = $client->request('POST', 'https://dms.inet.vn/api/public/whois/v1/whois/directly',
+									 ['body' => $postData]
+								);
+								$getResponse=$response->getBody()->getContents(); 
+								$resultDecode=json_decode($getResponse); 
+								if($resultDecode->code==0){
+									$this->_domainWhois=$getResponse; 
+									$this->_site->level=1; 
+								} 
+								unset($client);
+							}catch (\GuzzleHttp\Exception\ServerException $e){
+								//return 'false'; 
+							}catch (\GuzzleHttp\Exception\BadResponseException $e){
+								//return 'false'; 
+							}catch (\GuzzleHttp\Exception\ClientException $e){
+								//return 'false'; 
+							}catch (\GuzzleHttp\Exception\ConnectException $e){
+								//return 'false'; 
+							}
+						}
+					}else{
+						$listHistory=array(
+							'history_type'=>'re_get_content', 
+							'parent_id'=>0, 
+							'author'=>0,
+							'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						); 
+						History::insertGetId($listHistory); 
+					}
+				}
+				if(!empty($getInfoDomain->ip_detail) && count(json_decode($getInfoDomain->ip_detail))){
+					$this->_ipDetail=json_decode($getInfoDomain->ip_detail); 
+					$this->_site->level=2; 
+				}else if(!empty($getInfoDomain->ip) && $this->_site->level>=1){
+					$checkHistory=History::where('history_type','=','re_get_content')->first();
+					if(!empty($checkHistory->created_at)){
+						if(Carbon::parse($checkHistory->created_at)->addSecond(2)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+							History::where('history_type','=','re_get_content')->delete(); 
+							$listHistory=array(
+								'history_type'=>'re_get_content', 
+								'parent_id'=>0, 
+								'author'=>0,
+								'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							); 
+							History::insertGetId($listHistory); 
+							$opts = array(  
+								'http'=>array(  
+									'method'=>"GET",  
+									'timeout'=>1, 
+									'ignore_errors'=> true
+
+								)  
+							);
+							$context = stream_context_create($opts);
+							$getInfoIp=@file_get_contents('http://ip-api.com/json/'.$getInfoDomain->ip, false, $context); 
+							$this->_ipDetail=json_decode($getInfoIp); 
+							$this->_site->level=2; 
+						}
+					}else{
+						$listHistory=array(
+							'history_type'=>'re_get_content', 
+							'parent_id'=>0, 
+							'author'=>0,
+							'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						); 
+						History::insertGetId($listHistory); 
+					}
+				}
+				if(!empty($getInfoDomain->post_search) && count(json_decode($getInfoDomain->post_search,true))>0){
+					$this->_postSearch=json_decode($getInfoDomain->post_search,true); 
+					$this->_site->level=3; 
+				}else if(file_exists($this->_dateFolder.'/post_search.json')){
+					$this->_postSearch=json_decode(File::get($this->_dateFolder.'/post_search.json'),true); 
+					File::delete($this->_dateFolder.'/post_search.json'); 
+					$this->_site->level=3; 
+				}else if(!empty($this->_site->postSearch->attribute_value)){
+					//File::put($this->_dateFolder.'/post_search.json',$this->_site->postSearch->attribute_value); 
+					$this->_postSearch=json_decode($this->_site->postSearch->attribute_value,true); 
+					$this->_site->post_search_by=$this->_site->postSearch->search_by; 
+					$this->_site->postSearch->delete(); 
+					$this->_site->level=3; 
+				}else if($this->_site->level>=2){
+					$checkHistory=History::where('history_type','=','re_get_content')->first();
+					if(!empty($checkHistory->created_at)){
+						if(Carbon::parse($checkHistory->created_at)->addSecond(2)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+							History::where('history_type','=','re_get_content')->delete(); 
+							$listHistory=array(
+								'history_type'=>'re_get_content', 
+								'parent_id'=>0, 
+								'author'=>0,
+								'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							); 
+							History::insertGetId($listHistory); 
+							$newPostSearch=new KeywordsController(); 
+							$newPostSearch->_keyword=$this->_site->domain; 
+							$searchBy='google'; 
+							$this->_getPostSearch=$newPostSearch->getSearchGoogle(); 
+							if($this->_getPostSearch=='false' || count($this->_getPostSearch)<2){
+								$this->_getPostSearch=$newPostSearch->getSearchBing(); 
+								$searchBy='bing'; 
+							}
+							if($this->_getPostSearch=='false' || count($this->_getPostSearch)<2){
+								$this->_getPostSearch=$newPostSearch->getSearchYahoo(); 
+								$searchBy='yahoo'; 
+							}
+							if($this->_getPostSearch=='false' || count($this->_getPostSearch)<2){
+								$this->_getPostSearch=$newPostSearch->getSearchDogpile(); 
+								$searchBy='dogpile'; 
+							}
+							if($this->_getPostSearch=='false' || count($this->_getPostSearch)<2){
+								$this->_getPostSearch=$newPostSearch->getSearchMetacrawler(); 
+								$searchBy='metacrawler'; 
+							}
+							if($this->_getPostSearch=='false' || count($this->_getPostSearch)<2){
+								$this->_getPostSearch=$newPostSearch->getSearchAol(); 
+								$searchBy='aol'; 
+							}
+							if($this->_getPostSearch!='false' && count($this->_getPostSearch)>0){ 
+								$this->_site->post_search_by=$searchBy; 
+								$this->_postSearch=json_decode(json_encode($this->_getPostSearch),true); 
+								$this->_site->level=3; 
+							}
+						}
+					}else{
+						$listHistory=array(
+							'history_type'=>'re_get_content', 
+							'parent_id'=>0, 
+							'author'=>0,
+							'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						); 
+						History::insertGetId($listHistory); 
+					}
+				}
+				if(!empty($getInfoDomain->video_search) && count(json_decode($getInfoDomain->video_search))>0){
+					$this->_videoSearch=json_decode($getInfoDomain->video_search); 
+				}else if(file_exists($this->_dateFolder.'/video_search.json')){
+					$this->_videoSearch=json_decode(File::get($this->_dateFolder.'/video_search.json')); 
+					File::delete($this->_dateFolder.'/video_search.json'); 
+					$this->_site->level=4;
+				}else if(!empty($this->_site->videoSearch->attribute_value)){
+					$this->_videoSearch=json_decode($this->_site->videoSearch->attribute_value); 
+					$this->_site->video_search_by=$this->_site->videoSearch->search_by; 
+					$this->_site->videoSearch->delete(); 
+					$this->_site->level=4;
+				}else if($this->_site->level>=3){
+					$checkHistory=History::where('history_type','=','re_get_content')->first();
+					if(!empty($checkHistory->created_at)){
+						if(Carbon::parse($checkHistory->created_at)->addSecond(2)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+							History::where('history_type','=','re_get_content')->delete(); 
+							$listHistory=array(
+								'history_type'=>'re_get_content', 
+								'parent_id'=>0, 
+								'author'=>0,
+								'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							); 
+							History::insertGetId($listHistory); 
+							$newVideoSearch=new KeywordsController(); 
+							$newVideoSearch->_keyword=$this->_site->domain; 
+							$this->_getVideoSearch=$newVideoSearch->getSearchYoutube(); 
+							$searchBy='youtube'; 
+							if($this->_getVideoSearch!='false' && count($this->_getVideoSearch)>0){
+								$this->_site->video_search_by=$searchBy; 
+								$this->_videoSearch=json_decode(json_encode($this->_getVideoSearch)); 
+								$this->_site->level=4;
+							}
+						}
+					}else{
+						$listHistory=array(
+							'history_type'=>'re_get_content', 
+							'parent_id'=>0, 
+							'author'=>0,
+							'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						); 
+						History::insertGetId($listHistory); 
+					}
+				}
+				$this->_site->save(); 
+			}else if(empty($this->_site->domain)){
+				if(WebService::is_valid_url($checkDomain)){ 
+					$this->_domainAddNew=$checkDomain; 
+					$this->_site=$this->addNewDomainInfomation(); 
+					$this->_site=$this->addInForByOutlook(); 
+					$return=array(
+						'region'=>$this->_region, 
+						'site'=>$this->_site, 
+					); 
+					//Cache::store('file')->put('domain_'.base64_encode($this->_site->domain),$return, 2592000);
+					return $this->_theme->scope('sitelink.showoutlook', $return)->render();
+				}
+			}
+			if(!empty($this->_site->id) && $this->_site->status=='active' && $this->_site->craw_by=='outlook'){ 
+				$return=array(
+					'region'=>$this->_region, 
+					'site'=>$this->_site, 
+				); 
+				//Cache::store('file')->put('domain_'.base64_encode($this->_site->domain),$return, 2592000);
+				return $this->_theme->scope('sitelink.showoutlook', $return)->render();
+				
+			}else if(!empty($this->_site->id) && $this->_site->status=='active'){
+				if(count($this->_setKeyword)){
+					$listAffiliate=[]; 
+					$listDomain=[]; 
+					$listPost=[]; 
+					$listNews=[]; 
+					$textRank='';
+					foreach(array_unique($this->_setKeyword) as $keyVal){
+						$rake = RakePlus::create($keyVal, 'en_US');
+						$phrase_scores = $rake->sortByScore('desc')->scores(); 
+						if(count($phrase_scores)>0){
+							$keyValRe=array_slice($phrase_scores, 0);
+							$textRank.=key($keyValRe).', ';
+						}
+					}
+					$rake = RakePlus::create($textRank, 'en_US');
+					$phrase_scores = $rake->sortByScore('desc')->scores(); 
+					$i=0; 
+					foreach($phrase_scores as $key=>$phrase){
+						$getSearch=Affiliate_feed::searchByQuery([
+							'multi_match' => [
+								'query' => $key,
+								'fields' => ['title', 'category'], 
+								//'type'=>'phrase', 
+								//'slop'=>3
+							]
+						], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null); 
+						if(count($getSearch)){
+							foreach($getSearch as $search){
+								array_push($listAffiliate,$search);
+							}
+						}
+						$domainSearch=Domain::searchByQuery([
+							'multi_match' => [
+								'query' => $key,
+								'fields' => ['domain','domain_title','domain_description'], 
+								//'type'=>'phrase', 
+								//'slop'=>3
+							]
+						], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null);  
+						if(count($domainSearch)){
+							foreach($domainSearch as $domainS){
+								array_push($listDomain,$domainS);
+							}
+						}
+						$postSearch=Posts::searchByQuery([
+							'multi_match' => [
+								'query' => $key,
+								'fields' => ['posts_title'], 
+								//'type'=>'phrase', 
+								//'slop'=>3
+							]
+						], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null);  
+						if(count($postSearch)){
+							foreach($postSearch as $postsS){
+								array_push($listPost,$postsS);
+							}
+						}
+						$newsSearch=News::searchByQuery([
+							'multi_match' => [
+								'query' => $key,
+								'fields' => ['title'], 
+								//'type'=>'phrase', 
+								//'slop'=>3
+							]
+						], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null);  
+						if(count($newsSearch)){
+							foreach($newsSearch as $newsS){
+								array_push($listNews,$newsS);
+							}
+						}
+					}
+					$this->_affiliate=array_unique($listAffiliate); 
+					$this->_domainSearch=array_unique($listDomain); 
+					$this->_newsSearch=array_unique($listNews); 
+					$this->_postsSearch=array_unique($listPost); 
+				}
+				$data=array(
+					'h1'=>json_encode($this->_domain_h1), 
+					'h2'=>json_encode($this->_domain_h2), 
+					'h3'=>json_encode($this->_domain_h3), 
+					'h4'=>json_encode($this->_domain_h4), 
+					'a'=>json_encode($this->_domain_a), 
+					'ip'=>$this->_domain_ip, 
+					'ip_detail'=>json_encode($this->_ipDetail),
+					'post_search'=>json_encode($this->_postSearch), 
+					'video_search'=>json_encode($this->_videoSearch), 
+					'whois'=>$this->_domainWhois
+				); 
+				$domainData = Domain_data::firstOrNew(array('parent_id'=>$this->_site->id));
+				$domainData->content=json_encode($data);
+				$domainData->save();
+				//Domain_info::where('parent_id',$this->_site->id)->update($data, ['upsert' => true]); 
+				//$this->_site=Domain::find($this->_site->id); 
+				
+				/*$getSite=Domain::where('status','=','active')
+					->orderBy('updated_at','desc')
+					->limit(10)->get();*/
+				$return=array(
+					'region'=>$this->_region, 
+					'site'=>$this->_site, 
+					//'getSite'=>$getSite, 
+					'domainName'=>$this->_domainAddNew, 
+					'postSearch'=>$this->_postSearch, 
+					'videoSearch'=>$this->_videoSearch, 
+					'domain_h1'=>$this->_domain_h1, 
+					'domain_h2'=>$this->_domain_h2, 
+					'domain_h3'=>$this->_domain_h3, 
+					'domain_h4'=>$this->_domain_h4, 
+					'domain_a'=>$this->_domain_a, 
+					'domain_ip'=>$this->_domain_ip, 
+					'ip_detail'=>$this->_ipDetail, 
+					'domainWhois'=>$this->_domainWhois, 
+					'affiliate'=>$this->_affiliate, 
+					'domainSearch'=>$this->_domainSearch, 
+					'postsSearch'=>$this->_postsSearch, 
+					'newsSearch'=>$this->_newsSearch
+				); 
+				Cache::store('file')->put('domain_'.base64_encode($this->_site->domain),$return, 2592000);
+				return $this->_theme->scope('sitelink.show', $return)->render();
+			}else{ 
+				$return=array(
+					'domainName'=>$this->_domainAddNew
+				); 
+				return $this->_theme->scope('404notfoundDomain', $return)->render();
+			}
+		}
+	}
+	public function addNewDomainInfomation()
+    {
+		//return 'false';
+		$checkHistory=History::where('history_type','=','get_content')->first();
+		if(!empty($checkHistory->created_at)){
+			if(Carbon::parse($checkHistory->created_at)->addSecond(5)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+				History::where('history_type','=','get_content')->delete(); 
+				$listHistory=array(
+					'history_type'=>'get_content', 
+					'parent_id'=>0, 
+					'author'=>0,
+					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				); 
+				History::insertGetId($listHistory); 
+				$newDomain=new DomainController(); 
+				$newDomain->_domainRegister=$this->_domainAddNew; 
+				$newDomain->_domainRegisterPrimary='none'; 
+				$newDomain->_domainRegisterLocation='outside'; 
+				$newDomain->_domainRegisterServiceId=''; 
+				$newDomain->_domainRegisterStatus='pending'; 
+				$newDomain->_domainRegisterCreatedAt=Carbon::now()->format('Y-m-d H:i:s'); 
+				$newDomain->_domainRegisterUpdateAt=Carbon::now()->format('Y-m-d H:i:s'); 
+				$newDomain->_domainRegisterDateBegin=''; 
+				$newDomain->_domainRegisterDateEnd=''; 
+				$idDomain=$newDomain->addDomain(); 
+				if($idDomain){
+					$this->_domainAddNewId=$idDomain; 
+					$this->_site=Domain::find($idDomain); 
+					//$this->_dateFolder=$this->makeDir(); 
+					//$this->_site->path_data=$this->_dateFolder; 
+					$this->_site->insert_by='crawler'; 
+					$this->_site->save(); 
+					return $this->_site; 
+					return $this->addInForDomain(); 
+				}else{
+					return 'false'; 
+				}
+			}else{
+				return 'false';
+			}
+		}else{
+			$listHistory=array(
+				'history_type'=>'get_content', 
+				'parent_id'=>0, 
+				'author'=>0,
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+			); 
+			History::insertGetId($listHistory); 
+			return 'false'; 
+		}
+		
+	}
+	public function addInForDomain(){
+		//$this->_site=Domain::find($this->_domainAddNewId);
+		$urlRank='http://data.alexa.com/data?cli=10&url='.$this->_site->domain; 
+		$getXml=simplexml_load_file($urlRank); 
+		if(!empty($getXml->SD->POPULARITY['TEXT'])){
+			$this->_site->rank=$getXml->SD->POPULARITY['TEXT']; 
+		}
+		if(!empty($getXml->SD->COUNTRY['CODE'])){
+			$this->_site->country_code=$getXml->SD->COUNTRY['CODE']; 
+		}
+		if(!empty($getXml->SD->COUNTRY['RANK'])){
+			$this->_site->rank_country=$getXml->SD->COUNTRY['RANK']; 
+		}  
+		try {
+			$client = new Client([
+				'headers' => [ 
+					'Content-Type' => 'text/html',
+					'User-Agent' => 'Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10\r\n'
+				], 
+				'connect_timeout' => '2',
+				'timeout' => '2'
+			]);
+			$url='http://'.$this->_site->domain; 
+			$response = $client->request('GET', $url); 
+			$getResponse=$response->getBody()->getContents(); 
+			$dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+			$doc = new \DOMDocument;
+			@$doc->loadHTML($dataConvertUtf8);   
+			$nodes = $doc->getElementsByTagName('title');
+			//get and display what you need:
+			$title = $nodes->item(0)->nodeValue; 
+			$metas = $doc->getElementsByTagName('meta');
+			for ($i = 0; $i < $metas->length; $i++)
+			{
+				$meta = $metas->item($i);
+				if($meta->getAttribute('name') == 'description')
+					$description = $meta->getAttribute('content');
+				if($meta->getAttribute('name') == 'keywords')
+					$keywords = $meta->getAttribute('content');
+				if($meta->getAttribute('property') == 'og:image')
+					$image = $meta->getAttribute('content');
+			}
+			if(!empty($title)){
+				$this->_site->domain_title=strip_tags($title,''); 
+			}
+			if(!empty($description)){
+				$this->_site->domain_description=strip_tags($description,''); 
+			}
+			if(!empty($keywords)){
+				$this->_site->domain_keywords=strip_tags($keywords,''); 
+			}
+			if(!empty($image)){
+				$this->_site->domain_image=strip_tags($image,''); 
+			}
+			$h1tag = $doc->getElementsByTagName('h1'); 
+			if($h1tag->length>0){
+				$h1tagArray=array(); 
+				foreach($h1tag as $h1){
+					$h1tagArray[]=strip_tags(trim(preg_replace('/\s\s+/', ' ', $h1->nodeValue)),''); 
+				} 
+				if(!empty($h1tagArray)){
+					$this->_domain_h1=array_unique($h1tagArray); 
+				}
+			}
+			$h2tag = $doc->getElementsByTagName('h2'); 
+			if($h2tag->length>0){
+				$h2tagArray=array(); 
+				foreach($h2tag as $h2){
+					$h2tagArray[]=strip_tags(trim(preg_replace('/\s\s+/', ' ', $h2->nodeValue)),''); 
+				} 
+				if(!empty($h2tagArray)){
+					$this->_domain_h2=array_unique($h2tagArray); 
+				}
+			}
+			$h3tag = $doc->getElementsByTagName('h3'); 
+			if($h3tag->length>0){
+				$h3tagArray=array(); 
+				foreach($h3tag as $h3){
+					$h3tagArray[]=strip_tags(trim(preg_replace('/\s\s+/', ' ', $h3->nodeValue)),''); 
+				} 
+				if(!empty($h3tagArray)){
+					$this->_domain_h3=array_unique($h3tagArray); 
+				}
+			}
+			
+			$h4tag = $doc->getElementsByTagName('h4'); 
+			if($h4tag->length>0){
+				$h4tagArray=array(); 
+				foreach($h4tag as $h4){
+					$h4tagArray[]=strip_tags(trim(preg_replace('/\s\s+/', ' ', $h4->nodeValue)),''); 
+				} 
+				if(!empty($h4tagArray)){
+					$this->_domain_h4=array_unique($h4tagArray); 
+				}
+			}
+			$atag = $doc->getElementsByTagName('a'); 
+			if($atag->length>0){
+				$atagArray=array(); 
+				foreach($atag as $a){
+					$atagArray[]=array(
+					'text'=>strip_tags(trim(preg_replace('/\s\s+/', ' ', $a->nodeValue)),''), 
+					'link'=>$a->getAttribute('href')
+					); 
+				} 
+				if(!empty($atagArray)){
+					$this->_domain_a=WebService::unique_multidim_array($atagArray,'text'); 
+				}
+			}
+			$ipDomain=gethostbyname($this->_site->domain); 
+			if(!empty($ipDomain)){
+				$this->_domain_ip=$ipDomain; 
+			}
+			$status='true'; 
+			if(!empty($title))
+			{
+				if(WebService::checkBlacklistWord($title, $this->_wordBlacklist)){
+					$status='true';
+				}else{
+					$status='false';
+				}
+				
+			}
+			if(!empty($description))
+			{
+				if(WebService::checkBlacklistWord($description, $this->_wordBlacklist)){
+					$status='true';
+				}else{
+					$status='false';
+				}
+			}
+			if(!empty($keywords))
+			{
+				if(WebService::checkBlacklistWord($keywords, $this->_wordBlacklist)){
+					$status='true';
+				}else{
+					$status='false';
+				}
+			}
+			if($status=='true'){
+				$this->_site->status='active'; 
+			}else{
+				$this->_site->status='blacklist'; 
+			}
+			$data=array(
+				'h1'=>json_encode($this->_domain_h1), 
+				'h2'=>json_encode($this->_domain_h2), 
+				'h3'=>json_encode($this->_domain_h3), 
+				'h4'=>json_encode($this->_domain_h4), 
+				'a'=>json_encode($this->_domain_a), 
+				'ip'=>$this->_domain_ip, 
+				'post_search'=>json_encode($this->_postSearch), 
+				'video_search'=>json_encode($this->_videoSearch), 
+				'whois'=>$this->_domainWhois
+			); 
+			$domainData = Domain_data::firstOrNew(array('parent_id'=>$this->_site->id));
+			$domainData->content=json_encode($data);
+			$domainData->save();
+			//Domain_info::where('parent_id',$this->_site->id)->update($data, ['upsert' => true]);
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\ServerException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\BadResponseException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\ClientException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site; 
+		}catch (\GuzzleHttp\Exception\ConnectException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\RequestException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}
+		$this->_site->save(); 
+		$this->_site=Domain::find($this->_site->id); 
+		//unset($client);
+		return $this->_site;
+	}
+	public function addInForByOutlook(){
+		$this->_site->increment('craw_replay',1); 
+		$urlRank='http://data.alexa.com/data?cli=10&url='.$this->_site->domain; 
+		$getXml=simplexml_load_file($urlRank); 
+		if(!empty($getXml->SD->POPULARITY['TEXT'])){
+			$this->_site->rank=$getXml->SD->POPULARITY['TEXT']; 
+		}
+		if(!empty($getXml->SD->COUNTRY['CODE'])){
+			$this->_site->country_code=$getXml->SD->COUNTRY['CODE']; 
+		}
+		if(!empty($getXml->SD->COUNTRY['RANK'])){
+			$this->_site->rank_country=$getXml->SD->COUNTRY['RANK']; 
+		}  
+		try {
+			$client = new Client([
+				'headers' => [ 
+					'Content-Type' => 'text/html',
+					'User-Agent' => 'Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10\r\n'
+				], 
+				['allow_redirects' => true], 
+				'connect_timeout' => '2',
+				'timeout' => '2'
+			]);
+			$url='http://'.$this->_site->domain.'.websiteoutlook.com/'; 
+			$response = $client->request('GET', $url); 
+			$getResponse=$response->getBody()->getContents(); 
+			$dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse; 
+			$doc = new \DOMDocument;
+			@$doc->loadHTML($dataConvertUtf8, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);    
+			$xpath = new \DOMXpath($doc); 
+			$nodes = $doc->getElementsByTagName('title');
+			//get and display what you need:
+			$this->_title = $nodes->item(0)->nodeValue; 
+			$metas = $doc->getElementsByTagName('meta');
+			for ($i = 0; $i < $metas->length; $i++)
+			{
+				$meta = $metas->item($i);
+				if($meta->getAttribute('name') == 'description')
+					$this->_description = $meta->getAttribute('content');
+				if($meta->getAttribute('name') == 'keywords')
+					$this->_keyword = $meta->getAttribute('content');
+			}
+			foreach ($xpath->evaluate('//div[@id="basic"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")]/div[2]/table[contains(concat (" ", normalize-space(@class), " "), " table table-condensed ")] | //html/body/div[2]/div[2]/div[1]/div[2]/div/div[2]/div[2]/table') as $node) {
+				$this->_basicInfo=$doc->saveHtml($node); 
+				$this->_basicInfo = preg_replace('/<form.*>[^>]*.*[^>]*>/i','',$this->_basicInfo); 
+			}
+			foreach ($xpath->evaluate('//div[@id="website"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")]/dl[contains(concat (" ", normalize-space(@class), " "), " dl-horizontal ")] | //html/body/div[2]/div[2]/div[1]/div[3]/div/div[2]/dl') as $node) {
+				$this->_websiteInfo=$doc->saveHtml($node); 
+			}
+			foreach ($xpath->evaluate('//div[@id="sem"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")] | //html/body/div[2]/div[2]/div[1]/div[4]/div/div[2]') as $node) {
+				$this->_semrushMetrics=$doc->saveHtml($node); 
+			}
+			foreach ($xpath->evaluate('//div[@id="dns"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")] | //html/body/div[2]/div[2]/div[1]/div[5]/div/div[2]') as $node) {
+				$this->_dnsReport=$doc->saveHtml($node); 
+			}
+			foreach ($xpath->evaluate('//div[@id="geo"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")] | //html/body/div[2]/div[2]/div[1]/div[6]/div/div[2]') as $node) {
+				$this->_ipAddressInfo=$doc->saveHtml($node); 
+			}
+			foreach ($xpath->evaluate('//div[@id="whois"]/div[2][contains(concat (" ", normalize-space(@class), " "), " panel-body ")] | //html/body/div[2]/div[2]/div[1]/div[7]/div/div[2]') as $node) {
+				$this->_whoisRecord=$doc->saveHtml($node); 
+			}
+			$pos = strpos($dataConvertUtf8, 'adsbygoogle'); 
+			if ($pos === false) {
+				$this->_site->ads='disable';
+			}else{
+				$this->_site->ads='active'; 
+			}
+			$data=array(
+				'title'=>$this->_title, 
+				'description'=>$this->_description, 
+				'keyword'=>$this->_keyword, 
+				'basic_info'=>$this->_basicInfo, 
+				'website_info'=>$this->_websiteInfo, 
+				'semrush_metrics'=>$this->_semrushMetrics, 
+				'dns_report'=>$this->_dnsReport, 
+				'ip_address_info'=>$this->_ipAddressInfo, 
+				'whois_record'=>$this->_whoisRecord
+			); 
+			if(empty($this->_site->domain_title)){
+				$this->_site->domain_title=$this->_title; 
+			}
+			if(empty($this->_site->domain_description)){
+				$this->_site->domain_description=$this->_description; 
+			}
+			if(empty($this->_site->domain_keywords)){
+				$this->_site->domain_keywords=$this->_keyword; 
+			}
+			$this->_site->content=json_encode($data); 
+			$this->_site->updated_at=Carbon::now()->format('Y-m-d H:i:s'); 
+			$this->_site->status='active';  
+			$this->_site->craw_status='active'; 
+			$this->_site->craw_by='outlook'; 
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\ServerException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\BadResponseException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\ClientException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site; 
+		}catch (\GuzzleHttp\Exception\ConnectException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}catch (\GuzzleHttp\Exception\RequestException $e){
+			$this->_site->save(); 
+			$this->_site=Domain::find($this->_site->id); 
+			//unset($client);
+			return $this->_site;
+		}
+		$this->_site->save(); 
+		$this->_site=Domain::find($this->_site->id); 
+		//unset($client);
+		return $this->_site;
+	}
+	public function makeDir(){
+		$dateFolder=[
+			'day'=>date('d', strtotime(Carbon::now()->format('Y-m-d H:i:s'))), 
+			'month'=>date('m', strtotime(Carbon::now()->format('Y-m-d H:i:s'))), 
+			'year'=>date('Y', strtotime(Carbon::now()->format('Y-m-d H:i:s')))
+		]; 
+		$path = public_path(). '/domaindata/'.$dateFolder['year'].'/'.$dateFolder['month'].'/'.$dateFolder['day'].'/'.$this->_domainAddNewId; 
+		$destinationPath = 'domaindata/'.$dateFolder['year'].'/'.$dateFolder['month'].'/'.$dateFolder['day'].'/'.$this->_domainAddNewId; 
+		if(!File::exists($path)) {
+			File::makeDirectory($path, $mode = 0777, true, true); 
+		}
+		return $destinationPath; 
+	}
+	public function homePrice()
+    {
+		$this->_channel->increment('channel_view',1);
+		$return = array();
+		return $this->_theme->scope('price', $return)->render();
+	}
+	public function getFields()
+    {
+		$fields=Fields::where('name','!=',"")->where('status','=',0)->orderBy('sort_order','asc')->get(); 
+		return response()->json(['success'=>true,
+			'message'=>'Danh sách lĩnh vực', 
+			'fields'=>$fields
+		]);
+	}
+	
+	public function dashboard()
+    {
+		if($this->_security==true){
+			if(isset($this->_channel)){
+				$view = array(
+					'theme'=>$this->_theme
+				);
+				return $this->_theme->scope('admin.dashboard', $view)->render();
+			}
+			else{
+				return view('404');
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->scope('404', $view)->render(); 
+		}
+	}
+	public function getRegionAll(){
+		$region=Regions::get(); 
+		return response()->json(['success'=>true,
+			'message'=>'Danh sách quốc gia',
+			'region'=>$region
+		]);
+    }
+	public function getSubRegionByIdRegion(){
+		$subRegion=Subregions::where('region_id',$this->_parame['id'])->get(); 
+		if(count($subRegion)){
+			return response()->json(array('success' => true, 'message'=>'Danh sách khu vực', 'subregion' => $subRegion));
+		}
+		else{
+			return response()->json(array('success'=>false,'message' => 'Không tìm thấy'));
+		}
+    }
+	public function postSubRegionByIdRegion(){
+		$idRegion=Input::get('idRegion'); 
+		$subRegion=Subregions::where('region_id',$idRegion)->get(); 
+		if(count($subRegion)){
+			return response()->json(array('success' => true, 'message'=>'Danh sách khu vực', 'subregion' => $subRegion));
+		}
+		else{
+			return response()->json(array('success'=>false,'message' => 'Không tìm thấy'));
+		}
+    }
+	public function postDistrictByIdSubRegion(){
+		$idSubRegion=Input::get('idSubRegion'); 
+		$district=Region_district::where('subregions_id',$idSubRegion)->get(); 
+		if(count($district)){
+			return response()->json(array('success' => true, 'message'=>'Danh sách quận huyện', 'district' => $district));
+		}
+		else{
+			return response()->json(array('success'=>false,'message' => 'Không tìm thấy'));
+		}
+    }
+	public function postWardByIdDistrict(){
+		$idDistrict=Input::get('idDistrict'); 
+		$ward=Region_ward::where('region_district_id',$idDistrict)->get(); 
+		if(count($ward)){
+			return response()->json(array('success' => true, 'message'=>'Danh sách phường xã', 'ward' => $ward));
+		}
+		else{
+			return response()->json(array('success'=>false,'message' => 'Không tìm thấy'));
+		}
+    }
+	public function contact()
+    {
+		$lat=0; 
+		$lng=0;
+		$setAddress=''; 
+		if(!empty($this->_channel->joinAddress[0]->address->address)){
+			$address=$this->_channel->joinAddress[0]->address->address; 
+		}else{
+			$address=''; 
+		}
+		if(!empty($this->_channel->joinAddress[0]->address->joinWard->ward->ward_name)){
+			$ward=', '.$this->_channel->joinAddress[0]->address->joinWard->ward->ward_name; 
+		}else{
+			$ward=''; 
+		}
+		if(!empty($this->_channel->joinAddress[0]->address->joinDistrict->district->district_name)){
+			$district=', '.$this->_channel->joinAddress[0]->address->joinDistrict->district->district_name; 
+		}else{
+			$district=''; 
+		}
+		if(!empty($this->_channel->joinAddress[0]->address->joinSubRegion->subregion->subregions_name)){
+			$subregion=', '.$this->_channel->joinAddress[0]->address->joinSubRegion->subregion->subregions_name; 
+		}else{
+			$subregion=''; 
+		}
+		if(!empty($this->_channel->joinAddress[0]->address->joinRegion->region->country)){
+			$region=', '.$this->_channel->joinAddress[0]->address->joinRegion->region->country; 
+		}else{
+			$region=''; 
+		} 
+			
+		$setAddress=$address.$ward.$district.$subregion.$region; 
+		if(strlen($setAddress)>5){
+			$response = \GoogleMaps::load('geocoding')
+			->setParam (['address' =>$setAddress])
+			->get(); 
+			$jsonDecode=json_decode($response); 
+			//dd($jsonDecode); 
+			if($jsonDecode->status!='ZERO_RESULTS' && $jsonDecode->status!='OVER_QUERY_LIMIT'){
+				$lat=$jsonDecode->results[0]->geometry->location->lat; 
+				$lng=$jsonDecode->results[0]->geometry->location->lng; 
+			}
+		}
+		$view = array(
+			'address'=>$setAddress, 
+			'lat'=>$lat, 
+			'lng'=>$lng
+		);
+		return $this->_theme->scope('contact', $view)->render();
+	}
+	public function contactRequest()
+    {
+		$name=Input::get('name'); 
+		$email=Input::get('email'); 
+		$phone=Input::get('phone'); 
+		$title=Input::get('title'); 
+		$content=Input::get('content'); 
+		$messages = array(
+			'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
+			'required' => 'Vui lòng nhập thông tin (*).',
+			'numeric' => 'Số điện thoại phải dạng số',
+			'email' => 'Địa chỉ email không đúng'
+		);
+		$rules = array(
+			'name' => 'required',
+			'email'=>'required|email',
+			'phone'=>'required',
+			'title'=>'required',
+			'content'=>'required',
+		);
+		$validator = Validator::make(Input::all(), $rules, $messages);
+		if ($validator->fails())
+		{
+			return response()->json(['success'=>false,
+				'messageType'=>'validation',
+				'message'=>$validator->getMessageBag()->toArray(), 
+				'msg'=>'Yêu cầu liên hệ của bạn không được gửi đi'
+			]);
+		}else{
+			$contentMessage=[
+				'requestFrom'=>(!empty(Auth::user()->id)) ? 'user' : 'ip', 
+				'name'=>$name, 
+				'email'=>$email, 
+				'phone'=>$phone, 
+				'title'=>$title, 
+				'content'=>$content
+			]; 
+			$messageInsert=[
+				'type'=>'contact', 
+				'from'=>(!empty(Auth::user()->id)) ? Auth::user()->id : Request::ip(), 
+				'to'=>$this->_channel->id, 
+				'message_title'=>'Bạn nhận được 1 liên hệ từ '.$this->_channel->channel_name, 
+				'message_body'=>json_encode($contentMessage), 
+				'message_status'=>'unread', 
+				'message_send'=>'pending', 
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			]; 
+			Messages::create($messageInsert); 
+			return response()->json(['success'=>true,
+				'message'=>$messageInsert, 
+				'msg'=>'Yêu cầu liên hệ của bạn được gửi đến '.$this->_channel->channel_name
+			]);
+		}
+	}
+	public function contactConfig()
+    {
+		if($this->_security==true){
+			$view = array();
+			return $this->_theme->scope('admin.contact', $view)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->scope('404', $view)->render(); 
+		}
+	}
+	public function contactUpdate()
+    {
+		if($this->_security==true){
+			$channelId=Input::get('channelId'); 
+			$channelDomain=Input::get('channelDomain'); 
+			$channelCompanyName=Input::get('channelCompanyName'); 
+			$channelCompanyAddress=Input::get('channelCompanyAddress'); 
+			$channelPhone=Input::get('channelPhone'); 
+			$channelEmail=Input::get('channelEmail'); 
+			$channelRegion=Input::get('channelRegion');
+			$channelSubRegion=Input::get('channelSubRegion');
+			$messages = array(
+				'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
+				'required' => 'Vui lòng nhập thông tin (*).',
+				'numeric' => 'Số điện thoại phải dạng số',
+				'email' => 'Địa chỉ email không đúng'
+			);
+			$rules = array(
+				'channelCompanyName' => 'required',
+				'channelCompanyAddress' => 'required',
+				'channelPhone'=>'required|digits_between:10,11',
+				'channelEmail'=>'required|email',
+				'channelRegion'=>'required',
+				'channelSubRegion'=>'required',
+			);
+			$validator = Validator::make(Input::all(), $rules, $messages);
+			if ($validator->fails())
+			{
+				return response()->json(['success'=>false,
+					'messageType'=>'validation',
+					'message'=>$validator->getMessageBag()->toArray(),
+					'input'=>Input::all()
+				]);
+			}else{
+				/*----Company --*/
+				$messageCompany='false'; 
+				$getCompany=Company::where('company_name','=',$channelCompanyName)->first(); 
+				if(!empty($getCompany->company_name)){
+					$getCompany->company_name=$channelCompanyName; 
+					$getCompany->company_address=$channelCompanyAddress; 
+					$getCompany->company_region=$channelRegion; 
+					$getCompany->company_subregion=$channelSubRegion; 
+					$getCompany->company_updated_at=Carbon::now()->format('Y-m-d H:i:s'); 
+					$getCompany->company_status='pending'; 
+					$getCompany->save(); 
+					$insert_company_join=[
+						'channel_id'=>$this->_channel->id, 
+						'company_id'=>$getCompany->id
+					];
+					Company_join_channel::where('channel_id','=',$this->_channel->id)->delete(); 
+					Company_join_channel::insertGetId($insert_company_join); 
+				}else{
+					$insert_company = [
+						'company_name' => $channelCompanyName,
+						'company_address' => $channelCompanyAddress,
+						'company_region' => $channelRegion,
+						'company_subregion' => $channelSubRegion,
+						'company_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'company_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'company_status'=>'pending'
+					];
+					$id_company = Company::insertGetId($insert_company); 
+					if(isset($id_company)){
+						$insert_company_join=[
+							'channel_id'=>$this->_channel->id, 
+							'company_id'=>$id_company
+						];
+						Company_join_channel::where('channel_id','=',$this->_channel->id)->delete(); 
+						$id_company_join = Company_join_channel::insertGetId($insert_company_join); 
+						$insert_company_attribute=[
+							'parent_id'=>$id_company, 
+							'attribute_type'=>'author', 
+							'attribute_value'=>Auth::user()->id, 
+							'attribute_status'=>'active', 
+							'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+						];
+						Company_attribute::insertGetId($insert_company_attribute); 
+					}
+				}
+				/*----Company End --*/
+				/*-- Insert Address */
+					if(!empty($this->_channel->joinAddress->address->id)){
+						$this->_channel->joinAddress->address->delete(); 
+					}
+					$idAddress=Address::insertGetId(array(
+						'address'=>(!empty($channelCompanyAddress))?$channelCompanyAddress : '', 
+						'status'=>'pending', 
+						'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+					)); 
+					if($idAddress){
+						if(!empty(Regions::find($channelRegion)->id)){
+							Address_join_region::insertGetId(array(
+								'region_id'=>$channelRegion, 
+								'address_id'=>$idAddress
+							)); 
+						}
+						if(!empty(Subregions::find($channelSubRegion)->id)){
+							Address_join_subregion::insertGetId(array(
+								'subregion_id'=>$channelSubRegion, 
+								'address_id'=>$idAddress, 
+							));
+						}
+						if(!empty(Region_district::find($channelDistrict)->id)){
+							Address_join_district::insertGetId(array(
+								'subregion_id'=>$channelDistrict, 
+								'address_id'=>$idAddress, 
+							));
+						}
+						if(!empty(Region_ward::find($channelWard)->id)){
+							Address_join_ward::insertGetId(array(
+								'subregion_id'=>$channelWard, 
+								'address_id'=>$idAddress, 
+							));
+						}
+						Channel_join_address::insertGetId(array(
+							'channel_id'=>$this->_channel->id, 
+							'address_id'=>$idAddress, 
+						)); 
+					}
+				/*-- End Insert Address */
+				/*----Phone --*/
+				$getPhone=Phone::where('phone_number','=',$channelPhone)->first(); 
+				if(empty($getPhone->phone_number)){
+					$insert_phone = [
+						'phone_number' => $channelPhone,
+						'phone_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'phone_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'phone_status'=>'pending'
+					];
+					$idPhone = Phone::insertGetId($insert_phone); 
+				}else{
+					$idPhone =$getPhone->id; 
+				}
+				if($idPhone){
+					Channel_join_phone::insertGetId(array(
+						'channel_id'=>$this->_channel->id, 
+						'phone_id'=>$idPhone
+					)); 
+				} 
+				/*----Phone End--*/
+				
+				/*----Email --*/
+				$getEmail=Email::where('email_address','=',$channelEmail)->first(); 
+				if(empty($getEmail->email_address)){
+					$insert_email = [
+							'email_address' => $channelEmail,
+							'email_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							'email_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							'email_status'=>'pending'
+						];
+					$idEmail = Email::insertGetId($insert_email);  
+				}else{
+					$idEmail =$getEmail->id; 
+				}
+				if($idEmail){
+					Channel_join_email::insertGetId(array(
+						'channel_id'=>$this->_channel->id,  
+						'email_id'=>$idEmail
+					)); 
+				}
+				/*----Email End --*/
+				/*----Channel Join Region --*/
+				Channel_join_region::where('channel_id','=',$this->_channel->id)->delete(); 
+				Channel_join_region::insertGetId(array( 
+					'region_id'=>$channelRegion, 
+					'channel_id'=>$this->_channel->id, 
+				));
+				/*----Channel Join Region End --*/
+				/*----Channel Join SubRegion --*/
+				Channel_join_subregion::where('channel_id','=',$this->_channel->id)->delete(); 
+				Channel_join_subregion::insertGetId(array(
+					'subregion_id'=>$channelSubRegion, 
+					'channel_id'=>$this->_channel->id, 
+				));
+				/*----Channel Join SubRegion End --*/
+				return response()->json(['success'=>true,
+					'messageType'=>'success',
+					'url_redirect'=>route('channel.admin.contact'),
+					'message'=>'Đã cập nhật thông tin! ', 
+				]);
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->scope('404', $view)->render(); 
+		}
+	}
+	
+	public function theme()
+    {
+		if($this->_security==true){
+			$view = array();
+			return $this->_theme->scope('admin.theme', $view)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->scope('404', $view)->render(); 
+		}
+	}
+	public function emailList(){
+		$view = array();
+		return $this->_theme->scope('admin.tools.email.emailList', $view)->render(); 
+	}
+	
+	
+}

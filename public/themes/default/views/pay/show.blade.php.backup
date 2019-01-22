@@ -1,0 +1,424 @@
+<?
+	$channel['theme']->setTitle('Thanh toán');
+	$channel['theme']->setKeywords('Thanh toán');
+	$channel['theme']->setDescription('Thanh toán đơn hàng của bạn '); 
+?>
+{!!Theme::asset()->usePath()->add('jquery.gritter', 'css/jquery.gritter.css', array('core-style'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'))!!}
+{!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
+<section>
+<div class="mainpanel">
+	{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+	<div class="pageheader">
+		<h1>{!! Theme::get('keywords') !!}</h1>
+		<span><small>{!! Theme::get('description') !!}</small></span>
+	</div>
+	<div class="contentpanel" style="position:relative; ">
+		<div id="preloaderInBox" style="display:none;">
+			<div id="status"><i class="fa fa-spinner fa-spin"></i></div>
+		</div>
+		@if(count($listCart)>0)
+		<div class="panel panel-primary">
+			<div class="panel-body panel-body-nopadding">
+				<div class="table-responsive">
+					<table class="table table-bordered">
+						<thead>
+						  <tr>
+							<th><b>Loại</b></th>
+							<th><b>Tên</b></th>
+							<th><b>Số lượng</b></th>
+							<th><b>Số tiền</b></th>
+							<th><b>Tùy chọn</b></th>
+						  </tr>
+						</thead>
+						<tbody>
+						@foreach($listCart as $key=>$cart)
+							<?
+								$cartAttribute=json_decode($cart->attributes); 
+							?>
+							@if($cartAttribute->type=='channelAdd')
+							<tr>
+								<td><b>Tạo kênh</b></td>
+								<td><strong>{!!$cart->name!!}</strong>
+									<p><code>http://{!!$cart->attributes->domain!!}.{!!$cart->attributes->domainLtd!!}</code></p>
+								</td>
+								<td>
+									<select class="form-control input-sm mb15" name="updateQuanlity" data-id="{!!$cart->id!!}">
+									  <option value="1" @if($cart->quantity==1) selected @endif >1 {!!$cart->attributes->per!!}</option>
+									  <option value="3" @if($cart->quantity==3) selected @endif >3 {!!$cart->attributes->per!!}</option>
+									  <option value="6" @if($cart->quantity==6) selected @endif >6 {!!$cart->attributes->per!!}</option>
+									  <option value="12" @if($cart->quantity==12) selected @endif >12 {!!$cart->attributes->per!!}</option>
+									  <option value="24" @if($cart->quantity==24) selected @endif >24 {!!$cart->attributes->per!!}</option>
+									</select>
+								</td>
+								<td>{{Site::price($cart->getPriceSum())}}</span><sup>VND</sup></td>
+								<td class="table-action">
+								  <a href="#" class="removeCart" data-id="{!!$cart->id!!}"><span class="label label-danger"><i class="fa fa-trash-o"></i> xóa</span></a> 
+								</td>
+							</tr>
+							@elseif($cartAttribute->type=='channelUpgrade')
+							<tr>
+								<td><b>Gói {!!$cartAttribute->channel_service_name!!}</b></td>
+								<td>{!!$cart->name!!}</td>
+								<td>{!!$cart->quantity!!} {!!$cartAttribute->per!!}</td>
+								<td>{{Site::price($cart->getPriceSum())}}</span><sup>VND</sup></td>
+								<td class="table-action">
+								  <a href="#" class="removeCart" data-id="{!!$cart->id!!}"><span class="label label-danger"><i class="fa fa-trash-o"></i> xóa</span></a> 
+								</td>
+							</tr>
+							@elseif($cartAttribute->type=='domainAdd')
+							<tr>
+								<td><b>{!!$cartAttribute->service_name!!}</b></td>
+								<td>{!!$cart->name!!}</td>
+								<td>{!!$cart->quantity!!} năm</td>
+								<td>{{Site::price($cart->getPriceSum())}}</span><sup>VND</sup></td>
+								<td class="table-action">
+								  <a href="#" class="removeCart" data-id="{!!$cart->id!!}"><span class="label label-danger"><i class="fa fa-trash-o"></i> xóa</span></a> 
+								</td>
+							</tr>
+							@endif
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+				<table class="table table-total">
+					<tbody>
+						<tr>
+							<td><strong>Tổng tiền:</strong></td>
+							<td><b>{{Site::price($totalPrice)}}<sup>VND</sup><b></td>
+						</tr>
+					</tbody>
+				</table>
+			</div><!-- panel-body -->
+		</div><!-- panel-default -->
+		<div class="panel-group panel-group-dark listBank" id="accordion">
+			<div class="panel panel-default mb5">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse1"><i class="glyphicon glyphicon-credit-card"></i> Bằng Internet Banking <i class="glyphicon glyphicon-chevron-down"></i></a>
+					</h4>
+				</div>
+				<div id="collapse1" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vietcombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="IB_ONLINE" value="VCB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-donga.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="IB_ONLINE" value="DAB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-bidv.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="IB_ONLINE" value="BIDV" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-techcombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="IB_ONLINE" value="TCB" class="hidden" autocomplete="off"></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default mb5">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse2" class="collapsed"><i class="glyphicon glyphicon-credit-card"></i> Bằng thẻ Ngân hàng nội địa <i class="glyphicon glyphicon-chevron-down"></i></a>
+					</h4>
+				</div>
+				<div id="collapse2" class="panel-collapse collapse">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vietcombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="VCB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-donga.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="DAB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-bidv.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="BIDV" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-techcombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="TCB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-mb.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="MB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vib.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="VIB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-viettinbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="ICB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-eximbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="EXB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-acb.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="ACB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-hdbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="HDB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-maritime.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="MSB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-ncb.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="NVB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vieta.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="VAB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vpbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="VPB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-sacombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="SCB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-pgbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="PGB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-gpbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="GPB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-agribank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="AGB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-saigonbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="SGB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-bacabank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="BAB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-tpbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="TPB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-namabank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="NAB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-shb.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="SHB" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-oceanbank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="ATM_ONLINE" value="OJB" class="hidden" autocomplete="off"></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default mb5">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse3" class="collapsed"><i class="glyphicon glyphicon-credit-card"></i> Bằng Visa/ Master Card <i class="glyphicon glyphicon-chevron-down"></i></a>
+					</h4>
+				</div>
+				<div id="collapse3" class="panel-collapse collapse">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/visa.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="VISA" value="VISA" class="hidden" autocomplete="off"></label>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 form-group text-center">
+								<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/mastercard.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="VISA" value="MASTER" class="hidden" autocomplete="off"></label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default mb5">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse4" class="collapsed"><i class="fa fa-bank"></i> Bằng chuyển khoản <i class="glyphicon glyphicon-chevron-down"></i></a>
+					</h4>
+				</div>
+				<div id="collapse4" class="panel-collapse collapse">
+					<div class="panel-body">
+						<div class="alert alert-danger">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+							Ghi số điện thoại ở nội dung thanh toán khi chuyển khoản! 
+						</div>
+						<div class="col-sm-6">
+							<p><b>Thông tin tài khoản ngân hàng</b></p>
+							<p>Tên tài khoản: Nguyễn Hùng Thanh</p>
+							<p>Số tài khoản: 0071000672017</p>
+							<p>Ngân hàng: Vietcombank, Hồ Chí Minh</p>
+						</div>
+						<div class="col-sm-6">
+							<label class="btn btn-default"><img style="background:#fff; padding:5px; " src="{{asset("assets/img/bank/bank-vietcombank.png")}}" alt="" class="img-responsive bankCheck"><input type="radio" name="bankcode" payment_method="SEND_PAYMENT" value="VCB" class="hidden" autocomplete="off"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer text-right">
+			<p class="text-danger">Dịch vụ của bạn sẽ được kích hoạt ngay sau khi thanh toán! <a href="tel:@if(!empty($channel['info']->phoneJoin->phone->phone_number)){{$channel['info']->phoneJoin->phone->phone_number}}@endif"><i class="glyphicon glyphicon-earphone"></i> Trợ giúp?</a></p> 
+			<button type="button" class="btn btn-lg btn-warning" id="btnPayment"><i class="fa fa-check"></i> Thanh toán</button>
+		</div>
+	<?
+		$dependencies = array(); 
+		$channel['theme']->asset()->writeScript('custom','
+			
+			$("select[name=updateQuanlity]").change(function() {
+				var cartId=$(this).attr("data-id"); 
+				var quanlityChange=$(this).val(); 
+				var formData = new FormData();
+				formData.append("cartId", cartId); 
+				formData.append("quanlityChange", quanlityChange); 
+				$.ajax({
+					url: "'.route("pay.cart.quanlity",$channel["domainPrimary"]).'",
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					type: "post",
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: formData,
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-success",
+								sticky: false,
+								time: ""
+							}); 
+							location.reload();
+						}else{
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-danger",
+								sticky: false,
+								time: ""
+							});
+						}
+					},
+					error: function(result) {
+					}
+				});
+				return false;
+			}); 
+			$(".listBank").on("click",".bankCheck",function() {
+				$(".bankCheck").not(this).parent().removeClass("btn-primary").addClass("btn-default")
+					.siblings("input").prop("checked",false)
+					.siblings(".bankCheck").css("opacity","0.5");
+				$(this).parent().addClass("btn-primary").removeClass("btn-default")
+					.siblings("input").prop("checked",true)
+					.siblings(".bankCheck").css("opacity","1");
+			});
+			$(".removeCart").click(function() {
+				var cartId=$(this).attr("data-id"); 
+				var formData = new FormData();
+				formData.append("cartId", cartId); 
+				$.ajax({
+					url: "'.route("cart.remove",$channel["domain"]->domain).'",
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					type: "post",
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: formData,
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-success",
+								sticky: false,
+								time: ""
+							}); 
+							location.reload();
+						}else{
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-danger",
+								sticky: false,
+								time: ""
+							});
+						}
+					},
+					error: function(result) {
+					}
+				});
+				return false; 
+			}); 
+			$("#btnPayment").click(function() {
+				var bankcode = $( ".listBank input[name=bankcode]:checked" ).val(); 
+				var payment_method = $( ".listBank input[name=bankcode]:checked" ).attr("payment_method"); 
+				var bankcodeCheck="";
+				var payment_methodCheck=""; 
+				if(typeof(bankcode) != "undefined" && bankcode !== null) {
+					bankcodeCheck=bankcode; 
+				}
+				if(typeof(payment_method) != "undefined" && payment_method !== null) {
+					payment_methodCheck=payment_method; 
+				}
+				var formData = new FormData();
+				formData.append("bankcode", bankcodeCheck); 
+				formData.append("payment_method", payment_methodCheck); 
+				formData.append("cancel_url", "'.Request::url().'"); 
+				$(".contentpanel #preloaderInBox").css("display", "block"); 
+				$.ajax({
+					url: "'.route("pay.cart.send",$channel["domain"]->domain).'",
+					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+					type: "post",
+					cache: false,
+					contentType: false,
+					processData: false,
+					data: formData,
+					dataType:"json",
+					success:function(result){
+						//console.log(result); 
+						if(result.success==true){
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-success",
+								sticky: false,
+								time: ""
+							}); 
+							window.location.href = result.checkout_url;
+						}else{
+							$(".contentpanel #preloaderInBox").css("display", "none"); 
+							jQuery.gritter.add({
+								title: "Thông báo!",
+								text: result.message, 
+								class_name: "growl-danger",
+								sticky: false,
+								time: ""
+							});
+						}
+					},
+					error: function(result) {
+					}
+				});
+			});
+		', $dependencies);
+	?>
+	@else
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			  <div class="panel-btns">
+				<a href="" class="panel-close">×</a>
+				<a href="" class="minimize">−</a>
+			  </div><!-- panel-btns -->
+			  <h4 class="panel-title"><i class="fa fa-shopping-cart"></i> Đơn hàng</h4>
+			</div><!-- panel-heading -->
+			<div class="panel-body">
+				<div class="alert alert-info">
+					Bạn không có đơn hàng nào thanh toán!  
+				</div>
+			</div>
+		</div>
+	@endif
+
+</div><!-- mainpanel -->
+</section>
+<?
+	$dependencies = array(); 
+	$channel['theme']->asset()->writeScript('onload',' 
+	', $dependencies);
+?>

@@ -1,0 +1,442 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
+use Request;
+use Illuminate\Support\Str;
+use App\User;
+use App\Model\Users_attribute;  
+use App\Permission;
+use App\Role; 
+use App\Model\Channel_role;
+use App\Model\History; 
+use App\Model\Services; 
+use App\Model\Services_attribute; 
+use App\Model\Company; 
+use App\Model\Company_join; 
+use App\Model\Company_join_channel; 
+use App\Model\Company_attribute; 
+use App\Model\Channel; 
+use App\Model\Channel_join; 
+use App\Model\Channel_join_region;
+use App\Model\Channel_join_subregion;
+use App\Model\Channel_join_district;
+use App\Model\Channel_join_ward;
+use App\Model\Channel_join_field;
+use App\Model\Channel_attribute; 
+use App\Model\Domain;
+use App\Model\Domain_join;
+use App\Model\Domain_join_channel;
+use App\Model\Domain_attribute;
+use App\Model\Fields;
+use App\Model\Posts;
+use App\Model\Posts_join;
+use App\Model\Posts_attribute; 
+use App\Model\Category;
+use App\Model\Category_join;
+use App\Model\Slug;
+use App\Model\Media; 
+use App\Model\Media_join; 
+use App\Model\Media_join_post; 
+use App\Model\Media_join_channel;
+use App\Model\Users_join; 
+use App\Model\Email;
+use App\Model\Email_join;
+use App\Model\Phone;
+use App\Model\Phone_join; 
+use App\Model\Messages; 
+use App\Model\Region_district;
+use App\Model\Region_ward;
+use App\Model\Regions;
+use App\Model\Subregions;
+use Agent;
+use Auth;
+use Input;
+use DB;
+use Closure;
+use Validator;
+use Redirect;
+use Mail;
+use WebService;
+use Site;
+use Response;
+use Carbon\Carbon;
+use Theme;
+use URL;
+use Route;
+use FFMpeg; 
+class SitePublicController extends Controller
+{
+	protected $_domain; 
+	protected $_channel; 
+	protected $_channelColor; 
+	protected $_theme; 
+	protected $_parame; 
+	protected $_security; 
+	public function __construct(){
+		$this->_security=false; 
+		$this->_parame=Route::current()->parameters(); 
+		$this->_domain=WebService::getDomain($this->_parame['domain']); 
+		$this->beforeFilter(function()
+		{
+			if(empty($this->_domain->domain)){
+				return Redirect::to('//'.config('app.url'));
+			}elseif($this->_domain->domain_primary!='default'){
+				foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
+					if($domain->domain->domain_primary=='default'){
+						return Redirect::to('//'.$domain->domain->domain);
+					}
+				}
+			}else{
+				$this->_channel=$this->_domain->domainJoinChannel->channel; 
+				$this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default'); 
+				if(Auth::check()){
+					
+					$user=Auth::user(); 
+					if($user->hasRole(['admin', 'manage'])){
+						$this->_security=true;
+					}
+					$getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first(); 
+					if(!empty($getRoleChannel->id)){
+						$getRole=Role::findOrFail($getRoleChannel->role_id); 
+						$role_permissions = $getRole->perms()->get();
+						foreach ($role_permissions as $permission) {
+							if ($permission->name == 'manager_channel') {
+								$this->_security=true;
+							}
+						}
+					}
+				}
+				view()->share(
+					'channel',array(
+						'domain'=>$this->_domain, 
+						'info'=>$this->_channel, 
+						'security'=>$this->_security, 
+						'category'=>$this->_channel->getCategory, 
+						'theme'=>$this->_theme, 
+						'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
+					)
+				);
+			}
+		});
+	}
+	public function index()
+    {
+		$this->_channel->increment('channel_view',1);
+		if($this->_channel->channel_parent_id==0){
+			$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+			->where('channel.channel_status','=','active')
+			->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+			->groupBy('channel.id')
+			->orderBy('channel.service_attribute_id','desc')
+			->orderBy('channel.channel_updated_at','desc')
+			->paginate(8); 
+		}else{
+			$channelList=array(); 
+		}
+		$return = array(
+			'channelList'=>$channelList
+		);
+		return $this->_theme->scope('home', $return)->render();
+	}
+	public function homePrice()
+    {
+		$this->_channel->increment('channel_view',1);
+		$return = array();
+		return $this->_theme->scope('price', $return)->render();
+	}
+	public function getFields()
+    {
+		$fields=Fields::where('name','!=',"")->where('status','=',0)->orderBy('sort_order','asc')->get(); 
+		return response()->json(['success'=>true,
+			'message'=>'Danh sách lĩnh vực', 
+			'fields'=>$fields
+		]);
+	}
+	
+	public function dashboard()
+    {
+		if($this->_security==true){
+			if(isset($this->_channel)){
+				$view = array(
+					'theme'=>$this->_theme
+				);
+				return $this->_theme->of('themes.admin.dashboard', $view)->render();
+			}
+			else{
+				return view('404');
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function getRegionAll(){
+		$region=Regions::get(); 
+		return response()->json(['success'=>true,
+			'message'=>'Danh sách quốc gia',
+			'region'=>$region
+		]);
+    }
+	public function getSubRegionByIdRegion(){
+		$subRegion=Subregions::where('region_id',$this->_parame['id'])->get(); 
+		if(isset($subRegion)){
+			return response()->json(array('success' => true, 'message'=>'Danh sách khu vực', 'subregion' => $subRegion));
+		}
+		else{
+			return response()->json(array('success'=>false,'message' => 'Không tìm thấy'));
+		}
+    }
+	public function contact()
+    {
+		$view = array();
+		return $this->_theme->scope('contact', $view)->render();
+	}
+	public function contactRequest()
+    {
+		$name=Input::get('name'); 
+		$email=Input::get('email'); 
+		$phone=Input::get('phone'); 
+		$title=Input::get('title'); 
+		$content=Input::get('content'); 
+		$messages = array(
+			'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
+			'required' => 'Vui lòng nhập thông tin (*).',
+			'numeric' => 'Số điện thoại phải dạng số',
+			'email' => 'Địa chỉ email không đúng'
+		);
+		$rules = array(
+			'name' => 'required',
+			'email'=>'required|email',
+			'phone'=>'required|digits_between:10,11',
+			'title'=>'required',
+			'content'=>'required',
+		);
+		$validator = Validator::make(Input::all(), $rules, $messages);
+		if ($validator->fails())
+		{
+			return response()->json(['success'=>false,
+				'messageType'=>'validation',
+				'message'=>$validator->getMessageBag()->toArray()
+			]);
+		}else{
+			$contentMessage=[
+				'requestFrom'=>(!empty(Auth::user()->id)) ? 'user' : 'ip', 
+				'name'=>$name, 
+				'email'=>$email, 
+				'phone'=>$phone, 
+				'title'=>$title, 
+				'content'=>$content
+			]; 
+			$messageInsert=[
+				'type'=>'contact', 
+				'from'=>(!empty(Auth::user()->id)) ? Auth::user()->id : Request::ip(), 
+				'to'=>$this->_channel->id, 
+				'message_title'=>'Bạn nhận được 1 liên hệ từ '.$this->_channel->channel_name, 
+				'message_body'=>json_encode($contentMessage), 
+				'message_status'=>'unread', 
+				'message_send'=>'pending', 
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			]; 
+			Messages::create($messageInsert); 
+			return response()->json(['success'=>true,
+				'message'=>$messageInsert
+			]);
+		}
+	}
+	public function contactConfig()
+    {
+		if($this->_security==true){
+			$view = array();
+			return $this->_theme->of('themes.admin.contact', $view)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function contactUpdate()
+    {
+		if($this->_security==true){
+			$channelId=Input::get('channelId'); 
+			$channelDomain=Input::get('channelDomain'); 
+			$channelCompanyName=Input::get('channelCompanyName'); 
+			$channelCompanyAddress=Input::get('channelCompanyAddress'); 
+			$channelPhone=Input::get('channelPhone'); 
+			$channelEmail=Input::get('channelEmail'); 
+			$channelRegion=Input::get('channelRegion');
+			$channelSubRegion=Input::get('channelSubRegion');
+			$messages = array(
+				'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
+				'required' => 'Vui lòng nhập thông tin (*).',
+				'numeric' => 'Số điện thoại phải dạng số',
+				'email' => 'Địa chỉ email không đúng'
+			);
+			$rules = array(
+				'channelCompanyName' => 'required',
+				'channelCompanyAddress' => 'required',
+				'channelPhone'=>'required|digits_between:10,11',
+				'channelEmail'=>'required|email',
+				'channelRegion'=>'required',
+				'channelSubRegion'=>'required',
+			);
+			$validator = Validator::make(Input::all(), $rules, $messages);
+			if ($validator->fails())
+			{
+				return response()->json(['success'=>false,
+					'messageType'=>'validation',
+					'message'=>$validator->getMessageBag()->toArray(),
+					'input'=>Input::all()
+				]);
+			}else{
+				/*----Company --*/
+				$messageCompany='false'; 
+				$getCompany=Company::where('company_name','=',$channelCompanyName)->first(); 
+				if(!empty($getCompany->company_name)){
+					$getCompany->company_name=$channelCompanyName; 
+					$getCompany->company_address=$channelCompanyAddress; 
+					$getCompany->company_region=$channelRegion; 
+					$getCompany->company_subregion=$channelSubRegion; 
+					$getCompany->company_updated_at=Carbon::now()->format('Y-m-d H:i:s'); 
+					$getCompany->company_status='pending'; 
+					$getCompany->save(); 
+					$insert_company_join=[
+						'channel_id'=>$this->_channel->id, 
+						'company_id'=>$getCompany->id
+					];
+					Company_join_channel::where('channel_id','=',$this->_channel->id)->delete(); 
+					Company_join_channel::insertGetId($insert_company_join); 
+				}else{
+					$insert_company = [
+						'company_name' => $channelCompanyName,
+						'company_address' => $channelCompanyAddress,
+						'company_region' => $channelRegion,
+						'company_subregion' => $channelSubRegion,
+						'company_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'company_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'company_status'=>'pending'
+					];
+					$id_company = Company::insertGetId($insert_company); 
+					if(isset($id_company)){
+						$insert_company_join=[
+							'channel_id'=>$this->_channel->id, 
+							'company_id'=>$id_company
+						];
+						Company_join_channel::where('channel_id','=',$this->_channel->id)->delete(); 
+						$id_company_join = Company_join_channel::insertGetId($insert_company_join); 
+						$insert_company_attribute=[
+							'parent_id'=>$id_company, 
+							'attribute_type'=>'author', 
+							'attribute_value'=>Auth::user()->id, 
+							'attribute_status'=>'active', 
+							'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+						];
+						Company_attribute::insertGetId($insert_company_attribute); 
+					}
+				}
+				/*----Company End --*/
+				
+				/*----Phone --*/
+				$getPhone=Phone::where('phone_number','=',$channelPhone)->first(); 
+				if(empty($getPhone->phone_number)){
+					$insert_phone = [
+						'phone_number' => $channelPhone,
+						'phone_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'phone_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'phone_status'=>'pending'
+					];
+					$idPhone = Phone::insertGetId($insert_phone); 
+				}else{
+					$idPhone =$getPhone->id; 
+				}
+				Phone_join::where('phone_join_table','=','channel')
+					->where('table_parent_id','=',$this->_channel->id)
+					->delete(); 
+				Phone_join::insertGetId(array(
+					'phone_join_table'=>'channel',
+					'table_parent_id'=>$this->_channel->id, 
+					'phone_parent_id'=>$idPhone, 
+					'phone_join_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+				)); 
+				/*----Phone End--*/
+				
+				/*----Email --*/
+				$getEmail=Email::where('email_address','=',$channelEmail)->first(); 
+				if(empty($getEmail->email_address)){
+					$insert_email = [
+							'email_address' => $channelEmail,
+							'email_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							'email_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+							'email_status'=>'pending'
+						];
+					$idEmail = Email::insertGetId($insert_email);  
+				}else{
+					$idEmail =$getEmail->id; 
+				}
+				Email_join::where('email_join_table','=','channel')
+					->where('table_parent_id','=',$this->_channel->id)
+					->delete(); 
+				Email_join::insertGetId(array(
+					'email_join_table'=>'channel',
+					'table_parent_id'=>$this->_channel->id, 
+					'email_parent_id'=>$idEmail, 
+					'email_join_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+				)); 
+				/*----Email End --*/
+				/*----Channel Join Region --*/
+				Channel_join_region::where('channel_id','=',$this->_channel->id)->delete(); 
+				Channel_join_region::insertGetId(array( 
+					'region_id'=>$channelRegion, 
+					'channel_id'=>$this->_channel->id, 
+				));
+				/*----Channel Join Region End --*/
+				/*----Channel Join SubRegion --*/
+				Channel_join_subregion::where('channel_id','=',$this->_channel->id)->delete(); 
+				Channel_join_subregion::insertGetId(array(
+					'subregion_id'=>$channelSubRegion, 
+					'channel_id'=>$this->_channel->id, 
+				));
+				/*----Channel Join SubRegion End --*/
+				return response()->json(['success'=>true,
+					'messageType'=>'success',
+					'url_redirect'=>route('channel.admin.contact'),
+					'message'=>'Đã cập nhật thông tin! ', 
+				]);
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	
+	public function theme()
+    {
+		if($this->_security==true){
+			$view = array();
+			return $this->_theme->of('themes.admin.theme', $view)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function emailList(){
+		$view = array();
+		return $this->_theme->of('themes.admin.tools.email.emailList', $view)->render(); 
+	}
+	
+	
+}

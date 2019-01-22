@@ -1,0 +1,776 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\Paginator;
+use Request;
+use Illuminate\Support\Str;
+use Auth;
+use App\Permission;
+use App\Role;
+use App\User;
+use App\Model\Users_join; 
+use App\Model\Users_attribute;  
+use App\Model\Email;
+use App\Model\Email_join;
+use App\Model\Phone;
+use App\Model\Phone_join; 
+use App\Model\Fields;
+use App\Model\Channel; 
+use App\Model\Channel_join; 
+use App\Model\Channel_join_region;
+use App\Model\Channel_join_subregion;
+use App\Model\Channel_join_district;
+use App\Model\Channel_join_ward;
+use App\Model\Channel_join_field;
+use App\Model\Channel_role;
+use App\Model\Channel_attribute; 
+use App\Model\Domain;
+use App\Model\Domain_join; 
+use App\Model\Domain_join_channel;
+use App\Model\Domain_attribute; 
+use App\Model\Services; 
+use App\Model\Services_attribute; 
+use Pdp\PublicSuffixListManager; 
+use Pdp\Parser; 
+use Carbon\Carbon;
+use App\Model\History; 
+use App\Model\Posts; 
+use App\Model\Posts_join_channel; 
+use App\Model\Media; 
+use App\Model\Media_join; 
+use App\Model\Media_join_post; 
+use App\Model\Media_join_channel; 
+use App\Model\Messages;
+use File;
+use Youtube; 
+use App\Model\Voucher; 
+use App\Model\Voucher_attribute; 
+use App\Model\Voucher_join; 
+use Theme;
+use WebService; 
+use Route; 
+use Redirect; 
+use Response; 
+use Input; 
+use Validator; 
+use Hash;
+class ChannelController extends Controller
+{
+	protected $_domain; 
+	protected $_channel; 
+	protected $_channelColor; 
+	protected $_theme; 
+	protected $_parame; 
+	protected $_security; 
+	public function __construct(){
+		$this->_security=false; 
+		$this->_parame=Route::current()->parameters(); 
+		$this->_domain=WebService::getDomain($this->_parame['domain']); 
+		$this->beforeFilter(function()
+		{
+			if(empty($this->_domain->domain)){
+				return Redirect::to('//'.config('app.url'));
+			}elseif($this->_domain->domain_primary!='default'){
+				foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
+					if($domain->domain->domain_primary=='default'){
+						return Redirect::to('//'.$domain->domain->domain);
+					}
+				}
+			}else{
+				$this->_channel=$this->_domain->domainJoinChannel->channel; 
+				$this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default'); 
+				//$this->_channel->increment('channel_view',1);
+				if(Auth::check()){
+					$user=Auth::user(); 
+					if($user->hasRole(['admin', 'manage'])){
+						$this->_security=true;
+					}
+					$getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first(); 
+					if(!empty($getRoleChannel->id)){
+						$getRole=Role::findOrFail($getRoleChannel->role_id); 
+						$role_permissions = $getRole->perms()->get();
+						foreach ($role_permissions as $permission) {
+							if ($permission->name == 'manager_channel') {
+								$this->_security=true;
+							}
+						}
+					}
+				}
+				view()->share(
+					'channel',array(
+						'domain'=>$this->_domain, 
+						'info'=>$this->_channel, 
+						'security'=>$this->_security, 
+						'category'=>$this->_channel->getCategory, 
+						'theme'=>$this->_theme, 
+						'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
+					)
+				);
+			}
+		});
+	}
+	public function channelViewSlug(){
+		$slug=explode('-',$this->_parame['slug']); 
+		$getChannel=Channel::find($slug[0]); 
+		if(!empty($getChannel->id)){
+			$getChannel->increment('channel_view',1);
+			$return=array(
+				'channelInfo'=>$getChannel
+			); 
+			return $this->_theme->scope('channel.view', $return)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelList()
+    {
+		$this->_channel->increment('channel_view',1);
+		$channelList=Channel::where('channel.channel_parent_id','=',$this->_channel->id)
+			->where('channel.channel_status','=','active')
+			->join('domain_join_channel','domain_join_channel.channel_id','=','channel.id')
+			->groupBy('channel.id')
+			->orderBy('channel.service_attribute_id','desc')
+			->orderBy('channel.channel_updated_at','desc')->paginate(8); 
+		$return = array(
+			'channelList'=>$channelList
+		);
+		return $this->_theme->scope('channel.list', $return)->render();
+	}
+	public function trashList() 
+	{
+		if($this->_security==true){
+			$getPosts=Posts_join_channel::where('posts_join_channel.channel_id','=',$this->_channel->id)
+			->join('posts','posts.id','=','posts_join_channel.posts_id')
+			->where('posts.posts_status','!=','active')
+			->orderBy('posts.posts_updated_at','desc')
+			->select('posts.*')
+			->paginate(8); 
+			$return = array(
+				'theme'=>$this->_theme, 
+				'getPosts'=>$getPosts
+			);
+			return $this->_theme->of('themes.admin.channel.trash', $return)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAdd()
+    {
+		if(Auth::check()){
+			$return = array();
+			return $this->_theme->scope('channel.add', $return)->render();
+		}else{
+			$view = array();
+			return $this->_theme->of('themes.admin.user.login', $view)->render(); 
+		}
+	}
+	public function channelAddRequest()
+    {
+		$Domains=Input::get('Domains'); 
+		$channelName=Input::get('channelName'); 
+		$channelDescription=Input::get('channelDescription'); 
+		$channelField=Input::get('channelField');
+		$channelRegion=Input::get('channelRegion'); 
+		$channelSubregion=Input::get('channelSubregion'); 
+		$channelPackge=Input::get('channelPackge'); 
+		$messages = array(
+			'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
+			'required' => 'Vui lòng nhập',
+			'numeric' => 'Dữ liệu phải dạng số', 
+			'min'=>'Chọn ít nhất 1 lĩnh vực hoạt động'
+		);
+		$rules = array(
+			'channelName' => 'required',
+			'channelDescription'=>'required',
+			'channelRegion'=>'required',
+			'channelSubregion'=>'required',
+		);
+		$validator = Validator::make(Input::all(), $rules, $messages);
+		if ($validator->fails())
+		{
+			return response()->json(['success'=>false,
+				'messageType'=>'validation',
+				'message'=>$validator->getMessageBag()->toArray(),
+				'input'=>Input::all()
+			]);
+		}else{
+			$listDomain=json_decode($Domains,true); 
+			$jsonField=json_decode($channelField,true); 
+			if(count($jsonField)<=0){
+				$error='Vui lòng chọn ít nhất 1 lĩnh vực hoạt động'; 
+			}
+			if(count($listDomain)<=0){
+				$error='Vui lòng chọn ít nhất 1 tên miền'; 
+			}
+			$checkHistory=History::where('author','=',Auth::user()->id)
+				->where('history_type','=','channel_add')
+				->orderBy('created_at','asc')
+				->first(); 
+			if(!empty($checkHistory->created_at)){
+				if(Carbon::parse($checkHistory->created_at)->addMinutes(60) > Carbon::now()->format('Y-m-d H:i:s')){
+					$error='Mỗi website tạo cách nhau 60 phút. Lần tạo gần đây nhất của bạn cách đây '.WebService::time_request($checkHistory->created_at); 
+				}
+			}
+			if(empty($error)){
+				$idChannel=Channel::insertGetId(array(
+					'channel_name'=>$channelName, 
+					'channel_description'=>$channelDescription, 
+					'channel_parent_id'=>$this->_channel->id, 
+					'service_attribute_id'=>$channelPackge,
+					'channel_status'=>'active', 
+					'channel_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+					'channel_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+					'channel_date_end'=>Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))->addMonth(1)->format('Y-m-d H:i:s')
+				)); 
+				if($idChannel){
+					Channel_attribute::insertGetId(array(
+						'channel_parent_id'=>$idChannel, 
+						'channel_attribute_type'=>'author', 
+						'channel_attribute_value'=>Auth::user()->id, 
+						'channel_attribute_status'=>'active', 
+						'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+					)); 
+					Channel_role::insertGetId(array(
+						'parent_id'=>$idChannel, 
+						'user_id'=>Auth::user()->id, 
+						'role_id'=>1, 
+						'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+						'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+					)); 
+					Channel_attribute::insertGetId(array(
+						'channel_parent_id'=>$idChannel, 
+						'channel_attribute_type'=>'theme', 
+						'channel_attribute_value'=>1, 
+						'channel_attribute_status'=>'active', 
+						'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+					)); 
+					Channel_join_region::insertGetId(array(
+						'region_id'=>$channelRegion, 
+						'channel_id'=>$idChannel
+					)); 
+					Channel_join_subregion::insertGetId(array(
+						'subregion_id'=>$channelSubregion, 
+						'channel_id'=>$idChannel, 
+					)); 
+					foreach($jsonField as $value){
+						Channel_join_field::insertGetId(array(
+							'field_id'=>$value, 
+							'channel_id'=>$idChannel, 
+						));
+					} 
+					foreach($listDomain as $domain){
+						if($domain['type']=='local'){
+							$idDomain=Domain::insertGetId(array(
+								'domain'=>$domain['name'], 
+								'domain_primary'=>'default', 
+								'domain_location'=>$domain['type'], 
+								'service_attribute_id'=>2, 
+								'status'=>'active', 
+								'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+							)); 
+							if($idDomain){
+								Domain_attribute::insertGetId(array(
+									'parent_id'=>$idDomain, 
+									'attribute_type'=>'author', 
+									'attribute_value'=>Auth::user()->id, 
+									'attribute_status'=>'active', 
+									'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+								)); 
+								Domain_join_channel::insertGetId(array(
+									'channel_id'=>$idChannel, 
+									'domain_id'=>$idDomain, 
+								)); 
+							}
+						}else{
+							$pslManager = new PublicSuffixListManager(); 
+							$parser = new Parser($pslManager->getList());
+							if($parser->isSuffixValid($domain['name'])==true){
+								$domainName = $parser->parseUrl($domain['name']); 
+								//$getService=Services::find(4); 
+								$idDomain=Domain::insertGetId(array(
+									'domain'=>$domainName->host->registerableDomain, 
+									'domain_primary'=>'none', 
+									'domain_location'=>$domain['type'], 
+									'service_attribute_id'=>Services::find(4)->attribute->where('attribute_type','=',$domainName->host->publicSuffix)->first()->id, 
+									'status'=>'pending', 
+									'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+								)); 
+								if($idDomain){
+									Domain_attribute::insertGetId(array(
+										'parent_id'=>$idDomain, 
+										'attribute_type'=>'author', 
+										'attribute_value'=>Auth::user()->id, 
+										'attribute_status'=>'active', 
+										'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+									)); 
+									Domain_join_channel::insertGetId(array(
+										'channel_id'=>$idChannel, 
+										'domain_id'=>$idDomain, 
+									)); 
+								}
+							}
+						}
+					}
+					$getChannelNoDomain=Channel::find($idChannel); 
+					$domainLocal=false; 
+					if(count($getChannelNoDomain->domainAll)>0){
+						foreach($getChannelNoDomain->domainAll as $domainLocalCheck){
+							if($domainLocalCheck->domain->domain_location=='local'){
+								$domainLocal=true; 
+							}
+						}
+					}
+					if($domainLocal==false){
+						$idDomain=Domain::insertGetId(array(
+							'domain_primary'=>'default', 
+							'domain_location'=>'local', 
+							'service_attribute_id'=>2, 
+							'status'=>'active', 
+							'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+						)); 
+						if($idDomain){
+							Domain_attribute::insertGetId(array(
+								'parent_id'=>$idDomain, 
+								'attribute_type'=>'author', 
+								'attribute_value'=>Auth::user()->id, 
+								'attribute_status'=>'active', 
+								'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+							)); 
+							Domain_join_channel::insertGetId(array(
+								'channel_id'=>$idChannel, 
+								'domain_id'=>$idDomain, 
+							)); 
+							$getDomainLocal=Domain::find($idDomain); 
+							$getDomainLocal->domain=$idDomain.'.'.$this->_domain->domain; 
+							$getDomainLocal->save(); 
+						}
+					}
+				}
+				$getChannel=Channel::find($idChannel); 
+				$contentMessage=[
+					'channel'=>$getChannel
+				];
+				$messageInsert=[
+					'type'=>'channelAdd', 
+					'from'=>$this->_channel->id, 
+					'to'=>Auth::user()->id, 
+					'message_title'=>$getChannel->channel_name.' được tạo thành công tại '.$this->_channel->channel_name, 
+					'message_body'=>json_encode($contentMessage), 
+					'message_status'=>'unread', 
+					'message_send'=>'pending', 
+					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+					'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+				]; 
+				Messages::create($messageInsert); 
+				$listHistory=array(
+					'history_type'=>'channel_add', 
+					'parent_id'=>$idChannel, 
+					'author'=>Auth::user()->id,
+					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				); 
+				History::insertGetId($listHistory); 
+				if($getChannel->domainJoinPrimary->domain->domain_primary!='default'){
+					if(count($getChannel->domainAll)>0){
+						foreach($getChannel->domainAll as $domain){
+							if($domain->domain->domain_primary=='default'){
+								$domainPrimary=$domain->domain->domain; 
+							}
+						}
+					}else{
+						$domainPrimary=$getChannel->domainJoinPrimary->domain->domain; 
+					}
+				}else{
+					$domainPrimary=$getChannel->domainJoinPrimary->domain->domain; 
+				}
+				return response()->json(['success'=>true, 
+					'message'=>'Chúc mừng bạn đã tạo website thành công! ', 
+					'channelDomain'=>$domainPrimary
+				]);
+			}
+			else{
+				return response()->json(['success'=>false, 
+					'message'=>$error, 
+					'channelPackge'=>$channelPackge
+				]);
+			}
+		}
+	}
+	public function channelUpdateId(){
+		if($this->_security==true){
+			$date_begin=Input::get('date_begin'); 
+			$date_end=Input::get('date_end'); 
+			$channelPackge=Input::get('channelPackge'); 
+			$this->_channel->channel_created_at=Carbon::parse(Carbon::createFromFormat('d-m-Y', $date_begin))->format('Y-m-d H:i:s'); 
+			$this->_channel->channel_date_end=Carbon::parse(Carbon::createFromFormat('d-m-Y', $date_end))->format('Y-m-d H:i:s'); 
+			$this->_channel->service_attribute_id=$channelPackge; 
+			$this->_channel->save(); 
+			return response()->json(['success'=>true,
+				'message'=>'Thông tin đã được lưu ', 
+			]);
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function setting()
+    {
+		if($this->_security==true){
+			$getField=$this->_channel->fields; 
+			$getFieldsAll=Fields::where('name','!=',"")->where('status','=',0)->orderBy('sort_order','desc')->get();
+			$Field_id=array(); 
+			if(isset($getField)){
+				foreach ($getField as $Field) {
+					$Field_id[] = $Field->field->id;
+				}
+			}
+			$showFieldChannel=WebService::showMenuFields($getFieldsAll,$Field_id,0,""); 
+			$getSeo=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)->where('channel_attribute_type','=','seo')->first(); 
+			$view = array(
+				'channel_fields'=>$showFieldChannel, 
+				'getSeo'=>(!empty($getSeo->channel_attribute_value)) ? json_decode($getSeo->channel_attribute_value) : array()
+			);
+			return $this->_theme->of('themes.admin.setting', $view)->render();
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function settingUpdate(Request $request)
+    {
+		if($this->_security==true){
+			$channelId=$this->_channel->id; 
+			$channelName=Input::get('channelName'); 
+			$channelDescription=Input::get('channelDescription'); 
+			$channelField=Input::get('channelField'); 
+			$metaTitle=Input::get('metaTitle'); 
+			$metaDescription=Input::get('metaDescription'); 
+			$dataUpdateChannel=[
+				'channel_name'=>$channelName, 
+				'channel_description'=>$channelDescription, 
+				'channel_updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			];
+			$channelUpdate=Channel::where('id','=',$this->_channel->id)
+				->update($dataUpdateChannel); 
+			$jsonField=json_decode($channelField);
+			if(count($jsonField)>0){
+				Channel_join_field::where('channel_id','=',$this->_channel->id)->delete();  
+				foreach($jsonField as $Field_id){
+					Channel_join_field::insertGetId(array(
+						'field_id'=>$Field_id, 
+						'channel_id'=>$this->_channel->id
+					));
+				}
+			}
+			if($channelUpdate){
+				$attributeSEO=[
+					'metaTitle'=>$metaTitle, 
+					'metaDescription'=>$metaDescription
+				];
+				Channel_attribute::where('channel_parent_id','=',$this->_channel->id)->where('channel_attribute_type','=','seo')->delete(); 
+				Channel_attribute::insertGetId(array(
+					'channel_parent_id'=>$this->_channel->id, 
+					'channel_attribute_type'=>'seo', 
+					'channel_attribute_value'=>json_encode($attributeSEO)
+				)); 
+				return response()->json(['success'=>true, 
+					'message'=>'Cập nhật thông tin thành công! ', 
+				]);
+				//return Redirect::route('channel.admin.setting',$this->_domain->domain)-> with('message','Đã cập nhật');
+			}else{
+				return response()->json(['success'=>false, 
+					'message'=>'Không thể cập nhật! ', 
+				]);
+				//return Redirect::route('channel.admin.setting',$this->_domain->domain)-> with('message','Không thể cập nhật');
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function profileRemoveUserManager()
+    {
+		$userId=Input::get('userId'); 
+		Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+		->where('channel_attribute_type','=','author')
+		->where('channel_attribute_value','=',$userId)
+		->delete();   
+		return response()->json(['success'=>true,
+			'message'=>'Xóa quyền quản lý thành công', 
+		]);
+	}
+	public function profileAddUserManager()
+    {
+		$userId=Input::get('userId'); 
+		Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+		->where('channel_attribute_type','=','author')
+		->where('channel_attribute_value','=',$userId)
+		->delete();  
+		Channel_attribute::insertGetId(array(
+			'channel_attribute_type'=>'author', 
+			'channel_parent_id'=>$this->_channel->id, 
+			'channel_attribute_value'=>$userId, 
+			'channel_attribute_status'=>'active', 
+			'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+			'channel_attribute_updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+		)); 
+		return response()->json(['success'=>true,
+			'message'=>'Cấp quyền quản lý thành công', 
+		]);
+	}
+	public function profileJoinChannel()
+    {
+		/*Users_join::where('user_join_table','=','channel')
+		->where('table_parent_id','=',$this->_channel->id)
+		->where('user_parent_id','=',Auth::user()->id)
+		->delete();  
+		*/
+		$getChannelRole=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first(); 
+		if(!empty($getChannelRole->id)){
+			$getChannelRole->role_id=3; 
+			$getChannelRole->save(); 	
+		}else{
+			Channel_role::insertGetId(array(
+				'parent_id'=>$this->_channel->id, 
+				'user_id'=>Auth::user()->id, 
+				'role_id'=>3, 
+				'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+				'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			)); 
+		}
+		/*Users_join::insertGetId(array(
+			'user_join_table'=>'channel', 
+			'table_parent_id'=>$this->_channel->id, 
+			'user_parent_id'=>Auth::user()->id, 
+			'user_join_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
+			'user_join_updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+		)); 
+		*/
+		return response()->json(['success'=>true,
+			'message'=>'Gia nhập thành công', 
+		]);
+	}
+	public function channelAttributeColor()
+    {
+		if($this->_security==true){
+			$dataColor=Input::get('dataColor'); 
+			$channelColor=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+				->where('channel_attribute_type','=','channel_color')->first(); 
+			if(!empty($channelColor->channel_attribute_value)){
+				Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+					->where('channel_attribute_type','=','channel_color')->delete(); 
+			}
+			Channel_attribute::insertGetId(array(
+				'channel_parent_id'=>$this->_channel->id, 
+				'channel_attribute_type'=>'channel_color', 
+				'channel_attribute_value'=>$dataColor, 
+				'channel_attribute_status'=>'active', 
+				'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			)); 
+			return response()->json(['success'=>true,
+				'message'=>'Đã cập nhật màu sắc', 
+			]);
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAttributeColorReset()
+    {
+		if($this->_security==true){
+			Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+				->where('channel_attribute_type','=','channel_color')->delete(); 
+				
+			return response()->json(['success'=>true,
+				'message'=>'Đã đặt lại màu sắc', 
+			]);
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAttributeImageCover()
+	{
+		$getChannel=Channel::find($this->_parame['id']); 
+		$media=array(); 
+		foreach($getChannel->channelAttributeBanner as $medias){
+			$media[]=$medias->media; 
+		}
+		return response()->json(['success'=>true,
+			'gallery'=>$media
+		]);	
+	}
+	public function channelAttributeMediaBackgroundChange()
+    {
+		if($this->_security==true){
+			$mediaId=Input::get('mediaId'); 
+			$getMedia=Media::find($mediaId); 
+			if(!empty($getMedia->media_url)){
+				$gallery=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+					->where('channel_attribute_type','=','background')->first(); 
+				if(!empty($gallery->media->media_url)){
+					File::delete($gallery->media->media_path.$gallery->media->media_name); 
+					File::delete($gallery->media->media_path.'thumb/'.$gallery->media->media_name);
+					File::delete($gallery->media->media_path.'small/'.$gallery->media->media_name);
+					File::delete($gallery->media->media_path.'xs/'.$gallery->media->media_name);
+					Media::where('id','=',$gallery->media->id)->delete(); 
+					$gallery->delete(); 
+				}
+				Channel_attribute::insertGetId(array(
+					'channel_parent_id'=>$this->_channel->id, 
+					'channel_attribute_type'=>'background', 
+					'channel_attribute_value'=>$getMedia->id, 
+					'channel_attribute_status'=>'active', 
+					'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+				)); 
+				return response()->json(['success'=>true,
+					'message'=>'Đã cập nhật hình nền', 
+				]);
+			}else{
+				return response()->json(['success'=>false,
+					'message'=>'Không thể cập nhật hình nền', 
+				]);
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAttributeMediaLogoChange()
+    {
+		if($this->_security==true){
+			$mediaId=Input::get('mediaId'); 
+			$getMedia=Media::find($mediaId); 
+			if(!empty($getMedia->media_url)){
+				$gallery=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+					->where('channel_attribute_type','=','logo')->first(); 
+				if(!empty($gallery->media->media_url)){
+					File::delete($gallery->media->media_path.$gallery->media->media_name); 
+					File::delete($gallery->media->media_path.'thumb/'.$gallery->media->media_name);
+					File::delete($gallery->media->media_path.'small/'.$gallery->media->media_name);
+					File::delete($gallery->media->media_path.'xs/'.$gallery->media->media_name);
+					Media::where('id','=',$gallery->media->id)->delete(); 
+					$gallery->delete(); 
+				}
+				Channel_attribute::insertGetId(array(
+					'channel_parent_id'=>$this->_channel->id, 
+					'channel_attribute_type'=>'logo', 
+					'channel_attribute_value'=>$getMedia->id, 
+					'channel_attribute_status'=>'active', 
+					'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+				)); 
+				return response()->json(['success'=>true,
+					'message'=>'Đã thay đổi logo', 
+				]);
+			}else{
+				return response()->json(['success'=>false,
+					'message'=>'Không thể cập nhật Logo', 
+				]);
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAttributeMediaAdd()
+    {
+		if($this->_security==true){
+			$channelId=Input::get('channelId'); 
+			$channelAttributeType=Input::get('channelAttributeType'); 
+			$channelAttributeValue=Input::get('channelAttributeValue'); 
+			$idAttribute=Channel_attribute::insertGetId(array(
+				'channel_parent_id'=>$this->_channel->id, 
+				'channel_attribute_type'=>$channelAttributeType, 
+				'channel_attribute_value'=>$channelAttributeValue, 
+				'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+			)); 
+			$gallery=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+				->where('channel_attribute_type','=',$channelAttributeType)->get(); 
+			$media=array(); 
+			foreach($gallery as $medias){
+				$media[]=$medias->media; 
+			}
+			return response()->json(['success'=>true,
+				'message'=>'Đã thêm hình ảnh', 
+				'media'=>$media
+			]);
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+	public function channelAttributeMediaDelete()
+    {
+		if($this->_security==true){
+			$mediaId=Input::get('mediaId');  
+			$channelAttributeType=Input::get('channelAttributeType');  
+			$gallery=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+				->where('channel_attribute_type','=',$channelAttributeType)
+				->where('channel_attribute_value','=',$mediaId)->first(); 
+			if(!empty($gallery->media->media_url)){
+				File::delete($gallery->media->media_path.$gallery->media->media_name); 
+				File::delete($gallery->media->media_path.'thumb/'.$gallery->media->media_name);
+				File::delete($gallery->media->media_path.'small/'.$gallery->media->media_name);
+				File::delete($gallery->media->media_path.'xs/'.$gallery->media->media_name);
+				Media::where('id','=',$gallery->media->id)->delete(); 
+				Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+					->where('channel_attribute_type','=',$channelAttributeType)
+					->where('id','=',$gallery->id)->delete(); 
+					
+				$getGallery=Channel_attribute::where('channel_parent_id','=',$this->_channel->id)
+					->where('channel_attribute_type','=',$channelAttributeType)->get(); 
+				$media=array(); 
+				foreach($getGallery as $medias){
+					$media[]=$medias->media; 
+				}
+				return response()->json(['success'=>true,
+					'message'=>'Đã xóa! '.$gallery->media->media_name, 
+					'media'=>$media
+				]);	
+			}else{
+				return response()->json(['success'=>false,
+					'message'=>'Không tìm thấy media! ', 
+				]);	
+			}
+		}else{
+			$view = array(
+				'channel'=>$this->_channel, 
+				'domain'=>$this->_domain, 
+			); 
+			return $this->_theme->of('themes.404', $view)->render(); 
+		}
+	}
+}

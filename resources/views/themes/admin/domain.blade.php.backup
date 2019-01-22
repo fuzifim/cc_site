@@ -1,0 +1,293 @@
+<?
+	$channel['theme']->setTitle('Quản lý tên miền');
+?>
+@include('themes.admin.inc.header')
+<div class="section">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+				<div class="list-group">
+					<a href="{{route('channel.admin.dashboard',$channel['domain']->domain)}}" class="list-group-item"><i class="glyphicon glyphicon-dashboard"></i> Bảng điều khiển</a>
+					<a href="{{route('channel.admin.setting',$channel['domain']->domain)}}" class="list-group-item"><i class="glyphicon glyphicon-cog"></i> Cài đặt</a>
+					<a href="{{route('channel.domain.list',$channel['domain']->domain)}}" class="list-group-item active"><i class="glyphicon glyphicon-globe"></i> Tên miền</a>
+					<a href="#" class="list-group-item"><i class="glyphicon glyphicon-hdd"></i> Hosting</a>
+					<a href="#" class="list-group-item"><i class="glyphicon glyphicon-cloud"></i> Cloud Server</a>
+					<a href="#" class="list-group-item"><i class="glyphicon glyphicon-envelope"></i> Email Server</a>
+				</div>
+			</div>
+			<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Kiểm tra tên miền</h3>
+							</div>
+							<div class="panel-body">
+								<div class="message"></div>
+								<div class="form-group">
+									<code>Nhập tên miền để kiểm tra trước khi thêm</code>
+									<div class="input-group">
+										<span class="input-group-addon">http://</span>
+										<input type="text" required="required" class="form-control" placeholder="vd: example.com" name="domain" id="domain" value="" style=""/>
+										<span class="input-group-addon">
+											<button type="submit" class="btn btn-xs btn-primary" style="padding:0px 5px;" id="btnCheckDomain"><i class="glyphicon glyphicon-refresh"></i> <span class="hidden-xs">Kiểm tra</span></button>
+										</span>
+									</div>
+								</div>
+								<div class="resultCheckDomain"></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<h3 class="panel-title">Danh sách tên miền</h3>
+							</div>
+							<ul class="list-group listDomain">
+								@foreach($channel['info']->domainAll as $domains)
+									@if($domains->domain->domain_location=='local')
+										<li class="list-group-item  @if($domains->domain->domain_primary=='default') list-group-item-success @else list-group-item-default @endif">
+											@if($domains->domain->domain_primary=='default')
+												<button type="button" class="btn btn-xs btn-primary disabled"><i class="glyphicon glyphicon-ok"></i> </button>
+											@else
+												<button type="button" class="btn btn-xs btn-default setDomainPrimary" data-id="{{$domains->domain->id}}"><i class="glyphicon glyphicon-ok"></i> </button>
+											@endif
+											{{$domains->domain->domain}} <code>Mặc định</code>
+										</li>
+									@elseif($domains->domain->domain_location!='local')
+										@if(gethostbyname($domains->domain->domain)!=config('app.ip_address'))
+											<li class="list-group-item  @if($domains->domain->domain_primary=='default') list-group-item-success @else list-group-item-default @endif">
+											{{$domains->domain->domain}} Tên miền chưa được kích hoạt 
+											<button type="button" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-retweet"></i> thử lại</button></li>
+										@else
+											<li class="list-group-item @if($domains->domain->domain_primary=='default') list-group-item-success @else list-group-item-default @endif">
+												@if($domains->domain->domain_primary=='default')
+													<button type="button" class="btn btn-xs btn-primary disabled"><i class="glyphicon glyphicon-ok"></i> </button>
+												@else
+													<a href="#" class="close domainDelete" data-id="{{$domains->domain->id}}" data-dismiss="alert" aria-label="close">&times;</a>
+													<button type="button" class="btn btn-xs btn-default setDomainPrimary" data-id="{{$domains->domain->id}}"><i class="glyphicon glyphicon-ok"></i> </button>
+												@endif
+												{{$domains->domain->domain}} @if($domains->domain->domain_primary=='default')<code>Tên miền chính</code>@endif
+											</li>
+										@endif
+									@else
+										@if(gethostbyname($domains->domain->domain)!=config('app.ip_address'))
+											<li class="list-group-item list-group-item-warning">
+												<a href="#" class="close domainDelete" data-id="{{$domains->domain->id}}" data-dismiss="alert" aria-label="close">&times;</a>
+												<strong>{{$domains->domain->domain}}</strong> Chưa được kích hoạt, bạn cần trỏ Record A của tên miền về địa chỉ IP: <code>{{config('app.ip_address')}}</code>. Địa chỉ IP hiện tại là: <code>{!!gethostbyname($domains->domain->domain)!!}</code> 
+												<button type="button" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-retweet"></i> thử lại</button>
+											</li>
+										@else
+											<li class="list-group-item">
+												<a href="#" class="close domainDelete" data-id="{{$domains->domain->id}}" data-dismiss="alert" aria-label="close">&times;</a>
+												<strong>{{$domains->domain->domain}}</strong>
+											</li>
+										@endif
+									@endif
+								@endforeach
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="loading">
+	<ul class="bokeh">
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+<script>
+	$('.setDomainPrimary').click(function () {
+		var formData = new FormData();
+		formData.append("domainId", $(this).attr('data-id')); 
+        $.ajax({
+            url: "{{route('channel.domain.set.primary',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				//console.log(result); 
+				location.reload();
+            }
+        });
+	});
+	$('#btnCheckDomain').click(function () {
+		$('.resultCheckDomain').empty(); 
+		$('#loading').css('visibility', 'visible'); 
+		$('.message').empty(); 
+		var domain=$('input[name=domain]').val(); 
+		var formData = new FormData();
+		formData.append("domain", domain); 
+		formData.append("checkType", 'status'); 
+        $.ajax({
+            url: "{{route('channel.domain.check',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				console.log(result); 
+				$('#loading').css('visibility', 'hidden'); 
+				if(result.success==true){
+					if(result.domainInfo.channel.status=='Unavailable'){
+						$('.resultCheckDomain').append(''
+							+'<div class="form-group">'
+								+'<div class="alert alert-info">'
+									+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+									+'<div class="form-group">Tên miền <strong>'+domain+'</strong> Đã được đăng ký. <button type="button" class="btn btn-xs btn-info" id="domainView"><i class="glyphicon glyphicon-info-sign"></i> Xem thông tin chủ sở hữu</button></div>'
+									+'<div class="form-group"><li>Nếu bạn là chủ sở hữu của tên miền <strong>'+domain+'</strong>, bạn chỉ cần nhấp vào nút thêm ở bên dưới và sau đó trỏ Record A về địa chỉ ip: <code>139.59.241.224</code>.</li> '
+										+'<li>Nếu bạn không phải là chủ sở hữu tên miền này, <a href="#" class="btn btn-xs btn-danger" data-dismiss="alert" aria-label="close"><i class="glyphicon glyphicon-remove"></i> hủy</a> và kiểm tra một tên miền khác <span class="text-success">chưa được đăng ký</span> để thêm vào.</li> '
+									+'</div>'
+									+'<div class="text-right">'
+										+'<button type="button" class="btn btn-primary" id="btnAddDomainToChannel"><i class="glyphicon glyphicon-plus"></i> Thêm</button>'
+									+'</div>'
+								+'</div>'
+							+'</div>'
+							+''); 
+					}else if(result.domainInfo.channel.status=='Available'){
+						$('.resultCheckDomain').append('<div class="form-group">'
+							+'<div class="alert alert-success">'
+								+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+								+'<div class="form-group"><span>Tên miền: <strong>'+domain+'</strong></span> Chưa được đăng ký. </div>'
+								+'<div class="text-left">'
+									+'<button type="button" class="btn btn-primary btnRegisterDomain" domain="'+domain+'"><i class="glyphicon glyphicon-ok"></i> Đăng ký</button>'
+								+'</div>'
+							+'</div>'
+						+'</div>'); 
+					}else{
+						$('.resultCheckDomain').append('<div class="form-group"><div class="alert alert-warning"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><span>Tên miền: <strong>'+domain+'</strong></span> Không tìm thấy. </div></div>'); 
+					}
+				}else{
+					$('.resultCheckDomain').append('<div class="form-group"><div class="alert alert-warning"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><span> '+result.message+' </div></div>');
+				}
+            }
+        });
+	});
+	$('.resultCheckDomain').on("click",".btnRegisterDomain",function() {
+		$('.resultCheckDomain').empty(); 
+		var formData = new FormData();
+		formData.append("cartType", 'domain'); 
+		formData.append("cartName", $(this).attr('domain')); 
+        $.ajax({
+            url: "{{route('cart.add',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				//console.log(result); 
+				if(result.success==true){
+					window.location.href="{{route('cart.show',$channel['domain']->domain)}}"; 
+				}else{
+					$('.resultCheckDomain').append('<div class="form-group"><div class="alert alert-warning"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+result.message+'</div></div>'); 
+				}
+            }
+        });
+	});
+	$('.resultCheckDomain').on("click","#domainView",function() {
+		$('#loading').css('visibility', 'visible'); 
+		$('.message').empty(); 
+		$('#myModal .modal-title').empty(); 
+		$('#myModal .modal-body').empty(); 
+		$('#myModal .modal-footer').empty(); 
+		var domain=$('input[name=domain]').val(); 
+		var formData = new FormData();
+		formData.append("domain", domain); 
+		formData.append("checkType", 'info'); 
+        $.ajax({
+            url: "{{route('channel.domain.check',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				console.log(result); 
+				$('#loading').css('visibility', 'hidden'); 
+				$('#myModal .modal-title').text(result.domainInfo.channel.title); 
+				if(result.domainInfo.channel.item.description===null){
+					$('#myModal .modal-body').append('<div class="alert alert-warning">Không tìm thấy thông tin chủ sở hữu tên miền '+domain+'! </div>'); 
+				}else{
+					if(typeof result.domainInfo.channel.item[1]!=='undefined'){
+						$('#myModal .modal-body').append(result.domainInfo.channel.item[1].description); 
+					}else{
+						$('#myModal .modal-body').append(result.domainInfo.channel.item.description); 
+					}
+				}
+				$('#myModal').modal('show'); 
+            }
+        });
+	});
+	$('.resultCheckDomain').on("click","#btnAddDomainToChannel",function() {
+		$('#loading').css('visibility', 'visible'); 
+		$('.message').empty(); 
+		var domain=$('input[name=domain]').val(); 
+		var formData = new FormData();
+		formData.append("domain", domain); 
+        $.ajax({
+            url: "{{route('channel.domain.add',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				$('#loading').css('visibility', 'hidden'); 
+				if(result.success==true){
+					location.reload();
+				}else if(result.success==false){
+					$('.message').append('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+result.message+'! </div>'); 
+				}
+            }
+        });
+	});
+	$('.listDomain').on("click",".domainDelete",function() {
+		$('.message').empty(); 
+		var domainId=$(this).attr('data-id'); 
+		var formData = new FormData();
+		formData.append("domainId", domainId); 
+        $.ajax({
+            url: "{{route('channel.domain.delete',$channel['domain']->domain)}}",
+            type: "POST",
+            cache: false,
+			contentType: false,
+			processData: false,
+			dataType:'json',
+			data:formData,
+			headers: {'X-CSRF-TOKEN': $('meta[name=_token]').attr('content')},
+            success: function (result) {
+				$('#loading').css('visibility', 'hidden'); 
+				if(result.success==true){
+					$('.message').append('<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+result.message+' </div>'); 
+					$('.listDomain').empty(); 
+					$.each(result.domains, function(i, item) {
+						if(item.domain_primary=='default'){
+							$('.listDomain').append('<li class="list-group-item  active">'+item.domain+'</li>');
+						}else{
+							$('.listDomain').append('<li class="list-group-item"><button type="button" class="btn btn-xs btn-danger domainDelete" data-id="'+item.id+'"><i class="glyphicon glyphicon-trash"></i></button> '+item.domain+'</li>');
+						}
+					}); 
+				}
+            }
+        });
+	});
+</script>
+@include('themes.admin.inc.footer')

@@ -1,0 +1,355 @@
+@extends('inc.master')
+@section('seo')
+<?php 
+	$data_seo = array(
+		'title' => 'Quản lý kênh website | CungCap.net System',
+		'keywords' => '',
+		'description' => '',
+		'og_title' => '',
+		'og_description' => '',
+		'og_url' => Request::url(),
+		'og_sitename' => config('app.appname'),
+		'og_img' => '',
+		'current_url' => Request::url()
+	);
+	$seo = WebService::getSEO($data_seo); 
+?>
+@include('partials.seo')
+@endsection
+@section('content')
+
+<div id="wrapper">
+    <div id="sidebar-wrapper" class="menu_home margin_top_10 clear">
+        @include('partials.user_sidebar_new')
+    </div><!--sidebar-wrapper-->
+    <div id="page-content-wrapper" class="page_content_primary clear">
+        <div class="container-fluid entry_container xyz">
+            <div class="row no-gutter mrb-5 country_option">
+                <div class="col-lg-12">
+                    <div class="breadcrumbs_inc clear">
+                        <ol class="breadcrumb">
+                            <li><a href="{{url('/')}}">Trang chủ</a></li>
+                            <li class="active">Danh sách kênh</li>
+						</ol>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutter">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    @include('partials.message')
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <strong>Thông báo!</strong> Có lỗi xảy ra.<br><br>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div id="post-fanpage" class="clear dasboard_container_details">
+                        <!--
+						<div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <span class="fa fa-envelope-o"></span> <b>Tin Nhắn</b>
+                            </div>
+                            <div class="panel-body">
+                                <div id="user-change-pass" class="col-md-12 col-lg-12">
+                                    <p class= "clearfix"></p>
+                                    <div class="row">
+                                             <ul class="nav nav-tabs">
+                                                <li class="active"><a href="javascript:void(0)" data-toggle="tab" onclick="Message.status({message_status:'inbox', page: 1})" class="inbox-msg btn btn-default col-xs-12">
+
+                                                <i class="fa fa-inbox fa-fw mrs"></i>Hộp thư đến</a></li>
+                                              <li ><a href="javascript:void(0)" data-toggle="tab" onclick="Message.status({message_status:'outbox', page: 1})" class="outbox-msg btn btn-default col-xs-12">
+                                                <i class="fa fa-plane fa-fw mrs"></i>Hộp thư đi</a></li>
+                                                <li ><a href="javascript:void(0)"  data-toggle="tab" onclick="Message.status({message_status:'destroy', page: 1})" class="destroy-msg btn btn-default col-xs-12">
+                                                <i class="fa fa-trash-o"></i> Thư đã xóa</a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div id="home-message" class="tab-pane fade in active">
+
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						-->
+                       @if(!isset($template_setting)&& empty($template_setting))
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="form-group group_tab_add">
+                                    <a href="{{route('user.createweb')}}" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-plus"></span> Tạo kênh mới</a>
+									@if($check_alrt > 0)
+									<a href="{{route('front.ads.create_fast')}}" class="btn btn-primary btn-post"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> Đăng bài</a>
+									@endif
+                                </div>
+								@if($check_alrt == 0)
+									@if(count($domains)>0)
+								<div class="alert alert-danger">
+									<strong>Thông báo!</strong> Kênh quảng cáo của bạn chưa được thanh toán. Xem hướng dẫn thanh toán <i class="fa-hand-o-right fa"></i> <a href="#">Tại đây</a>
+								</div>
+									@endif
+								@endif
+								@if(count($domains)==0)
+									<div class="alert alert-danger">
+										<strong>Thông báo!</strong> bạn chưa có kênh quảng cáo nào. Đăng ký tạo kênh quảng cáo  <i class="fa-hand-o-right fa"></i> <a href="{{route('user.createweb')}}">Tại đây</a>
+									</div>
+								@else
+									@foreach($domains as $domain)
+									<input id="url_root" type="hidden" value="{{url('/')}}"/>
+									<div class="notice notice-info list_site_manage @if($domain->template_setting_order==1) bg_error_web @endif" id="website_view_{{$domain->id}}">
+										<div class="row">
+											<div class="col-xs-12 col-md-6 col-list-web" style="padding:10px;">
+												<strong><a href="{{route('user.templateType.setting',array($domain->id,'general'))}}"><i class="glyphicon glyphicon-globe"></i> {{$domain->domain}}</a></strong>
+											</div>
+											<div class="col-xs-12 col-md-6 col-list-web col-list-web-manage" style="padding:10px;">
+											  @if($domain->template_setting_order==1) <a class="alert-danger mgr-10 none-bg" data-href="{{$domain->id}}" href="{{route('front.ads.thanhtoan',$domain->id)}}"><i class=" fa fa-lock"></i> Thanh toán</a> @else <a class="alert-success mgr-10 none-bg" href="javascript:void(0)"><i class="fa fa-unlock-alt"></i> Đang hoạt động</a> @endif  <a href="{{route('user.templateType.setting',array($domain->id,'general'))}}"><i class="glyphicon glyphicon-cog"></i> Cài đặt</a> | <a target="_blank" href="{{$domain->domain}}" title=""><i class="glyphicon glyphicon-link"></i> Xem <span class="hidden-xs">website</span></a> | <a href="javascript:void(0)" onclick="delete_website({{$domain->id}})"><i class="glyphicon glyphicon-remove"></i> <span class="hidden-xs">Xoá</span> </a>
+											</div>
+										</div>
+									</div>
+									@endforeach
+								@endif
+								<br/>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-xs-2 col-md-6">
+                                        <h6>
+                                            Tổng <span class="label label-info">{{count($domains)}}</span></h6>
+                                    </div>
+                                    <div class="col-xs-10 col-md-6">
+                                        <ul class="pagination pagination-sm pull-right">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       <script>
+                        var Message = {
+
+                               /*
+                                   status: inbox, outbox, destroy
+                               */
+                               status : function(data){
+                                   return jQuery.ajax({
+                                       method: 'GET',
+                                       url : '/ajax/message/status',
+                                       data: data,
+                                       beforeSend:function(){
+                                           jQuery('#home-message').html(loadling);
+                                       },
+                                       success: function(data){
+                                           jQuery('#home-message').html(data);
+                                       }
+                                   });
+                               },
+
+                               changestatus : function(data){
+                                   return jQuery.ajax({
+                                       method: 'GET',
+                                       url : '/ajax/message/changeStatus',
+                                       data: data,
+                                       success: function(data){
+
+                                       }
+                                   });
+                               },
+
+                            detail: function(mesage_group,page){
+                                return jQuery.ajax({
+                                    method: 'GET',
+                                    url : '/ajax/message/getMessagesDetail?page='+page+'&mesage_group='+mesage_group,
+                                    beforeSend:function(){
+                                        jQuery('#home-message').html(loadling);
+                                    },
+                                    success: function(data){
+                                        jQuery('#home-message').html(data);
+                                    }
+                                   });
+                            },
+
+
+                               detailMesage: function(mesage_id){
+                                   return jQuery.ajax({
+                                       method: 'GET',
+                                       url : '/ajax/message/getMessagesDetailByID?message_id='+mesage_id,
+                                       beforeSend:function(){
+                                           jQuery('#home-message').html(loadling);
+                                       },
+                                       success: function(data){
+                                           jQuery('#home-message').html(data);
+                                       }
+                                   });
+                               },
+
+                            destroy: function(data){
+                                return jQuery.ajax({
+                                    method: 'GET',
+                                    url : '/ajax/message/destroy',
+                                    data: data,
+                                    beforeSend:function(){
+                                        jQuery('#home-message').html(loadling);
+                                    },
+                                    success: function(d){
+                                           if(d.r == 'success'){
+                                               var arrMsg = data.message_id.split(',');
+                                               jQuery.each(arrMsg,function(index,value){
+                                                   if(value != ''){
+                                                       jQuery('#home-message').find('div#msg-'+value).remove();
+                                                   }
+                                               });
+
+                                           }
+
+                                    }
+                                   });
+                            },
+                               destroyItem: function(message_id,del_state){
+
+                                   return jQuery.ajax({
+                                       method: 'GET',
+                                       url : '/ajax/message/destroy',
+                                       data: {message_id: message_id,del_state:del_state },
+
+                                       success: function(data){
+                                           jQuery('div#msg-'+message_id).remove();
+                                       }
+                                   });
+                               },
+
+                               search: function(data){
+
+                                   return jQuery.ajax({
+                                       method: 'GET',
+                                       url : '/ajax/message/search',
+                                       data: data,
+                                       beforeSend:function(){
+                                           jQuery('#home-message').html(loadling);
+                                       },
+                                       success: function(data){
+                                           jQuery('#home-message').html(data);
+                                       }
+                                   });
+                               }
+
+                        };
+                        var loadling = '<img class="center-block" src="/img/loading.gif"/>';
+                        jQuery(document).ready(function(){
+                            Message.status({message_status:'inbox', page: 1});
+
+                               //search
+
+                               jQuery( "input#s-message" ).keypress(function( event ) {
+                                   if ( event.which == 13 ) {
+                                       event.preventDefault();
+                                       var s = jQuery( "input#s-message" ).val();
+                                       Message.search({ keywords: s });
+                                   }
+                               });
+
+                               // Destroy only item
+                               jQuery(document).on('click', '.destroy-item', function (e) {
+                                   e.preventDefault();
+                                   var message_id = jQuery(this).data('msgid');
+                                   var del_state = jQuery(this).data('delstate');
+                                   Message.destroyItem(message_id,del_state);
+
+                               });
+
+
+                               //Get message detail
+                               jQuery(document).on('click', 'a.get-detail-msg', function (e) {
+                                   e.preventDefault();
+                                   var mesage_group = jQuery(this).data('msg-group');
+                                   var msg_status = jQuery(this).data('status');
+                                   var msg_id = jQuery(this).data('msg-id');
+                                   Message.detail(mesage_group,1);
+                                   if(msg_status == 'unread'){
+                                       Message.changestatus({message_id:msg_id,message_status:'read' });
+                                   }
+
+                               });
+
+
+
+                               // Del message when chose as a list
+                                jQuery(document).on('click', 'button#destroy-message', function (e) {
+                                   e.preventDefault();
+
+                                   var del_state = jQuery('input#del-state').val();
+                                   var data = '';
+                                   jQuery('input:checkbox[name="message_id[]"]').each(function () {
+                                       data += ','+(this.checked ? jQuery(this).val() : "");
+                                   });
+
+                                   Message.destroy({message_id: data,del_state:del_state});
+                                   return;
+
+                               });
+                               // Pagination
+                            jQuery(document).on('click', '#inbox-message .pagination a', function (e) {
+                                   var page = jQuery(this).attr('href').split('page=')[1];
+                                   Message.status({message_status:'inbox',page: page});
+                                   e.preventDefault();
+                               });
+
+                               jQuery(document).on('click', '#inbox-message-filter .pagination a', function (e) {
+                                   var page = jQuery(this).attr('href').split('page=')[1];
+                                   var filter = jQuery(this).attr('href').split('filter=')[1].split('&')[0];
+                                   Message.status({message_status:'inbox',filter:filter,page: page});
+                                   e.preventDefault();
+                               });
+
+                               jQuery(document).on('click', '#outbox-message .pagination a', function (e) {
+                                   var page = jQuery(this).attr('href').split('page=')[1];
+                                   Message.status({message_status:'outbox',page: page});
+                                   e.preventDefault();
+                               });
+
+                               jQuery(document).on('click', '#destroy-message .pagination a', function (e) {
+                                   var page = jQuery(this).attr('href').split('page=')[1];
+                                   Message.status({message_status:'destroy',page: page});
+                                   e.preventDefault();
+                               });
+                               // End Pagination
+
+
+                               jQuery(document).on('click', '.checkall, input[name="message_id[]"]', function () {
+                                   var list_msg = jQuery('input[name="message_id[]"]');
+                                   if(this.checked) { // check select status
+                                       if(list_msg.length > 0){
+                                           jQuery('button#destroy-message').show();
+                                       }
+                                       list_msg.each(function() { //loop through each checkbox
+                                           this.checked = true;
+                                       });
+
+                                   }else{
+                                       jQuery('button#destroy-message').hide();
+                                       list_msg.each(function() { //loop through each checkbox
+                                           this.checked = false;
+                                       });
+                                   }
+                               });
+
+
+                        });
+
+                       </script>
+                       @else
+
+
+
+                       @endif
+
+                    </div><!--post-fanpage-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>	
+ 
+@endsection
