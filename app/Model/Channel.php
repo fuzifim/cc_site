@@ -8,7 +8,12 @@ class Channel extends Model
 {
 	//protected $connection = 'mysqlzcom';
     protected $table = 'channel';
-    public $timestamps = false; 
+    public $timestamps = false;
+    const ATTRIBUTE_SEO          = 'seo';
+    const ATTRIBUTE_COLOR        = 'channel_color';
+    const ATTRIBUTE_LOGO         = 'channel_logo';
+    const ATTRIBUTE_BACKGROUND   = 'channel_background';
+    const ATTRIBUTE_BANNER       = 'channel_banner';
 	public function admin(){
         return $this->hasOne('App\User', 'id', 'user_id');
     }

@@ -64,9 +64,9 @@ class ConstructController extends Controller
 		//$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('words_blacklist.txt')); 
 		$this->_security=false; 
 		$this->_parame=Route::current()->parameters(); 
-		$this->_rulesDomain = Cache::store('file')->remember('rulesDomain',500, function()
+		$this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
 		{
-			$pdp_url = 'https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat';
+			$pdp_url = public_path('data/public_suffix_list.dat.txt');
 			$rules = \Pdp\Rules::createFromPath($pdp_url); 
 			return $rules; 
 		}); 
