@@ -35,21 +35,21 @@ class DataDemo extends Migration
 
         DB::table('channel_attribute')->insert([
             [
-                'channel_id'=> Config::get('base.channel_id_master'),
-                'type'=> Config::get('base.channel_type_color_master'),
-                'value'=> Config::get('base.channel_value_color_master'),
-                'status'=> Config::get('base.channel_status_color_master'),
+                'channel_parent_id'=> Config::get('base.channel_id_master'),
+                'channel_attribute_type'=> Config::get('base.channel_type_color_master'),
+                'channel_attribute_value'=> Config::get('base.channel_value_color_master'),
+                'channel_attribute_status'=> Config::get('base.channel_status_color_master'),
             ]
         ]);
         DB::table('channel_attribute')->insert([
             [
-                'channel_id'=> Config::get('base.channel_id_master'),
-                'type'=> Config::get('base.channel_type_logo_master'),
-                'value'=> Config::get('base.channel_value_logo_master'),
-                'status'=> Config::get('base.channel_status_logo_master'),
+                'channel_parent_id'=> Config::get('base.channel_id_master'),
+                'channel_attribute_type'=> Config::get('base.channel_type_logo_master'),
+                'channel_attribute_value'=> Config::get('base.channel_value_logo_master'),
+                'channel_attribute_status'=> Config::get('base.channel_status_logo_master'),
             ]
         ]);
-        DB::table('domain')->insert([
+        DB::table('domains_z')->insert([
             [
                 'domain'=> Config::get('base.domain_master'),
                 'domain_encode'=> Config::get('base.domain_encode_master'),
@@ -74,7 +74,7 @@ class DataDemo extends Migration
                 'channel_date_end'=>Config::get('base.channel_date_end_user')
             ]
         ]);
-        DB::table('domain')->insert([
+        DB::table('domains_z')->insert([
             [
                 'domain'=> Config::get('base.domain_user'),
                 'domain_encode'=> Config::get('base.domain_encode_user'),
