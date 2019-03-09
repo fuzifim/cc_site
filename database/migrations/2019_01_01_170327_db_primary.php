@@ -13,9 +13,11 @@ class DbPrimary extends Migration
      */
     public function up()
     {
-        //DB::unprepared(public_path('data/data.sql'));
-        $sql_dump = File::get('public/data/data.sql');
-        DB::connection()->getPdo()->exec($sql_dump);
+        //$sql_dump = File::get('public/data/cungcap.sql');
+        //DB::connection()->getPdo()->exec($sql_dump);
+        DB::unprepared(file_get_contents('public/data/cungcap.sql'));
+        DB::disconnect(); 
+
     }
 
     /**
