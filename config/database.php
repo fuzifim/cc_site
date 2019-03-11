@@ -63,42 +63,14 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
-		'mysqlzcom' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST_ZCOM_z', 'localhost'),
-            'database'  => env('DB_DATABASE_ZCOM_z', 'database'),
-            'username'  => env('DB_USERNAME_ZCOM_z', 'username'),
-            'password'  => env('DB_PASSWORD_ZCOM_z', 'password'),
-			//'port'     => env('DB_PORT_ZCOM',3306), 
-            'charset'   => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix'    => '',
-            'strict'    => false,
-			'engine'    => null,
-        ], 
-		'tracker' => [
-			'driver'   => 'mysql',
-			'host'      => env('DB_HOST_ZCOM', 'localhost'),
-            'database'  => env('DB_DATABASE_ZCOM', 'database'),
-            'username'  => env('DB_USERNAME_ZCOM', 'username'),
-            'password'  => env('DB_PASSWORD_ZCOM', 'password'), 
-			'collation' => 'utf8mb4_unicode_ci',
-			'strict' => false,    // to avoid problems on some MySQL installs
-		],
 		'mongodb' => [
             'driver'   => 'mongodb',
             'host'     => env('DB_HOST', 'localhost'),
 			'port'     => env('DB_PORT', 27017),
             'database' => env('MONGO_DB', 'database')
-        ], 
-		'mongodbcc' => [
-            'driver'   => 'mongodb',
-            'host'     => env('DB_HOST_MONGO_CC', 'ip'),
-			'port'     => env('DB_PORT_MONGO_CC', 27017),
-            'database' => env('MONGO_DB_CC', 'database')
         ],
         'pgsql' => [
             'driver'   => 'pgsql',

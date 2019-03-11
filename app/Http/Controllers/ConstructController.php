@@ -204,9 +204,8 @@ class ConstructController extends Controller
 				if(!empty($this->_channel->channelAttributeColor->channel_attribute_value)){
 					$contentAttributeDecode=json_decode($this->_channel->channelAttributeColor->channel_attribute_value); 
 					if(!empty($contentAttributeDecode->fanpageFacebook)){
-						//dd($contentAttributeDecode->fanpageFacebook); 
-						//$linkFanpageFacebook = $this->_parser->parseUrl($contentAttributeDecode->fanpageFacebook); 
-						//$this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook->path);
+						$linkFanpageFacebook = $this->_rulesDomain->resolve($contentAttributeDecode->fanpageFacebook);
+						$this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook->path);
 					}
 					if(!empty($contentAttributeDecode->zaloAccount)){
 						$this->_socialLinkZalo=$contentAttributeDecode->zaloAccount;

@@ -629,7 +629,7 @@ class ChannelController extends ConstructController
 			$fields=explode(',',$this->_addChannelField); 
 			$idChannel=Channel::insertGetId(array(
 				'channel_name'=>$this->_addChannelName, 
-				'channel_description'=>$this->_addChannelDescription, 
+				'channel_description'=>$this->_addChannelDescription,
 				'channel_parent_id'=>$this->_addChannelParentId, 
 				'user_id'=>$this->_addChannelAuthor, 
 				'service_attribute_id'=>$this->_addChannelServiceId,
