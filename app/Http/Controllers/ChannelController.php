@@ -840,7 +840,6 @@ class ChannelController extends ConstructController
 				ssl_certificate /etc/letsencrypt/live/'.$this->_domainPrimary.'/fullchain.pem;
 				ssl_certificate_key /etc/letsencrypt/live/'.$this->_domainPrimary.'/privkey.pem;
 				include /usr/local/nginx/snippets/ssl.conf;
-				add_header Strict-Transport-Security "max-age=31536000" always;
 				root /home/nginx/domains/cungcap.net/public;
 				location / {
 				try_files $uri $uri/ /index.php?q=$uri&$args;
