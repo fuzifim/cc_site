@@ -29,12 +29,12 @@
 						<div class="row row-pad-5 linkFooter">
 							<div class="col-md-4 col-xs-4">
 								<small>
-								<li><a href="https://taoweb.cungcap.net/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a></li>
+								<li><a href="https://{!! $channel['domainPrimary'] !!}/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a></li>
 								<li><a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a></li>
 								<li><a href="https://help.cungcap.net/" target="_blank"><i class="glyphicon glyphicon-question-sign"></i> Trợ giúp</a></li>
-								<li><a href="https://taoweb.cungcap.net/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a></li>
-								<li><a href="https://taoweb.cungcap.net/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a></li>
-								<li><a href="https://taoweb.cungcap.net/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a></li>
+								<li><a href="https://{!! $channel['domainPrimary'] !!}/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a></li>
+								<li><a href="https://{!! $channel['domainPrimary'] !!}/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a></li>
+								<li><a href="https://{!! $channel['domainPrimary'] !!}/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a></li>
 								</small>
 							</div>
 							<div class="col-md-4 col-xs-4">
