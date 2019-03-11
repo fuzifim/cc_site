@@ -178,12 +178,12 @@ class DomainController extends ConstructController
 				$ltdDomain='com';
 			}
 			if(WebService::is_valid_url($domain)){
-				$domainName=$this->_parser->parseUrl($domain); 
-				$fixDomain=explode('.',$domainName->host->registerableDomain); 
+				$domainName=$this->_rulesDomain->resolve($domain);
+				$fixDomain=explode('.',$domainName->getRegistrableDomain());
 				$domain=$fixDomain[0]; 
 			}
-			$pslManager = new PublicSuffixListManager(); 
-			$parser = new Parser($pslManager->getList()); 
+//			$pslManager = new PublicSuffixListManager();
+//			$parser = new Parser($pslManager->getList());
 			if($domainType=='local'){
 				$domainFull=Str::slug($domain).'.'.$this->_domain->domain; 
 				$channelCheck=Domain::where('domain','=',$domainFull)->get(); 
@@ -217,12 +217,12 @@ class DomainController extends ConstructController
 					]);
 				}
 			}else{
-				$domainName = $this->_parser->parseUrl(Str::slug($domain).'.'.$ltdDomain);
+				$domainName = $this->_rulesDomain->resolve(Str::slug($domain).'.'.$ltdDomain);
 				$client = new Client([
 					'headers' => [ 'Content-Type' => 'application/json' ]
 				]);
 				$postData='{
-					"domainName": "'.$domainName->host->registerableDomain.'"
+					"domainName": "'.$domainName->getRegistrableDomain().'"
 				}';
 				$response = $client->request('POST', 'https://dms.inet.vn/api/public/whois/v1/whois/directly',
 					 ['body' => $postData]
@@ -231,10 +231,10 @@ class DomainController extends ConstructController
 				//$service=Services::where('id','=',4)->first();
 				return response()->json(['success'=>true,
 					'message'=>'Thông tin tên miền', 
-					'domain'=>$domainName->host->registerableDomain, 
+					'domain'=>$domainName->getRegistrableDomain(),
 					'domainType'=>$domainType, 
 					'domainInfo'=>$responseDecode, 
-					'serviceAttribute'=>Services::find(4)->attribute->where('attribute_type','=',$domainName->host->publicSuffix)->first(), 
+					'serviceAttribute'=>Services::find(4)->attribute->where('attribute_type','=',$domainName->getPublicSuffix())->first(),
 				]);
 			}
 		}else{
