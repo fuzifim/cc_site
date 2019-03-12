@@ -26,32 +26,14 @@
 						</div>
 					</div>
 					<div class="col-md-8">
-						<div class="row row-pad-5 linkFooter">
-							<div class="col-md-4 col-xs-4">
-								<small>
-								<li><a href="https://{!! $channel['domainPrimary'] !!}/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a></li>
-								<li><a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a></li>
-								<li><a href="https://help.cungcap.net/" target="_blank"><i class="glyphicon glyphicon-question-sign"></i> Trợ giúp</a></li>
-								<li><a href="https://{!! $channel['domainPrimary'] !!}/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a></li>
-								<li><a href="https://{!! $channel['domainPrimary'] !!}/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a></li>
-								<li><a href="https://{!! $channel['domainPrimary'] !!}/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a></li>
-								</small>
-							</div>
-							<div class="col-md-4 col-xs-4">
-								<small>
-									<li><a href="{{route('pages.domain',$channel["domainPrimary"])}}"><i class="glyphicon glyphicon-chevron-right"></i> Tên miền</a></li>
-									<li><a href="{{route('pages.email',$channel["domainPrimary"])}}"><i class="glyphicon glyphicon-chevron-right"></i> Email</a></li>
-									<li><a href="{{route('pages.hosting',$channel["domainPrimary"])}}"><i class="glyphicon glyphicon-chevron-right"></i> Hosting</a></li>
-									<li><a href="{{route('pages.cloud',$channel["domainPrimary"])}}"><i class="glyphicon glyphicon-chevron-right"></i> Cloud</a></li>
-									<li><a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a></li>
-								</small>
-							</div>
-							<div class="col-md-4 col-xs-4">
-								<small>
-									
-								</small>
-							</div>
-						</div>
+						<small>
+						<a href="//{!! $channel['domainPrimary'] !!}/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a> |
+						<a href="//{!! $channel['domainPrimary'] !!}/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a> |
+						<a href="//{!! $channel['domainPrimary'] !!}/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a> |
+						<a href="//{!! $channel['domainPrimary'] !!}/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a> |
+						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
+						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
+						</small>
 					</div>
 				</div>
 			</div>

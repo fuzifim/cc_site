@@ -66,7 +66,7 @@
 					<br><small><a href="{{route('channel.home',$domainPrimary)}}" target="_blank"><i class="glyphicon glyphicon-globe"></i> {{$domainPrimary}}</a></small>
 					<br><small>Ngày đăng ký: <i class="glyphicon glyphicon-time"></i> {{Site::date($channelMe->channel_created_at)}}</small>
 					@if($channelMe->channelService->id!=1)<br><small class="text-danger">Ngày hết hạn: <i class="glyphicon glyphicon-time"></i> {{Site::date($channelMe->channel_date_end)}}</small>@endif
-					<br><strong>{{$channelMe->channelService->name}} <span>{!!Site::price($channelMe->channelService->price_re_order)!!}</span></strong><sup>đ</sup>/ tháng</span> 
+					{{--<br><strong>{{$channelMe->channelService->name}} <span>{!!Site::price($channelMe->channelService->price_re_order)!!}</span></strong><sup>đ</sup>/ tháng</span> --}}
 					<div class="form-group">
 						{!!$channelStatus!!} {!!$option!!} 
 					</div>

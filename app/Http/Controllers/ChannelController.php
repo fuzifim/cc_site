@@ -129,13 +129,15 @@ class ChannelController extends ConstructController
 		$channelDescription=Input::get('channelDescription'); 
 		$createDomain=str_replace('-', '',Str::slug($domain)); 
 		if(strlen($createDomain)>30){
-			$createDomain = substr($createDomain, 0, 30); 
+            return response()->json(['success'=>false,
+                'message'=>'Địa chỉ tên miền của bạn quá dài, vui lòng nhập dưới 30 ký tự!  '
+            ]);
 		}
 		if(!empty($createDomain)){
-			$checkDomain=Domain::where('domain','=',$createDomain.'.cungcap.net')->first(); 
+			$checkDomain=Domain::where('domain','=',$createDomain.'.'.$this->_domainPrimary)->first();
 			if(!empty($checkDomain->domain)){
 				return response()->json(['success'=>false,
-					'message'=>$createDomain.'.cungcap.net đã có người sử dụng! '
+					'message'=>$createDomain.'.'.$this->_domainPrimary.' đã có người sử dụng! '
 				]);
 			}
 		}
@@ -293,310 +295,35 @@ class ChannelController extends ConstructController
 				if(Session::has('channelRegion')){
 					$channelRegion=Session::get('channelRegion'); 
 				}
-				if(Session::has('channelPackge')){
-					$channelPackge=Session::get('channelPackge'); 
-				}else{
-					$channelPackge=3; 
-				}
-				$serviceAttribute=Services_attribute::find($channelPackge); 
-				if(!empty($serviceAttribute->id)){
-					if($serviceAttribute->id==1){
-						
-						$this->_addChannelDomain=$channelDomain; 
-						$this->_addChannelDomainLtd='cungcap.net'; 
-						$this->_addChannelName=$channelInfo['channelName'];  
-						$this->_addChannelDescription=$channelInfo['channelDescription'];  
-						$this->_addChannelEmail=$channelContact['channelEmail'];  
-						$this->_addChannelPhone=$channelContact['channelPhone']; 
-						$this->_addChannelField=$channelRegion['channelFields']; 
-						$this->_addChannelAddress=$channelRegion['channelAddress'];  
-						$this->_addChannelRegion=$channelRegion['channelRegion']; 
-						$this->_addChannelSubRegion=$channelRegion['channelSubRegion'];  
-						$this->_addChannelDistrict=$channelRegion['channelDistrict'];  
-						$this->_addChannelWard=$channelRegion['channelWard']; 
-						$this->_addChannelServiceId=$serviceAttribute->id; 
-						$this->_addChannelParentId=$this->_channel->id;  
-						$this->_addChannelAuthor=Auth::user()->id; 
-						$this->_addChannelStatus='test'; 
-						$this->_addChannelDateEnd=Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))->addDays(15)->format('Y-m-d H:i:s'); 
-						$result=$this->addChannel(); 
-						if($result==true){
-							return response()->json(['success'=>true, 
-								'message'=>'Tạo website thành công! ', 
-								'type'=>'free', 
-							]);
-						}else{
-							return response()->json(['success'=>false, 
-								'message'=>'Không thể tạo website, vui lòng kiểm tra lại! ',
-								'type'=>'free', 
-							]);
-						}
-					}else{
-						$keyRandom=str_random(10); 
-						if(!empty($serviceAttribute->price_sale)){
-							$price=$serviceAttribute->price_sale; 
-						}else{
-							$price=$serviceAttribute->price_re_order+$serviceAttribute->price_order; 
-						}
-						$item = array(
-							'id' => $keyRandom,
-							'name' => $channelInfo['channelName'],
-							'price' => $price,
-							'quantity' => 12,
-							'attributes' => array(
-								'type'=>'channelAdd', 
-								'domain'=>$channelDomain, 
-								'domainLtd'=>'cungcap.net', 
-								'description'=>$channelInfo['channelDescription'], 
-								'email'=>$channelContact['channelEmail'], 
-								'phone'=>$channelContact['channelPhone'], 
-								'fields'=>$channelRegion['channelFields'], 
-								'address'=>$channelRegion['channelAddress'], 
-								'region'=>$channelRegion['channelRegion'], 
-								'subregion'=>$channelRegion['channelSubRegion'], 
-								'district'=>$channelRegion['channelDistrict'], 
-								'ward'=>$channelRegion['channelWard'], 
-								'channel_parent_id'=>$this->_channel->id, 
-								'channel_service_id'=>$channelPackge, 
-								'per'=>$serviceAttribute->per,
-								'author'=>Auth::user()->id
-							)
-						);
-						Cart::add($item);
-						return response()->json(['success'=>true, 
-							'message'=>'Đã thêm vào giỏ hàng của bạn. ', 
-							'type'=>'premium', 
-							'cartId'=>$keyRandom, 
-						]);
-					}
-				}else{
-					return response()->json(['success'=>false, 
-						'message'=>'Không tìm thấy gói cài đặt! ',
-					]);
-				}
-			}else{
-				return response()->json(['success'=>false, 
-					'message'=>'Không tìm thấy thông tin cài đặt website! ',
-				]);
-			}
-		}else{
-			return response()->json(['success'=>false, 
-				'message'=>'Không tìm thấy địa chỉ tên miền website! ',
-			]);
-		}
-	}
-	public function channelAddStep4(){
-		
-		$channelFields=Input::get('channelFields'); 
-		$channelAddress=Input::get('channelAddress'); 
-		$channelRegion=Input::get('channelRegion'); 
-		$channelSubRegion=Input::get('channelSubRegion'); 
-		$channelDistrict=Input::get('channelDistrict'); 
-		$channelWard=Input::get('channelWard'); 
-		$fields=explode(',',$channelFields); 
-		if(count($fields)<=0){
-			return response()->json(['success'=>false,
-				'message'=>'Vui lòng chọn ít nhất 1 lĩnh vực hoạt động! '
-			]);
-		}
-		if(strlen($channelAddress)<=2){
-			return response()->json(['success'=>false,
-				'message'=>'Vui lòng nhập địa chỉ cửa hàng của bạn! '
-			]);
-		}
-		Session::put('channelRegion', [ 
-			'channelFields' => $channelFields, 
-			'channelAddress' => $channelAddress, 
-			'channelRegion' => $channelRegion, 
-			'channelSubRegion' => $channelSubRegion, 
-			'channelDistrict' => $channelDistrict, 
-			'channelWard' => $channelWard, 
-		]); 
-		return response()->json(['success'=>true,
-			'message'=>'Cập nhật thông tin thành công! '
-		]);
-	}
-	public function channelAddStep5(){
-		$channelPhone=Input::get('channelPhone'); 
-		$channelEmail=Input::get('channelEmail'); 
-		$channelPassword=Input::get('password'); 
-		$channelRePassword=Input::get('password_confirmation'); 
-		if(strlen($channelPhone)<=9){
-			return response()->json(['success'=>false,
-				'message'=>'Vui lòng nhập số điện thoại của bạn! '
-			]);
-		}
-		if(strlen($channelEmail)<=5){
-			return response()->json(['success'=>false,
-				'message'=>'Vui lòng nhập địa chỉ email của bạn! '
-			]);
-		}
-		if(Auth::check()){
-			Session::put('channelContact', [ 
-				'channelPhone' => $channelPhone, 
-				'channelEmail' => $channelEmail, 
-			]); 
-		}else{
-			$getUserByPhone=User::where('phone','=',$channelPhone)->first(); 
-			$getUserByEmail=User::where('email','=',$channelEmail)->first(); 
-			if(!empty($getUserByPhone->id) && !empty($channelPhone)){
-				return response()->json(['success'=>false,
-					'message'=>'Số điện thoại này đã có người sử dụng. Nếu đây là tài khoản của bạn, vui lòng đăng nhập và thử lại! '
-				]); 
-				$error=false; 
-			}
-			else if(!empty($getUserByEmail->id) && !empty($channelEmail)){
-				return response()->json(['success'=>false,
-					'message'=>'Email này đã có người sử dụng. Nếu đây là tài khoản của bạn, vui lòng đăng nhập và thử lại! '
-				]); 
-				$error=false; 
-			}else{
-				$error=true; 
-			}
-			if($error==true){
-				if(Session::has('channelRegion')){
-					$channelRegion=Session::get('channelRegion'); 
-				}
-				$messages = array(
-					'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
-					'required' => 'Vui lòng nhập thông tin (*).',
-					'numeric' => 'Dữ liệu phải dạng số',
-					'email' => 'Địa chỉ email không đúng', 
-					'confirmed'=>'Nhập lại mật khẩu không chính xác'
-				);
-				$rules = array(
-					'channelPhone'=>'required|numeric',
-					'channelEmail'=>'required|email',
-					'password'=>'required|min:6|confirmed',
-					'password_confirmation'=>'required|same:password',
-				);
-				$validator = Validator::make(Input::all(), $rules, $messages);
-				if ($validator->fails())
-				{
-				
-					return response()->json(['success'=>false,
-						'message'=>' Không thể tạo tài khoản hoặc mật khẩu nhập lại không chính xác! ', 
-					]); 
-				}else{
-					$userControl= new UserController(); 
-					$userControl->_fullName=$channelPhone; 
-					$userControl->_phone=$channelPhone; 
-					$userControl->_email=$channelEmail; 
-					$userControl->_password=$channelPassword; 
-					$userControl->_repassword=$channelRePassword; 
-					$userControl->_channel=$this->_channel; 
-					if(!empty($channelRegion['channelRegion'])){
-						$userControl->_region=$channelRegion['channelRegion']; 
-					}else{
-						$userControl->_region=$this->_channel->channelJoinRegion->region->id; 
-					}
-					if(!empty($channelRegion['channelSubRegion'])){
-						$userControl->_subRegion=$channelRegion['channelSubRegion']; 
-					}else{
-						$userControl->_subRegion=$this->_channel->channelJoinSubRegion->subregion->id; 
-					}
-					$result=$userControl->addUser(); 
-					if($result==true){
-						Session::put('channelContact', [ 
-							'channelPhone' => $channelPhone, 
-							'channelEmail' => $channelEmail, 
-						]); 
-					}else{
-						return response()->json(['success'=>false,
-							'message'=>'Không thể tạo tài khoản, vui lòng thử lại! '
-						]); 
-					}
-				}
-			}
-		}
-		if(Session::has('channelDomain')){
-			$channelDomain=Session::get('channelDomain'); 
-			if(Session::has('channelInfo')){
-				$channelInfo=Session::get('channelInfo'); 
-				if(Session::has('channelContact')){
-					$channelContact=Session::get('channelContact'); 
-				}
-				if(Session::has('channelRegion')){
-					$channelRegion=Session::get('channelRegion'); 
-				}
-				if(Session::has('channelPackge')){
-					$channelPackge=Session::get('channelPackge'); 
-				}
-				$serviceAttribute=Services_attribute::find($channelPackge); 
-				if(!empty($serviceAttribute->id)){
-					if($serviceAttribute->id==1){
-						$this->_addChannelDomain=$channelDomain; 
-						$this->_addChannelDomainLtd=$this->_domainPrimary; 
-						$this->_addChannelName=$channelInfo['channelName'];  
-						$this->_addChannelDescription=$channelInfo['channelDescription'];  
-						$this->_addChannelEmail=$channelContact['channelEmail'];  
-						$this->_addChannelPhone=$channelContact['channelPhone']; 
-						$this->_addChannelField=$channelRegion['channelFields']; 
-						$this->_addChannelAddress=$channelRegion['channelAddress'];  
-						$this->_addChannelRegion=$channelRegion['channelRegion']; 
-						$this->_addChannelSubRegion=$channelRegion['channelSubRegion'];  
-						$this->_addChannelDistrict=$channelRegion['channelDistrict'];  
-						$this->_addChannelWard=$channelRegion['channelWard']; 
-						$this->_addChannelServiceId=$serviceAttribute->id; 
-						$this->_addChannelParentId=$this->_channel->id;  
-						$this->_addChannelAuthor=Auth::user()->id; 
-						$this->_addChannelStatus='test'; 
-						$this->_addChannelDateEnd=Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))->addDays(15)->format('Y-m-d H:i:s'); 
-						$result=$this->addChannel(); 
-						if($result==true){
-							return response()->json(['success'=>true, 
-								'message'=>'Tạo website thành công! ', 
-								'type'=>'free', 
-							]);
-						}else{
-							return response()->json(['success'=>false, 
-								'message'=>'Không thể tạo website, vui lòng kiểm tra lại! ',
-								'type'=>'free', 
-							]);
-						}
-					}else{
-						$keyRandom=str_random(10); 
-						if(!empty($serviceAttribute->price_sale)){
-							$price=$serviceAttribute->price_sale; 
-						}else{
-							$price=$serviceAttribute->price_re_order+$serviceAttribute->price_order; 
-						}
-						$item = array(
-							'id' => $keyRandom,
-							'name' => $channelInfo['channelName'],
-							'price' => $price,
-							'quantity' => 1,
-							'attributes' => array(
-								'type'=>'channelAdd', 
-								'domain'=>$channelDomain, 
-								'domainLtd'=>$this->_domainPrimary, 
-								'description'=>$channelInfo['channelDescription'], 
-								'email'=>$channelContact['channelEmail'], 
-								'phone'=>$channelContact['channelPhone'], 
-								'fields'=>$channelRegion['channelFields'], 
-								'address'=>$channelRegion['channelAddress'], 
-								'region'=>$channelRegion['channelRegion'], 
-								'subregion'=>$channelRegion['channelSubRegion'], 
-								'district'=>$channelRegion['channelDistrict'], 
-								'ward'=>$channelRegion['channelWard'], 
-								'channel_parent_id'=>$this->_channel->id, 
-								'channel_service_id'=>$channelPackge, 
-								'per'=>$serviceAttribute->per,
-								'author'=>Auth::user()->id
-							)
-						);
-						Cart::add($item);
-						return response()->json(['success'=>true, 
-							'message'=>'Đã thêm vào giỏ hàng của bạn. ', 
-							'type'=>'premium', 
-							'cartId'=>$keyRandom, 
-						]);
-					}
-				}else{
-					return response()->json(['success'=>false, 
-						'message'=>'Không tìm thấy gói cài đặt! ',
-					]);
-				}
+                $this->_addChannelDomain=$channelDomain;
+                $this->_addChannelDomainLtd=$this->_domainPrimary;
+                $this->_addChannelName=$channelInfo['channelName'];
+                $this->_addChannelDescription=$channelInfo['channelDescription'];
+                $this->_addChannelEmail=$channelContact['channelEmail'];
+                $this->_addChannelPhone=$channelContact['channelPhone'];
+                $this->_addChannelField=$channelRegion['channelFields'];
+                $this->_addChannelAddress=$channelRegion['channelAddress'];
+                $this->_addChannelRegion=$channelRegion['channelRegion'];
+                $this->_addChannelSubRegion=$channelRegion['channelSubRegion'];
+                $this->_addChannelDistrict=$channelRegion['channelDistrict'];
+                $this->_addChannelWard=$channelRegion['channelWard'];
+                $this->_addChannelServiceId=1;
+                $this->_addChannelParentId=$this->_channel->id;
+                $this->_addChannelAuthor=Auth::user()->id;
+                $this->_addChannelStatus='active';
+                $this->_addChannelDateEnd=Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))->addDays(15)->format('Y-m-d H:i:s');
+                $result=$this->addChannel();
+                if($result=='success'){
+                    return response()->json(['success'=>true,
+                        'message'=>'Tạo website thành công! ',
+                        'type'=>'free'
+                    ]);
+                }else{
+                    return response()->json(['success'=>false,
+                        'message'=>$result,
+                        'type'=>'free'
+                    ]);
+                }
 			}else{
 				return response()->json(['success'=>false, 
 					'message'=>'Không tìm thấy thông tin cài đặt website! ',
@@ -613,8 +340,8 @@ class ChannelController extends ConstructController
 		if(Session::has('add_channel')){
 			$sessionHistory=Session::get('add_channel'); 
 			if(!empty($sessionHistory['created_at'])){
-				if(Carbon::parse($sessionHistory['created_at'])->addMinutes(30) > Carbon::now()->format('Y-m-d H:i:s')){
-					$error='Mỗi lượt xem cách nhau 30 phút. Lần xem gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']); 
+				if(Carbon::parse($sessionHistory['created_at'])->addMinutes(5) > Carbon::now()->format('Y-m-d H:i:s')){
+					$error='Mỗi website tạo phải cách nhau 30 phút. Lần tạo gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']);
 				}
 			}
 		}
@@ -778,15 +505,15 @@ class ChannelController extends ConstructController
 						'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
 					]; 
 					Messages::create($messageInsert); 
-					return $contentMessage; 
+					return 'success';
 				}else{
-					return false; 
+					return 'Không thể tạo domain';
 				}
 			}else{
-				return false; 
+				return 'Không thể tạo channel! ';
 			}
 		}else{
-			return false;
+			return $error;
 		}
 	}
 	public function channelMe(){
@@ -1373,173 +1100,6 @@ class ChannelController extends ConstructController
 			]);
 		}else{
 			return false; 
-		}
-	}
-	public function channelAddRequest()
-    {
-		$Domains=Input::get('Domains'); 
-		$channelName=Input::get('channelName'); 
-		$channelDescription=Input::get('channelDescription'); 
-		$channelField=Input::get('channelField');
-		$channelRegion=Input::get('channelRegion'); 
-		$channelSubregion=Input::get('channelSubregion'); 
-		$channelPackge=Input::get('channelPackge'); 
-		$messages = array(
-			'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
-			'required' => 'Vui lòng nhập',
-			'numeric' => 'Dữ liệu phải dạng số', 
-			'min'=>'Chọn ít nhất 1 lĩnh vực hoạt động'
-		);
-		$rules = array(
-			'channelName' => 'required',
-			'channelDescription'=>'required',
-			'channelRegion'=>'required',
-			'channelSubregion'=>'required',
-		);
-		$validator = Validator::make(Input::all(), $rules, $messages);
-		if ($validator->fails())
-		{
-			return response()->json(['success'=>false,
-				'messageType'=>'validation',
-				'message'=>$validator->getMessageBag()->toArray(),
-				'input'=>Input::all()
-			]);
-		}else{
-			$listDomain=json_decode($Domains,true); 
-			$jsonField=json_decode($channelField,true); 
-			if(count($jsonField)<=0){
-				$error='Vui lòng chọn ít nhất 1 lĩnh vực hoạt động'; 
-			}
-			/*if(count($listDomain)<=0){
-				$error='Vui lòng chọn ít nhất 1 tên miền'; 
-			}*/
-			$checkHistory=History::where('author','=',Auth::user()->id)
-				->where('history_type','=','channel_add')
-				->orderBy('created_at','asc')
-				->first(); 
-			if(!empty($checkHistory->created_at)){
-				if(Carbon::parse($checkHistory->created_at)->addMinutes(60) > Carbon::now()->format('Y-m-d H:i:s')){
-					$error='Mỗi website tạo cách nhau 60 phút. Lần tạo gần đây nhất của bạn cách đây '.WebService::time_request($checkHistory->created_at); 
-				}
-			}
-			if(empty($error)){
-				$idChannel=Channel::insertGetId(array(
-					'channel_name'=>$channelName, 
-					'channel_description'=>$channelDescription, 
-					'channel_parent_id'=>$this->_channel->id, 
-					'service_attribute_id'=>$channelPackge,
-					'channel_status'=>'active', 
-					'channel_created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-					'channel_updated_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-					'channel_date_end'=>Carbon::parse(Carbon::now()->format('Y-m-d H:i:s'))->addMonth(1)->format('Y-m-d H:i:s')
-				)); 
-				if($idChannel){
-					Channel_attribute::insertGetId(array(
-						'channel_parent_id'=>$idChannel, 
-						'channel_attribute_type'=>'author', 
-						'channel_attribute_value'=>Auth::user()->id, 
-						'channel_attribute_status'=>'active', 
-						'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-					)); 
-					Channel_role::insertGetId(array(
-						'parent_id'=>$idChannel, 
-						'user_id'=>Auth::user()->id, 
-						'role_id'=>1, 
-						'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-						'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-					)); 
-					Channel_attribute::insertGetId(array(
-						'channel_parent_id'=>$idChannel, 
-						'channel_attribute_type'=>'theme', 
-						'channel_attribute_value'=>1, 
-						'channel_attribute_status'=>'active', 
-						'channel_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-					)); 
-					Channel_join_region::insertGetId(array(
-						'region_id'=>$channelRegion, 
-						'channel_id'=>$idChannel
-					)); 
-					Channel_join_subregion::insertGetId(array(
-						'subregion_id'=>$channelSubregion, 
-						'channel_id'=>$idChannel, 
-					)); 
-					foreach($jsonField as $value){
-						Channel_join_field::insertGetId(array(
-							'field_id'=>$value, 
-							'channel_id'=>$idChannel, 
-						));
-					} 
-					$idDomain=Domain::insertGetId(array(
-						'domain_primary'=>'default', 
-						'domain_location'=>'local', 
-						'service_attribute_id'=>2, 
-						'status'=>'active', 
-						'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-					)); 
-					if($idDomain){
-						Domain_attribute::insertGetId(array(
-							'parent_id'=>$idDomain, 
-							'attribute_type'=>'author', 
-							'attribute_value'=>Auth::user()->id, 
-							'attribute_status'=>'active', 
-							'attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-						)); 
-						Domain_join_channel::insertGetId(array(
-							'channel_id'=>$idChannel, 
-							'domain_id'=>$idDomain, 
-						)); 
-						$getDomainLocal=Domain::find($idDomain);
-						$getDomainLocal->domain=$idDomain.'.'.$this->_domain->domain; 
-						$getDomainLocal->save(); 
-					}
-				}
-				$getChannel=Channel::find($idChannel); 
-				$contentMessage=[
-					'channel'=>$getChannel
-				];
-				$messageInsert=[
-					'type'=>'channelAdd', 
-					'from'=>$this->_channel->id, 
-					'to'=>Auth::user()->id, 
-					'message_title'=>$getChannel->channel_name.' được tạo thành công tại '.$this->_channel->channel_name, 
-					'message_body'=>json_encode($contentMessage), 
-					'message_status'=>'unread', 
-					'message_send'=>'pending', 
-					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-					'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-				]; 
-				Messages::create($messageInsert); 
-				$listHistory=array(
-					'history_type'=>'channel_add', 
-					'parent_id'=>$idChannel, 
-					'author'=>Auth::user()->id,
-					'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-				); 
-				History::insertGetId($listHistory); 
-				if($getChannel->domainJoinPrimary->domain->domain_primary!='default'){
-					if(count($getChannel->domainAll)>0){
-						foreach($getChannel->domainAll as $domain){
-							if($domain->domain->domain_primary=='default'){
-								$domainPrimary=$domain->domain->domain; 
-							}
-						}
-					}else{
-						$domainPrimary=$getChannel->domainJoinPrimary->domain->domain; 
-					}
-				}else{
-					$domainPrimary=$getChannel->domainJoinPrimary->domain->domain; 
-				}
-				return response()->json(['success'=>true, 
-					'message'=>'Chúc mừng bạn đã tạo website thành công! ', 
-					'channelDomain'=>$domainPrimary
-				]);
-			}
-			else{
-				return response()->json(['success'=>false, 
-					'message'=>$error, 
-					'channelPackge'=>$channelPackge
-				]);
-			}
 		}
 	}
 	public function channelUpdateId(){

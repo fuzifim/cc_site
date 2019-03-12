@@ -12,22 +12,17 @@
 		</div>
 	  <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
 		<ul class="nav navbar-nav navbar-right">
-			<!--<li class="active"><a href="{{route('channel.add',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-globe"></i> Tạo website</a></li>-->
-			<!--<li><a href="{{route('pages.domain',$channel['domainPrimary'])}}">Tên miền</a></li>
-			<li><a href="{{route('pages.hosting',$channel['domainPrimary'])}}">Hosting</a></li>
-			<li><a href="{{route('pages.email',$channel['domainPrimary'])}}">Email Server</a></li>
-			<li><a href="{{route('pages.cloud',$channel['domainPrimary'])}}">Cloud Server</a></li>--> 
 		@if (Auth::check())
 		  <li  class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-user"></i> {{Auth::user()->name}} @if(Cart::getContent()->count()>0)<span class="pull-right badge badge-danger">{{Cart::getContent()->count()}}</span>@else <span class="fa fa-angle-down"></span>@endif</a>
 			<ul class="dropdown-menu">
 				<!--<li><a href="{{route('post.me',$channel['domainPrimary'])}}" class=""><i class="fa fa-bars"></i><span class=""> Tin đã đăng</span></a></li>-->
 				<li class="dropdown-header">Quản lý dịch vụ của tôi</li>
-				<li><a href="{{route('channel.me',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-cloud-upload"></i> Website</a></li>
-				<li><a href="{{route('channel.domain.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-globe"></i> Tên miền</a></li>
-				<li><a href="{{route('channel.hosting.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-hdd"></i> Web Hosting</a></li>
-				<li><a href="{{route('channel.mailserver.list',$channel['domainPrimary'])}}"><i class="fa fa-envelope-o"></i> Email Server</a></li>
-				<li><a href="{{route('channel.cloud.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-cloud"></i> Cloud Server</a></li>
+				<li><a href="{{route('channel.me',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-cloud-upload"></i> Website của tôi</a></li>
+				{{--<li><a href="{{route('channel.domain.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-globe"></i> Tên miền</a></li>--}}
+				{{--<li><a href="{{route('channel.hosting.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-hdd"></i> Web Hosting</a></li>--}}
+				{{--<li><a href="{{route('channel.mailserver.list',$channel['domainPrimary'])}}"><i class="fa fa-envelope-o"></i> Email Server</a></li>--}}
+				{{--<li><a href="{{route('channel.cloud.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-cloud"></i> Cloud Server</a></li>--}}
 				<li class="divider"></li>
 				<li class="dropdown-header">Tài khoản</li>
 				<li><a href="{{route('channel.profile.info',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-user"></i> Hồ sơ</a></li>

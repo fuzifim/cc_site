@@ -1,8 +1,8 @@
 <?
 	$channel['theme']->setTitle('Tạo website');
 	$channel['theme']->setKeywords('Tạo kênh, tạo website, bảng giá tạo website');
-	$channel['theme']->setDescription('Cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người '); 
-	$channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap-website.jpg')); 
+	$channel['theme']->setDescription('Cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người ');
+	$channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap-website.jpg'));
 ?>
 {!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
 {!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
@@ -21,7 +21,7 @@
 		<div class="row row-pad-5">
 			<div class="col-md-6">
 				<div class="formRegisterChannel mb10">
-					<h1><strong>Tạo website</strong></h1> 
+					<h1><strong>Tạo website</strong></h1>
 					<p>Tạo website để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người. </p>
 					<div id="validationWizard" class="basic-wizard" style="position:relative;">
 						<div id="preloaderInBox" style="display:none;">
@@ -36,27 +36,27 @@
 							</li>
 							<li class="stepwizard-step">
 								<a class="btn btn-default btn-circle disabled"  href="#vtab3" data-toggle="tab">3</a>
-							</li> 
+							</li>
 						</ul>
 						<form class="form" id="form1" method="post" action="{{route('channel.create.request',$channel['domain']->domain)}}">
 							<div class="tab-content">
 								<div class="tab-pane" id="vtab1">
 									<?
 										if(Session::has('channelDomain')){
-											$channelDomain=Session::get('channelDomain'); 
+											$channelDomain=Session::get('channelDomain');
 										}
 									?>
 									<div class="form-group">
 										<div class="input-group">
 										  <input type="text" name="channelDomain" id="channelDomain" class="form-control" value="@if(!empty($channelDomain)){!!$channelDomain!!}@endif" maxlength="30" placeholder="Nhập địa chỉ tên miền" required >
-										  <span class="input-group-addon">.cungcap.net</span>
+										  <span class="input-group-addon">.{!! $channel['domainPrimary'] !!}</span>
 										</div>
-										<code id="changeDomain">@if(!empty($channelDomain))http://{!!$channelDomain!!}.cungcap.net @endif</code>
+										<code id="changeDomain">@if(!empty($channelDomain))http://{!!$channelDomain!!}.{!! $channel['domainPrimary'] !!} @endif</code>
 										<label class="error" for="channelDomain"></label>
 									</div>
 									<?
 										if(Session::has('channelInfo')){
-											$channelInfo=Session::get('channelInfo'); 
+											$channelInfo=Session::get('channelInfo');
 										}
 									?>
 									<div class="form-group">
@@ -69,7 +69,7 @@
 								<div class="tab-pane" id="vtab2">
 									<?
 										if(Session::has('channelRegion')){
-											$channelRegion=Session::get('channelRegion'); 
+											$channelRegion=Session::get('channelRegion');
 										}
 									?>
 									<div class="form-group">
@@ -174,13 +174,13 @@
 					</div>
 				</div><!-- panel -->
 			</div>
-			<div class="col-md-6"> 
-				<div class="channelPrice">Chỉ với 480.000<sup>đ</sup>/ Năm</div>
+			<div class="col-md-6">
+				<div class="channelPrice">Tạo website miễn phí</div>
 				<ul class="list-group">
-					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> 100 bài viết</li> 
-					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> 150 MB dung lượng SSD</li> 
-					<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .cungcap.net</li> 
-					<li class="list-group-item"><i class="glyphicon glyphicon-tint text-success"></i> Không tốn phí thiết kế</li> 
+					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> Không giới hạn bài viết</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> Không giới hạn dung lượng sử dụng</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .{!! $channel['domainPrimary'] !!}</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-tint text-success"></i> Không tốn phí thiết kế</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-hdd text-success"></i> Không tốn phí hosting</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-search text-success"></i> Giao diện chuẩn SEO, Responsive</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-phone text-success"></i> Hỗ trợ trên mọi thiết bị</li>
@@ -191,7 +191,6 @@
 					<li class="list-group-item"><i class="glyphicon glyphicon-stats text-success"></i> Thống kê lượt xem</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-check text-success"></i> Và còn nữa...</li>
 				</ul>
-				<div class="channelPrice">Chỉ với 480.000<sup>đ</sup>/ Năm</div>
 			</div>
 		</div>
 	</div>
@@ -203,21 +202,21 @@
 		<div class="row">
 			<div class="col-sm-6">
 			<h3>Quản lý dễ dàng</h3>
-		
-				<p>Không giới hạn tài khoản quản lý, dễ đăng bài, tạo chuyên mục menu, theo dõi thống kê lượt xem, thích, bình luận và nhận thông báo ngay vào email...</p> 
-			</div>	
+
+				<p>Không giới hạn tài khoản quản lý, dễ đăng bài, tạo chuyên mục menu, theo dõi thống kê lượt xem, thích, bình luận và nhận thông báo ngay vào email...</p>
+			</div>
 			<div class="col-sm-6">
-						
-				<h3>Thanh toán theo tháng</h3>
-				<p>Nạp tiền trực tuyến và thanh toán theo tháng, giúp bạn chủ động thanh toán và tối ưu khoản phí đầu tư để sử dụng website nhanh chóng và tiện lợi.  </p>
-			</div>	
+
+				<h3>Tiện lợi</h3>
+				<p>Sử dụng dễ dàng trên mọi thiết bị, điện thoại, máy tính bảng, desktop... truy cập và quản lý mọi lúc, mọi nơi.   </p>
+			</div>
 			<div class="col-sm-6">
-				<h3>Mọi lúc, mọi nơi</h3>
-				<p>Tiếp cận khách hàng ở khắp các khu vực liên tục 24/24 thông qua các công cụ tìm kiếm và qua các trang mạng xã hội. </p>
+				<h3>Tốc độ truy cập cao</h3>
+				<p>Trung tâm dữ liệu tại nhiều quốc gia đảm bảo tốc độ truy cập cao ở mọi nơi, backup và bảo mật hàng ngày. </p>
 			</div>
 			<div class="col-sm-6">
 				<h3>Đa quốc gia</h3>
-				<p>Trung tâm dữ liệu đa quốc gia Việt Nam, Singapore, Nhật Bản, Hoa Kỳ, đảm bảo tốc độ truy cập cao ở mọi nơi. Backup và bảo mật hàng ngày, hổ trợ 24/7. </p>
+				<p>Tiếp cận khách hàng ở khắp các khu vực và liên tục 24/24 thông qua các công cụ tìm kiếm và qua các trang mạng xã hội. </p>
 			</div>
 		</div>
 	</div>
@@ -230,13 +229,13 @@
 	</div>
 </div>
 <?
-	$dependencies = array(); 
-	$channel['theme']->asset()->writeScript('custom',' 
+	$dependencies = array();
+	$channel['theme']->asset()->writeScript('custom','
 	function convertToSlug(title)
 	{
 	  //Đổi chữ hoa thành chữ thường
 		slug = title.toLowerCase();
-	 
+
 		//Đổi ký tự có dấu thành không dấu
 		slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, "a");
 		slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, "e");
@@ -259,7 +258,7 @@
 		slug = "@" + slug + "@";
 		slug = slug.replace(/\@\-|\-\@|\@/gi, "");
 		//In slug ra textbox có id “slug”
-		
+
 	  return slug;
 	}
 	$("#channelDomain").keyup(function () {
@@ -267,15 +266,15 @@
 			var appendDomain="cungcap.net";
 			$("#changeDomain").html("http://"+convertToSlug($(this).val())+"."+appendDomain);
 		}else{
-			$("#changeDomain").empty(); 
+			$("#changeDomain").empty();
 		}
 	});
 	$(".appendpricing").on("click",".pricingPackge",function() {
-		$(".appendpricing .pricingPackge").not(this).removeClass("active"); 
+		$(".appendpricing .pricingPackge").not(this).removeClass("active");
 		$(".appendpricing .pricingPackge").not(this).find("input").prop("checked",false);
 		$(this).addClass("active");
 		$(this).find("input").prop("checked",true);
-	}); 
+	});
 	function getPackge(){
 		$.ajax({
 			url: "'.route('channel.packge.json',$channel['domainPrimary']).'",
@@ -297,7 +296,7 @@
 								+"<input type=\"radio\" class=\"hidden\" value=\""+item.id+"\" name=\"channelPackge\" checked>"
 							+"</div>"
 						+"</div>"
-					+"</div>"); 
+					+"</div>");
 					}else{
 						$(".appendPackge").append("<div class=\"col-lg-4 col-md-4 col-sm-6 col-xs-12\">"
 						+"<div class=\"form-group\">"
@@ -312,57 +311,57 @@
 								+"<input type=\"radio\" class=\"hidden\" value=\""+item.id+"\" name=\"channelPackge\">"
 							+"</div>"
 						+"</div>"
-					+"</div>"); 
+					+"</div>");
 					}
-				}); 
+				});
 			}
 		});
 	}
-	getPackge(); 
+	getPackge();
 	$(".appendPackge").on("click",".packgeCheck",function() {
-		$(".appendPackge .packgeCheck").not(this).removeClass("active"); 
+		$(".appendPackge .packgeCheck").not(this).removeClass("active");
 		$(".appendPackge .packgeCheck").not(this).find("input").prop("checked",false);
 		$(this).addClass("active");
 		$(this).find("input").prop("checked",true);
-	}); 
-	getFields(); 
-	getRegions(); 
+	});
+	getFields();
+	getRegions();
 	$(".addSelectRegion").on("change",".selectRegion",function() {
-		getSubregion($(this).val()); 
-		getDistrict(0); 
-		getWard(0); 
-		$("input[name=regionIso]").val($(this).find("option:selected").attr("data-iso")); 
-		$("input[name=idRegion]").val($(this).val()); 
-		$("input[name=idSubRegion]").val(0); 
-		$("input[name=idDistrict]").val(0); 
+		getSubregion($(this).val());
+		getDistrict(0);
+		getWard(0);
+		$("input[name=regionIso]").val($(this).find("option:selected").attr("data-iso"));
+		$("input[name=idRegion]").val($(this).val());
+		$("input[name=idSubRegion]").val(0);
+		$("input[name=idDistrict]").val(0);
 	});
 	$(".addSelectSubRegion").on("change",".selectSubRegion",function() {
-		getDistrict($(this).val()); 
+		getDistrict($(this).val());
 		getWard(0);
-		$("input[name=idSubRegion]").val($(this).val()); 
-		$("input[name=idDistrict]").val(0); 
+		$("input[name=idSubRegion]").val($(this).val());
+		$("input[name=idDistrict]").val(0);
 	});
 	$(".addSelectDistrict").on("change",".selectDistrict",function() {
-		getWard($(this).val()); 
-		$("input[name=idDistrict]").val($(this).val()); 
-		$("input[name=idWard]").val(0); 
+		getWard($(this).val());
+		$("input[name=idDistrict]").val($(this).val());
+		$("input[name=idWard]").val(0);
 	});
 	$(".addSelectWard").on("change",".selectWard",function() {
-		$("input[name=idWard]").val($(this).val()); 
+		$("input[name=idWard]").val($(this).val());
 	});
 	function getFields(){
-		$(".addFields").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải lĩnh vực, vui lòng chờ...</small></div>"); 
+		$(".addFields").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải lĩnh vực, vui lòng chờ...</small></div>");
 		$.ajax({
 			url: "'.route('channel.json.fields',$channel['domainPrimary']).'",
 			type: "GET",
 			dataType: "json",
 			success: function (result) {
-				$(".addFields .loading").empty(); 
+				$(".addFields .loading").empty();
 				$(".addFields").append("<select class=\"selectField\" data-placeholder=\"Chọn lĩnh vực hoạt động...\" name=\"channelFields\" multiple required>"
-					+"<option value=\"\"></option></select><label class=\"error\" for=\"channelFields\"></label>"); 
+					+"<option value=\"\"></option></select><label class=\"error\" for=\"channelFields\"></label>");
 				$.each(result.fields, function(i, item) {
 					$(".addFields .selectField").append("<option value="+item.id+">"+item.name+"</option>");
-				}); 
+				});
 				jQuery(".addFields .selectField").select2({
 					width: "100%"
 				});
@@ -370,24 +369,24 @@
 		});
 	}
 	function getRegions(){
-		$(".addSelectRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quốc gia, vui lòng chờ...</small></div>"); 
+		$(".addSelectRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quốc gia, vui lòng chờ...</small></div>");
 		$.ajax({
 			url: "'.route("regions.json.list",$channel["domainPrimary"]).'",
 			type: "GET",
 			dataType: "json",
 			success: function (result) {
-				$(".addSelectRegion .loading").empty(); 
+				$(".addSelectRegion .loading").empty();
 				if(result.success==true){
-					getSubregion($("input[name=idRegion]").val()); 
+					getSubregion($("input[name=idRegion]").val());
 					$(".addSelectRegion").append("<div class=\"input-group\"><span class=\"input-group-addon\"><i class=\"flag flag-"+$("input[name=regionIso]").val()+"\"></i></span><select class=\"selectRegion\" data-placeholder=\"Chọn quốc gia...\" name=\"channelRegion\" required>"
-					+"<option value=\"\"></option></select></div><label class=\"error\" for=\"channelRegion\"></label>"); 
+					+"<option value=\"\"></option></select></div><label class=\"error\" for=\"channelRegion\"></label>");
 					$.each(result.region, function(i, item) {
 						if(item.id==$("input[name=idRegion]").val()){
 							$(".addSelectRegion .selectRegion").append("<option value="+item.id+" data-icon=\"flag-"+item.iso.toLowerCase()+"\"  data-iso="+item.iso.toLowerCase()+" selected>"+item.country+"</option>");
 						}else{
 							$(".addSelectRegion .selectRegion").append("<option value="+item.id+"  data-icon=\"flag-"+item.iso.toLowerCase()+"\"  data-iso="+item.iso.toLowerCase()+" >"+item.country+"</option>");
 						}
-					}); 
+					});
 					function format(icon) {
 						var originalOption = icon.element;
 						return "<i class=\"flag " + $(originalOption).data("icon") + "\"></i> " + icon.text;
@@ -397,16 +396,16 @@
 						formatResult: format
 					});
 				}else{
-					
+
 				}
 			}
 		});
-	} 
+	}
 	function getSubregion(idRegion){
-		$(".addSelectSubRegion").empty(); 
-		$(".addSelectSubRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải thành phố, vui lòng chờ...</small></div>"); 
+		$(".addSelectSubRegion").empty();
+		$(".addSelectSubRegion").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải thành phố, vui lòng chờ...</small></div>");
 		var formData = new FormData();
-		formData.append("idRegion", idRegion); 
+		formData.append("idRegion", idRegion);
 		$.ajax({
 			url: "'.route("subregion.json.list.post",$channel["domainPrimary"]).'",
 			type: "POST",
@@ -417,19 +416,19 @@
 			data:formData,
 			headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 			success: function (result) {
-				$(".addSelectSubRegion .loading").empty(); 
-				$(".addSelectRegion .input-group-addon").html("<i class=\"flag flag-"+$("input[name=regionIso]").val()+"\"></i>"); 
+				$(".addSelectSubRegion .loading").empty();
+				$(".addSelectRegion .input-group-addon").html("<i class=\"flag flag-"+$("input[name=regionIso]").val()+"\"></i>");
 				if(result.success==true){
-					getDistrict($("input[name=idSubRegion]").val()); 
+					getDistrict($("input[name=idSubRegion]").val());
 					$(".addSelectSubRegion").append("<select class=\"selectSubRegion\" data-placeholder=\"Chọn thành phố...\" name=\"channelSubRegion\">"
-					+"<option value=\"\"></option></select><label class=\"error\" for=\"channelSubRegion\"></label>"); 
+					+"<option value=\"\"></option></select><label class=\"error\" for=\"channelSubRegion\"></label>");
 					$.each(result.subregion, function(i, item) {
 						if(item.id==$("input[name=idSubRegion]").val()){
 							$(".addSelectSubRegion .selectSubRegion").append("<option value="+item.id+" selected>"+item.subregions_name+"</option>");
 						}else{
 							$(".addSelectSubRegion .selectSubRegion").append("<option value="+item.id+">"+item.subregions_name+"</option>");
 						}
-					}); 
+					});
 					function format(icon) {
 						var originalOption = icon.element;
 						return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
@@ -439,16 +438,16 @@
 						formatResult: format
 					});
 				}else{
-					$(".addSelectSubRegion").empty(); 
+					$(".addSelectSubRegion").empty();
 				}
 			}
 		});
 	}
 	function getDistrict(idSubRegion){
-		$(".addSelectDistrict").empty(); 
-		$(".addSelectDistrict").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quận huyện, vui lòng chờ...</small></div>"); 
+		$(".addSelectDistrict").empty();
+		$(".addSelectDistrict").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải quận huyện, vui lòng chờ...</small></div>");
 		var formData = new FormData();
-		formData.append("idSubRegion", idSubRegion); 
+		formData.append("idSubRegion", idSubRegion);
 		$.ajax({
 			url: "'.route("district.json.list.post",$channel["domainPrimary"]).'",
 			type: "POST",
@@ -459,18 +458,18 @@
 			data:formData,
 			headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 			success: function (result) {
-				$(".addSelectDistrict .loading").empty(); 
+				$(".addSelectDistrict .loading").empty();
 				if(result.success==true){
-					getWard($("input[name=idDistrict]").val()); 
+					getWard($("input[name=idDistrict]").val());
 					$(".addSelectDistrict").append("<select class=\"selectDistrict\" data-placeholder=\"Chọn quận huyện...\" name=\"channelDistrict\">"
-						+"<option value=\"\"></option></select><label class=\"error\" for=\"channelDistrict\"></label>"); 
+						+"<option value=\"\"></option></select><label class=\"error\" for=\"channelDistrict\"></label>");
 					$.each(result.district, function(i, item) {
 						if(item.id=='.$channel['info']->channelJoinSubRegion->subregion->id.'){
 							$(".addSelectDistrict .selectDistrict").append("<option value="+item.id+" selected>"+item.district_name+"</option>");
 						}else{
 							$(".addSelectDistrict .selectDistrict").append("<option value="+item.id+">"+item.district_name+"</option>");
 						}
-					}); 
+					});
 					function format(icon) {
 						var originalOption = icon.element;
 						return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
@@ -480,16 +479,16 @@
 						formatResult: format
 					});
 				}else{
-					$(".addSelectDistrict").empty(); 
+					$(".addSelectDistrict").empty();
 				}
 			}
 		});
 	}
 	function getWard(idDistrict){
-		$(".addSelectWard").empty(); 
-		$(".addSelectWard").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải phường xã, vui lòng chờ...</small></div>"); 
+		$(".addSelectWard").empty();
+		$(".addSelectWard").append("<div class=\"loading\"><small><i class=\"fa fa-spinner fa-spin\"></i> đang tải phường xã, vui lòng chờ...</small></div>");
 		var formData = new FormData();
-		formData.append("idDistrict", idDistrict); 
+		formData.append("idDistrict", idDistrict);
 		$.ajax({
 			url: "'.route("ward.json.list.post",$channel["domainPrimary"]).'",
 			type: "POST",
@@ -500,18 +499,18 @@
 			data:formData,
 			headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 			success: function (result) {
-				//console.log(result); 
-				$(".addSelectWard .loading").empty(); 
+				//console.log(result);
+				$(".addSelectWard .loading").empty();
 				if(result.success==true){
 					$(".addSelectWard").append("<select class=\"selectWard\" data-placeholder=\"Chọn phường xã...\" name=\"channelWard\">"
-						+"<option value=\"\"></option></select><label class=\"error\" for=\"channelWard\"></label>"); 
+						+"<option value=\"\"></option></select><label class=\"error\" for=\"channelWard\"></label>");
 					$.each(result.ward, function(i, item) {
 						if(item.id=='.$channel['info']->channelJoinSubRegion->subregion->id.'){
 							$(".addSelectWard .selectWard").append("<option value="+item.id+" selected>"+item.ward_name+"</option>");
 						}else{
 							$(".addSelectWard .selectWard").append("<option value="+item.id+">"+item.ward_name+"</option>");
 						}
-					}); 
+					});
 					function format(icon) {
 						var originalOption = icon.element;
 						return "<i class=\"fa fa-map-marker\"></i> " + icon.text;
@@ -521,7 +520,7 @@
 						formatResult: format
 					});
 				}else{
-					$(".addSelectWard").empty(); 
+					$(".addSelectWard").empty();
 				}
 			}
 		});
@@ -546,18 +545,18 @@
 					$validator.focusInvalid();
 					return false;
 				}else{
-					var move = false; 
+					var move = false;
 					if(index==1){
-						$(".previous").removeClass("hidden"); 
-						$(".textNext").text("Tiếp tục"); 
-						var channelDomain=$("input[name=channelDomain]").val(); 
-						var channelName=$("input[name=channelName]").val(); 
-						var channelDescription=$("input[name=channelDescription]").val(); 
+						$(".previous").removeClass("hidden");
+						$(".textNext").text("Tiếp tục");
+						var channelDomain=$("input[name=channelDomain]").val();
+						var channelName=$("input[name=channelName]").val();
+						var channelDescription=$("input[name=channelDescription]").val();
 						var formData = new FormData();
-						formData.append("channelDomain", channelDomain); 
-						formData.append("channelName", channelName); 
-						formData.append("channelDescription", channelDescription); 
-						$("#validationWizard #preloaderInBox").css("display", "block"); 
+						formData.append("channelDomain", channelDomain);
+						formData.append("channelName", channelName);
+						formData.append("channelDescription", channelDescription);
+						$("#validationWizard #preloaderInBox").css("display", "block");
 						$.ajax({
 							url: "'.route("channel.add.step1",$channel["domainPrimary"]).'",
 							type: "POST",
@@ -568,18 +567,18 @@
 							data:formData,
 							headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 							success: function (result) {
-								console.log(result); 
+								console.log(result);
 								if(result.success==true){
-									move= true; 
-									$("#validationWizard #preloaderInBox").css("display", "none"); 
-									$("#validationWizard").bootstrapWizard("show",index); 
+									move= true;
+									$("#validationWizard #preloaderInBox").css("display", "none");
+									$("#validationWizard").bootstrapWizard("show",index);
 									$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
 								}else{
-									$("#validationWizard #preloaderInBox").css("display", "none");  
-									move=false; 
+									$("#validationWizard #preloaderInBox").css("display", "none");
+									move=false;
 									jQuery.gritter.add({
 										title: "Thông báo!",
-										text: result.message, 
+										text: result.message,
 										class_name: "growl-danger",
 										sticky: false,
 										time: ""
@@ -588,22 +587,22 @@
 							}
 						});
 					}else if(index==2){
-						$(".textNext").text("Đăng ký"); 
-						
-						var channelAddress=$("input[name=channelAddress]").val(); 
-						var channelFields=$("select[name=channelFields]").select2("val"); 
+						$(".textNext").text("Đăng ký");
+
+						var channelAddress=$("input[name=channelAddress]").val();
+						var channelFields=$("select[name=channelFields]").select2("val");
 						var channelRegion=$("select[name=channelRegion]").select2("val");
-						var channelSubRegion=$("select[name=channelSubRegion]").select2("val"); 
+						var channelSubRegion=$("select[name=channelSubRegion]").select2("val");
 						var channelDistrict=$("select[name=channelDistrict]").select2("val");
 						var channelWard=$("select[name=channelWard]").select2("val");
 						var formData = new FormData();
-						formData.append("channelAddress", channelAddress); 
-						formData.append("channelFields", channelFields); 
-						formData.append("channelRegion", channelRegion); 
-						formData.append("channelSubRegion", channelSubRegion); 
-						formData.append("channelDistrict", channelDistrict); 
-						formData.append("channelWard", channelWard); 
-						$("#validationWizard #preloaderInBox").css("display", "block"); 
+						formData.append("channelAddress", channelAddress);
+						formData.append("channelFields", channelFields);
+						formData.append("channelRegion", channelRegion);
+						formData.append("channelSubRegion", channelSubRegion);
+						formData.append("channelDistrict", channelDistrict);
+						formData.append("channelWard", channelWard);
+						$("#validationWizard #preloaderInBox").css("display", "block");
 						$.ajax({
 							url: "'.route("channel.add.step2",$channel["domainPrimary"]).'",
 							type: "POST",
@@ -614,24 +613,24 @@
 							data:formData,
 							headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 							success: function (result) {
-								console.log(result); 
+								console.log(result);
 								if(result.success==true){
 									if(result.type=="free"){
-										$("#validationWizard #preloaderInBox").css("display", "none"); 
-										$("#validationWizard").bootstrapWizard("show",index); 
-										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
-										move= true; 
+										$("#validationWizard #preloaderInBox").css("display", "none");
+										$("#validationWizard").bootstrapWizard("show",index);
+										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
+										move= true;
 									}else{
-										$("#validationWizard #preloaderInBox").css("display", "none"); 
-										$("#validationWizard").bootstrapWizard("show",index); 
-										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+										$("#validationWizard #preloaderInBox").css("display", "none");
+										$("#validationWizard").bootstrapWizard("show",index);
+										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
 									}
 								}else{
-									$("#validationWizard #preloaderInBox").css("display", "none");  
-									move=false; 
+									$("#validationWizard #preloaderInBox").css("display", "none");
+									move=false;
 									jQuery.gritter.add({
 										title: "Thông báo!",
-										text: result.message, 
+										text: result.message,
 										class_name: "growl-danger",
 										sticky: false,
 										time: ""
@@ -640,17 +639,17 @@
 							}
 						});
 					}else if(index==3){
-						
-						var channelPhone=$("input[name=channelPhone]").val(); 
-						var channelEmail=$("input[name=channelEmail]").val(); 
-						var channelPassword=$("input[name=password]").val(); 
-						var channelRePassword=$("input[name=password_confirmation]").val(); 
+
+						var channelPhone=$("input[name=channelPhone]").val();
+						var channelEmail=$("input[name=channelEmail]").val();
+						var channelPassword=$("input[name=password]").val();
+						var channelRePassword=$("input[name=password_confirmation]").val();
 						var formData = new FormData();
-						formData.append("channelPhone", channelPhone); 
-						formData.append("channelEmail", channelEmail); 
-						formData.append("password", channelPassword); 
-						formData.append("password_confirmation", channelRePassword); 
-						$("#validationWizard #preloaderInBox").css("display", "block"); 
+						formData.append("channelPhone", channelPhone);
+						formData.append("channelEmail", channelEmail);
+						formData.append("password", channelPassword);
+						formData.append("password_confirmation", channelRePassword);
+						$("#validationWizard #preloaderInBox").css("display", "block");
 						$.ajax({
 							url: "'.route("channel.add.step3",$channel["domainPrimary"]).'",
 							type: "POST",
@@ -661,25 +660,25 @@
 							data:formData,
 							headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 							success: function (result) {
-								console.log(result); 
+								console.log(result);
 								if(result.success==true){
 									if(result.type=="free"){
-										$("#validationWizard #preloaderInBox").css("display", "none"); 
-										$("#validationWizard").bootstrapWizard("show",index); 
-										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+										$("#validationWizard #preloaderInBox").css("display", "none");
+										$("#validationWizard").bootstrapWizard("show",index);
+										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
 										window.location.href = "'.route("channel.me",$channel["domainPrimary"]).'";
 									}else{
-										$("#validationWizard #preloaderInBox").css("display", "none"); 
-										$("#validationWizard").bootstrapWizard("show",index); 
-										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow"); 
+										$("#validationWizard #preloaderInBox").css("display", "none");
+										$("#validationWizard").bootstrapWizard("show",index);
+										$("html, body").animate({scrollTop: $("#validationWizard").offset().top}, "slow");
 										window.location.href = "'.route("pay.cart",$channel["domainPrimary"]).'";
 									}
 								}else{
-									$("#validationWizard #preloaderInBox").css("display", "none");  
-									move=false; 
+									$("#validationWizard #preloaderInBox").css("display", "none");
+									move=false;
 									jQuery.gritter.add({
 										title: "Thông báo!",
-										text: result.message, 
+										text: result.message,
 										class_name: "growl-danger",
 										sticky: false,
 										time: ""
@@ -696,8 +695,8 @@
 	', $dependencies);
 ?>
 <?
-	$getService=\App\Model\Services::find(4); 
-	$listLtd=''; 
+	$getService=\App\Model\Services::find(4);
+	$listLtd='';
 	foreach($getService->attributeAll as $serviceDomain){
 	$listLtd.='
 	+"<div class=\"col-lg-3 col-md-3 col-sm-6 col-xs-6\">"
@@ -707,13 +706,13 @@
 				+"<label for=\"'.$serviceDomain->attribute_type.'\"> .'.$serviceDomain->attribute_type.'</label>"
 			+"</div>"
 		+"</div>"
-	+"</div>"'; 
+	+"</div>"';
 	}
-	$dependencies = array(); 
+	$dependencies = array();
 	$channel['theme']->asset()->writeScript('loadLazy','
 		$(function() {
 			$(".lazy").lazy();
-		}); 
+		});
 		var swiper = new Swiper(".swiper-container", {
 			navigation: {
 				nextEl: ".carousel_control_right",
@@ -730,7 +729,7 @@
 			{
 			  //Đổi chữ hoa thành chữ thường
 				var slug = title.toLowerCase();
-			 
+
 				//Đổi ký tự có dấu thành không dấu
 				slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, "a");
 				slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, "e");
@@ -753,12 +752,12 @@
 				slug = "@" + slug + "@";
 				slug = slug.replace(/\@\-|\-\@|\@/gi, "");
 				//In slug ra textbox có id “slug”
-				
+
 			  return slug;
 			}
-		getCheckDomain(); 
+		getCheckDomain();
 		function getCheckDomain(){
-			$(".panelNewRegisterDomain .checkDomain").append("<div class=\"form-group\"><div class=\"input-group\">"      
+			$(".panelNewRegisterDomain .checkDomain").append("<div class=\"form-group\"><div class=\"input-group\">"
 				+"<input type=\"text\" class=\"form-control\" name=\"domainNewRegister\" placeholder=\"Nhập tên miền cần kiểm tra\" required>"
 				+"<span class=\"input-group-btn\">"
 					+"<button class=\"btn btn-primary\" type=\"submit\" id=\"btnCheckDomain\"><span class=\"glyphicon glyphicon-retweet\"></span> Kiểm tra</button>"
@@ -780,14 +779,14 @@
 		});
 		$(".panelNewRegisterDomain").on("click","#btnCheckDomain",function() {
 			$(".panelNewRegisterDomain input[name=ltdDomain]:checked").each(function () {
-				$(".domainResult").empty(); 
-				var ltdDomain=$(this).val(); 
-				var Domain=convertToSlug($(".panelNewRegisterDomain input[name=domainNewRegister]").val()); 
+				$(".domainResult").empty();
+				var ltdDomain=$(this).val();
+				var Domain=convertToSlug($(".panelNewRegisterDomain input[name=domainNewRegister]").val());
 				var formData = new FormData();
-				formData.append("domain", Domain); 
-				formData.append("ltdDomain", ltdDomain); 
-				formData.append("domainType", $(this).attr("data-type")); 
-				formData.append("checkType", "status"); 
+				formData.append("domain", Domain);
+				formData.append("ltdDomain", ltdDomain);
+				formData.append("domainType", $(this).attr("data-type"));
+				formData.append("checkType", "status");
 				$.ajax({
 					url: "'.route("channel.domain.check",$channel["domain"]->domain).'",
 					type: "POST",
@@ -798,7 +797,7 @@
 					data:formData,
 					headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
 					success: function (result) {
-						console.log(result); 
+						console.log(result);
 						if(result.success==true){
 							if(result.domainInfo.code==1){
 								if(result.serviceAttribute.price_re_order==0){
@@ -806,49 +805,49 @@
 										+"<div class=\"pull-right\">"
 											+"<div class=\"form-group\"><strong class=\"text-info\">Miễn phí</strong> <button type=\"button\" class=\"btn btn-xs btn-success selectDomain\" domain-data=\""+result.domain+"\" domain-type=\""+result.domainType+"\" data-check=\"\"><i class=\"glyphicon glyphicon-unchecked\"></i> chọn</button></div>"
 										+"</div> "
-										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>" 
-									+"</li>"); 
+										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>"
+									+"</li>");
 								}else{
 									$(".domainResult").append("<li class=\"list-group-item list-group-item-success\">"
 										+"<div class=\"pull-right\">"
 											+"<div class=\"form-group\"><strong class=\"text-danger\">"+(parseInt(result.serviceAttribute.price_re_order)+parseInt(result.serviceAttribute.price_order)).toLocaleString()+"<sup>VND</sup></strong> <button type=\"button\" class=\"btn btn-xs btn-success selectDomain\" domain-data=\""+result.domain+"\" domain-type=\""+result.domainType+"\" data-check=\"\"><i class=\"glyphicon glyphicon-unchecked\"></i> chọn</button></div>"
 										+"</div> "
-										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>" 
-									+"</li>"); 
+										+"<strong>"+result.domainInfo.domainName+"</strong> <small class=\"hidden-xs\">(tên miền này chưa được đăng ký)</small>"
+									+"</li>");
 								}
 							}else if(result.domainInfo.code==0){
-								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><button type=\"button\" class=\"btn btn-xs btn-default pull-right btnDetail\" data-domainName=\""+result.domainInfo.domainName+"\" data-registrar=\""+result.domainInfo.registrar+"\" data-nameServer=\""+result.domainInfo.nameServer+"\" data-creationDate=\""+result.domainInfo.creationDate+"\" data-expirationDate=\""+result.domainInfo.expirationDate+"\" data-registrantName=\""+result.domainInfo.registrantName+"\"><i class=\"glyphicon glyphicon-eye-open\"></i> Xem</button> <strong>"+result.domainInfo.domainName+"</strong> <small class=\"text-danger hidden-xs\">(tên miền này đã được đăng ký)</small> </li>"); 
+								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><button type=\"button\" class=\"btn btn-xs btn-default pull-right btnDetail\" data-domainName=\""+result.domainInfo.domainName+"\" data-registrar=\""+result.domainInfo.registrar+"\" data-nameServer=\""+result.domainInfo.nameServer+"\" data-creationDate=\""+result.domainInfo.creationDate+"\" data-expirationDate=\""+result.domainInfo.expirationDate+"\" data-registrantName=\""+result.domainInfo.registrantName+"\"><i class=\"glyphicon glyphicon-eye-open\"></i> Xem</button> <strong>"+result.domainInfo.domainName+"</strong> <small class=\"text-danger hidden-xs\">(tên miền này đã được đăng ký)</small> </li>");
 							}else{
-								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><strong>"+result.domainInfo.domainName+"</strong> </li>"); 
+								$(".domainResult").append("<li class=\"list-group-item list-group-item-warning disabled\"><strong>"+result.domainInfo.domainName+"</strong> </li>");
 							}
 						}else{
-							$(".domainResult").empty(); 
-							$(".domainResult").append("<div class=\"alert alert-danger alert-dismissable\" id=\"alertError\"><a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"+result.message+"</div>"); 
+							$(".domainResult").empty();
+							$(".domainResult").append("<div class=\"alert alert-danger alert-dismissable\" id=\"alertError\"><a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"+result.message+"</div>");
 						}
 					}
 				});
 			});
-			return false; 
+			return false;
 		});
 		$(".panelNewRegisterDomain").on("click",".btnDetail",function() {
-			var domainName=$(this).attr("data-domainName"); 
-			var dateCreated=$(this).attr("data-creationDate"); 
-			var dateExpiration=$(this).attr("data-expirationDate"); 
-			var domainRegistar=$(this).attr("data-registrar"); 
-			var nameServer=$(this).attr("data-nameServer"); 
-			var registrantName=$(this).attr("data-registrantName"); 
-			$("#modalViewDomain .modal-title").empty(); 
-			$("#modalViewDomain .modal-body").empty(); 
-			$("#modalViewDomain .modal-title").text(domainName); 
+			var domainName=$(this).attr("data-domainName");
+			var dateCreated=$(this).attr("data-creationDate");
+			var dateExpiration=$(this).attr("data-expirationDate");
+			var domainRegistar=$(this).attr("data-registrar");
+			var nameServer=$(this).attr("data-nameServer");
+			var registrantName=$(this).attr("data-registrantName");
+			$("#modalViewDomain .modal-title").empty();
+			$("#modalViewDomain .modal-body").empty();
+			$("#modalViewDomain .modal-title").text(domainName);
 			$("#modalViewDomain .modal-body").html(""
-			+"<strong>Ngày đăng ký: </strong>"+dateCreated+"<br>" 
-			+"<strong>Ngày hết hạn: </strong>"+dateExpiration+"<br>" 
-			+"<strong>Chủ sở hữu: </strong>"+registrantName+"<br>" 
-			+"<strong>Name Server: </strong>"+nameServer+"<br>" 
-			+"<strong>Nhà đăng ký: </strong>"+domainRegistar+"<br>" 
+			+"<strong>Ngày đăng ký: </strong>"+dateCreated+"<br>"
+			+"<strong>Ngày hết hạn: </strong>"+dateExpiration+"<br>"
+			+"<strong>Chủ sở hữu: </strong>"+registrantName+"<br>"
+			+"<strong>Name Server: </strong>"+nameServer+"<br>"
+			+"<strong>Nhà đăng ký: </strong>"+domainRegistar+"<br>"
 			+"");
-			$("#modalViewDomain").modal("show"); 
-			
+			$("#modalViewDomain").modal("show");
+
 		});
 	', $dependencies);
 ?>

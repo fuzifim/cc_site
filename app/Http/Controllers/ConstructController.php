@@ -69,40 +69,15 @@ class ConstructController extends Controller
 			$pdp_url = public_path('data/public_suffix_list.dat.txt');
 			$rules = \Pdp\Rules::createFromPath($pdp_url); 
 			return $rules; 
-		}); 
-		//$parsedUrl=parse_url(Request::url()); 
-		//dd($parsedUrl); 
-		//$checkDomain=str_replace('.cungcap.net','',$parsedUrl['host']); 
-		/*if(!empty(Request::server('HTTP_REFERER'))){
-			$domainReferer = $this->_parser->parseUrl(Request::server('HTTP_REFERER')); 
-			if($domainReferer->host->registerableDomain!=$this->_domainName->host->registerableDomain){
-				$fixDomain=explode('.',$domainReferer->host->registerableDomain); 
-				if(!empty($fixDomain[0])){
-					if($fixDomain[0]=='google' || $fixDomain[0]=='yahoo' || $fixDomain[0]=='msn' || $fixDomain[0]=='bing' || $fixDomain[0]=='aol' || $fixDomain[0]=='ask'){
-						$checkReferer=Urlreferer::where('url_encode','=',base64_encode(Request::server('HTTP_REFERER')))->first(); 
-						if(empty($checkReferer->id)){
-							Urlreferer::insertGetId(array(
-								'url'=>Request::server('HTTP_REFERER'), 
-								'url_encode'=>base64_encode(Request::server('HTTP_REFERER')), 
-								'created_at'=>Carbon::now()->format('Y-m-d H:i:s'), 
-								'status'=>'pending'
-							));
-						}
-					}
-				}
-			}
-		}*/
-		/*if(Session::has('locale')){
-			\App::setLocale(Session::has('locale')); 
-			$this->_region=Regions::where('lang','=',Session::has('locale'))->first(); 
-		}else{
-			\App::setLocale(mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE'])); 
-			$this->_region=Regions::where('lang','=',mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE']))->first(); 
-		}*/
-		$this->_region = Cache::store('file')->rememberForever('regionVn', function()
+		});
+		$this->_region = Cache::store('file')->remember('region',1, function()
 		{
-			return Regions::find(704); 
-		}); 
+		    if(!empty($_SERVER['GEOIP_COUNTRY_CODE'])){
+                return Regions::where('lang','=',mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE']))->first();
+            }else{
+                return Regions::find(704);
+            }
+        });
 		$parsedUrl=parse_url(Request::url()); 
 		if(!empty($parsedUrl['host'])){
 			$checkDomain=str_replace('www.','',$parsedUrl['host']); 
@@ -115,10 +90,7 @@ class ConstructController extends Controller
 			$this->_siteSuccess='infoChannel'; 
 			$this->_channel = $this->_domain->domainJoinChannel->channel; 
 			if($this->_channel->channel_parent_id==0){ 
-				$this->_theme=Theme::uses('main')->layout('default'); 
-				/*if($this->_domain->domain!=config('app.url')){ 
-					//return Redirect::to('https://'.config('app.url')); 
-				}*/
+				$this->_theme=Theme::uses('main')->layout('default');
 			}else{
 				$this->_theme=Theme::uses('control')->layout('default'); 
 			}
@@ -134,8 +106,7 @@ class ConstructController extends Controller
 			
 			if(!empty($this->_channel)){
 				$this->_fullUrl=Request::fullUrl(); 
-				$checkFullUrl=parse_url($this->_fullUrl); 
-				//$checkFullUrl = $this->_parser->parseUrl($this->_fullUrl); 
+				$checkFullUrl=parse_url($this->_fullUrl);
 				if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
 					return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
 				}

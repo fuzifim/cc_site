@@ -398,7 +398,7 @@ class SitePublicController extends ConstructController
 	}
 	public function getFields()
     {
-		$fields=Fields::where('name','!=',"")->where('status','=',0)->orderBy('sort_order','asc')->get(); 
+		$fields=Fields::where('name','!=',"")->where('status','=',0)->orderBy('sort_order','desc')->get();
 		return response()->json(['success'=>true,
 			'message'=>'Danh sách lĩnh vực', 
 			'fields'=>$fields
