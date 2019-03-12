@@ -730,18 +730,6 @@
 		$(function() {
 			$(".lazy").lazy();
 		});
-		var swiper = new Swiper(".swiper-container", {
-			navigation: {
-				nextEl: ".carousel_control_right",
-				prevEl: ".carousel_control_left",
-			},
-		});
-		var swiper = new Swiper("#carousel-2", {
-			navigation: {
-				nextEl: ".carousel_control_right_2",
-				prevEl: ".carousel_control_left_2",
-			},
-		});
 		function convertToSlug(title)
 			{
 			  //Đổi chữ hoa thành chữ thường
