@@ -175,10 +175,10 @@
 				</div><!-- panel -->
 			</div>
 			<div class="col-md-6">
-				<div class="channelPrice">Tạo website miễn phí</div>
+				<div class="channelPrice">Dùng thử website miễn phí</div>
 				<ul class="list-group">
-					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> Không giới hạn bài viết</li>
-					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> Không giới hạn dung lượng sử dụng</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> 10 bài viết</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> 20MB dung lượng SSD</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .{!! $channel['domainPrimary'] !!}</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-tint text-success"></i> Không tốn phí thiết kế</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-hdd text-success"></i> Không tốn phí hosting</li>
