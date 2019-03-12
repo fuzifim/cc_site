@@ -324,14 +324,14 @@ class CartController extends ConstructController
 					foreach($listDomain as $domain){
 						$keyRandom=substr(str_shuffle(str_repeat($pool, 5)), 0, 5).strtotime(Carbon::now()->format('Y-m-d H:i:s')).$i;
 						if(WebService::is_valid_url($domain['name'])){
-							$domainName = $this->_parser->parseUrl($domain['name']); 
-							$serviceAttribute=Services_attribute::where('attribute_type','=',$domainName->host->publicSuffix)->first(); 
+							$domainName = $this->_rulesDomain->resolve($domain['name']);
+							$serviceAttribute=Services_attribute::where('attribute_type','=',$domainName->getPublicSuffix())->first();
 							if(!empty($serviceAttribute->id)){
 								$checkExit='true';
 								$colec=json_decode(Cart::getContent(),true);  
 								if(count($colec)>0){
 									foreach($colec as $checkColec){
-										if($checkColec['name']==$domainName->host->registerableDomain){
+										if($checkColec['name']==$domainName->getRegistrableDomain()){
 											$checkExit='false';
 											break; 
 										}
@@ -340,7 +340,7 @@ class CartController extends ConstructController
 								if($checkExit=='true'){
 									$item = array(
 										'id' => $keyRandom,
-										'name' => $domainName->host->registerableDomain,
+										'name' => $domainName->getRegistrableDomain(),
 										'price' => $serviceAttribute->price_order+$serviceAttribute->price_re_order,
 										'quantity' => 1,
 										'attributes' => array(
@@ -362,7 +362,7 @@ class CartController extends ConstructController
 									Cart::add($item);
 								}
 							}else{
-								$message['error']='Tên miền '.$domainName->host->registerableDomain.' không được hỗ trợ!';
+								$message['error']='Tên miền '.$domainName->getRegistrableDomain().' không được hỗ trợ!';
 							}
 						}
 						$i++; 
