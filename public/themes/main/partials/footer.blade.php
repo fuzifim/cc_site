@@ -34,9 +34,6 @@
 						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
 						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
 						</small>
-						<div class="form-group mt-2">
-							<h1><a href="tel:0963913349"><i class="glyphicon glyphicon-earphone"></i> 0963913349</a></h1>
-						</div>
 					</div>
 				</div>
 			</div>

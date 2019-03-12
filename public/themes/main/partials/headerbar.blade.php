@@ -28,7 +28,7 @@
 				<li><a href="{{route('channel.profile.info',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-user"></i> Hồ sơ</a></li>
 				@if(Cart::getContent()->count()>0)<li><a href="{{route('pay.cart',$channel['domainPrimary'])}}"><span class="pull-right badge badge-danger">{{Cart::getContent()->count()}}</span> <i class="glyphicon glyphicon-shopping-cart"></i> Giỏ hàng</a></li>@endif
 				<li><a href="{{route('pay.history',$channel['domainPrimary'])}}"><i class="glyphicon  glyphicon-credit-card"></i> Thanh toán </a></li>
-				<li><a href="http://help.cungcap.net/" target="_blank"><i class="glyphicon glyphicon-question-sign"></i> Trợ giúp</a></li>
+				{{--<li><a href="http://help.cungcap.net/" target="_blank"><i class="glyphicon glyphicon-question-sign"></i> Trợ giúp</a></li>--}}
 				<li><a href="{{route('channel.logout',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-log-out"></i> Đăng xuất</a></li>
 			</ul>
 		  </li>
