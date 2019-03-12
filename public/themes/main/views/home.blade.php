@@ -180,16 +180,6 @@
 						</form>
 					</div>
 				</div><!-- panel -->
-				<div class="form-group mt-2">
-					<ins class="adsbygoogle"
-						 style="display:block"
-						 data-ad-client="ca-pub-6739685874678212"
-						 data-ad-slot="7536384219"
-						 data-ad-format="auto"></ins>
-					<script>
-						(adsbygoogle = window.adsbygoogle || []).push({});
-					</script>
-				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="channelPrice">Tạo website miễn phí</div>
@@ -210,6 +200,16 @@
 				</ul>
 			</div>
 		</div>
+	</div>
+	<div class="form-group mt-2">
+		<ins class="adsbygoogle"
+			 style="display:block"
+			 data-ad-client="ca-pub-6739685874678212"
+			 data-ad-slot="7536384219"
+			 data-ad-format="auto"></ins>
+		<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
 	</div>
 
 </div><!-- mainpanel -->
