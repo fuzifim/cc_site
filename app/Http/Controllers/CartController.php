@@ -257,14 +257,17 @@ class CartController extends ConstructController
 				$customerAddress=Input::get('customerAddress'); 
 				$customerCity=Input::get('customerCity'); 
 				$customerCountry=Input::get('customerCountry'); 
-				$error=''; 
 				$getRegion=Regions::find($customerCountry); 
 				$getSubregion=Subregions::find($customerCity); 
 				if(empty($getSubregion->id)){
-					$error='Bạn chưa chọn thành phố';
+                    return response()->json(['success'=>false,
+                        'message'=>'Bạn chưa chọn thành phố',
+                    ]);
 				}
 				if(empty($getRegion->id)){
-					$error='Bạn chưa chọn quốc gia';
+                    return response()->json(['success'=>false,
+                        'message'=>'Bạn chưa chọn quốc gia',
+                    ]);
 				}
 				$messages = array(
 					'alpha_dash'=>'Địa chỉ kênh chỉ là dạng chữ không dấu và số',
@@ -283,7 +286,7 @@ class CartController extends ConstructController
 				$validator = Validator::make(Input::all(), $rules, $messages);
 				if ($validator->fails())
 				{
-					return response()->json(['success'=>false, 
+					return response()->json(['success'=>false,
 						'message'=>$validator->errors()->first(), 
 					]);
 				}else{
