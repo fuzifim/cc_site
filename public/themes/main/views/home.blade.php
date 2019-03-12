@@ -15,6 +15,13 @@
 {!!Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'))!!}
 {!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
 <section>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+	(adsbygoogle = window.adsbygoogle || []).push({
+		google_ad_client: "ca-pub-6739685874678212",
+		enable_page_level_ads: true
+	});
+</script>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
 	<div class="container panelRegisterSite">
@@ -173,6 +180,16 @@
 						</form>
 					</div>
 				</div><!-- panel -->
+				<div class="form-group mt-2">
+					<ins class="adsbygoogle"
+						 style="display:block"
+						 data-ad-client="ca-pub-6739685874678212"
+						 data-ad-slot="7536384219"
+						 data-ad-format="auto"></ins>
+					<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="channelPrice">Tạo website miễn phí</div>
