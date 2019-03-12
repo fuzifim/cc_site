@@ -1,6 +1,6 @@
 <?
-	$channel['theme']->setTitle('Tạo website');
-	$channel['theme']->setKeywords('Tạo kênh, tạo website, bảng giá tạo website');
+	$channel['theme']->setTitle('Cung Cấp');
+	$channel['theme']->setKeywords('Tạo kênấph, tạo website, bảng giá tạo website');
 	$channel['theme']->setDescription('Cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người ');
 	$channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap-website.jpg'));
 ?>
