@@ -7,13 +7,13 @@ return [
 		'facebook' => [
 			'client_id' => env('FACEBOOK_APP_ID'),
 			'client_secret' => env('FACEBOOK_APP_SECRET'),
-			'redirect_uri' => 'https://taoweb.cungcap.net/social/facebook/login',
+			'redirect_uri' => 'https://cungcap.net/social/facebook/login',
 			'scope' => ['email', 'public_profile','user_posts','user_photos'],
 		],
 		'google' => [
 			'client_id' => env('GOOGLE_CLIENT_ID'),
 			'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-			'redirect_uri' => 'https://taoweb.cungcap.net/social/google/login',
+			'redirect_uri' => 'https://cungcap.net/social/google/login',
 			'scope' => [],
 		],
 		'github' => [
