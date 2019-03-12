@@ -340,8 +340,8 @@ class ChannelController extends ConstructController
 		if(Session::has('add_channel')){
 			$sessionHistory=Session::get('add_channel'); 
 			if(!empty($sessionHistory['created_at'])){
-				if(Carbon::parse($sessionHistory['created_at'])->addMinutes(5) > Carbon::now()->format('Y-m-d H:i:s')){
-					$error='Mỗi website tạo phải cách nhau 30 phút. Lần tạo gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']);
+				if(Carbon::parse($sessionHistory['created_at'])->addMinutes(10) > Carbon::now()->format('Y-m-d H:i:s')){
+					$error='Mỗi website tạo phải cách nhau 10 phút. Lần tạo gần đây nhất của bạn cách đây '.WebService::time_request($sessionHistory['created_at']);
 				}
 			}
 		}
