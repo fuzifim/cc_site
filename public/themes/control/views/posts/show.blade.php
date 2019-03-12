@@ -106,12 +106,12 @@
 					<div class="swiper-container postGallery mb5 " id="postGallery" style="max-height:520px; overflow:hidden;padding:5px;background:#fff; ">
 						<!-- Wrapper for slides -->
 						  <div class="swiper-wrapper my-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-							<?php
-								$i=0;
-								foreach ($post->gallery as $image) {
-									$width='720'; 
-									$height='480';
-							?>
+							  <?php
+							  $i=0;
+							  foreach ($post->gallery as $image) {
+							  list($width, $height, $type, $attr) = getimagesize('http:'.config('app.link_media').$image->media->media_path.$image->media->media_name);
+
+							  ?>
 							@if($image->media->media_type == "image/jpeg" || $image->media->media_type == "image/jpg" || $image->media->media_type == "image/png" || $image->media->media_type == "image/gif") 
 								<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" class="swiper-slide @if($i==0) active @endif">
 									<a href="{{config('app.link_media').$image->media->media_path.$image->media->media_name}}" itemprop="contentUrl" data-size="{{$width}}x{{$height}}">
