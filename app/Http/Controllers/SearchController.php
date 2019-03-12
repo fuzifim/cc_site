@@ -77,7 +77,7 @@ class SearchController extends ConstructController
 	
 	public function getSearchQuery(Request $request)
     {
-		$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('words_blacklist.txt')); 
+		$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('data/words_blacklist.txt'));
 		$type=addslashes($request->query('t')); 
 		$id=addslashes($request->query('i')); 
 		$string_search=addslashes($request->query('v')); 
@@ -89,76 +89,76 @@ class SearchController extends ConstructController
 						return Redirect::to('http://'.$domainParser->host->registerableDomain.'.'.config('app.url'));
 					}
 				}
-				$postSearch=Posts::searchByQuery([
-					'multi_match' => [
-						'query' => $string_search,
-						'fields' => ['posts_title','posts_title_convert'], 
-						//'type'=>'phrase', 
-						//'slop'=>3
-					]
-				], $aggregations = null, $sourceFields = null, $limit = 1000, $offset = null, $sort = null);  
-				$results_post = collect($postSearch)->map(function($x,$y){return $x;})->toArray(); 
-				foreach($results_post as $item){
-					$this->_listResult['type']='post'; 
-					$this->_listResult['id']=$item['id']; 
-					$this->_listResult['title']=$item['posts_title']; 
-					$this->_listResult['description']=$item['posts_description']; 
-					array_push($this->_listArray,$this->_listResult);
-				}
-				$affiliateSearch=Affiliate_feed::searchByQuery([
-					'multi_match' => [
-						'query' => $string_search,
-						'fields' => ['title','category'], 
-						//'type'=>'phrase', 
-						//'slop'=>3
-					]
-				], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null);  
-				$domainSearch=Domain::searchByQuery([
-					'multi_match' => [
-						'query' => $string_search,
-						'fields' => ['domain_title','domain_description'], 
-						//'type'=>'phrase', 
-						//'slop'=>3
-					]
-				], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null);   
-				$newsSearch=News::searchByQuery([
-					'multi_match' => [
-						'query' => $string_search,
-						'fields' => ['title','title_convert'], 
-						//'type'=>'phrase', 
-						//'slop'=>3
-					]
-				], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null); 
-				/*$results_domain = collect($domainSearch)->map(function($x,$y){return $x;})->toArray(); 
-				foreach($results_domain as $item){
-					$this->_listResult['type']='domain'; 
-					$this->_listResult['id']=$item['id']; 
-					$this->_listResult['title']=$item['domain_title']; 
-					$this->_listResult['description']=$item['domain_description']; 
-					array_push($this->_listArray,$this->_listResult);
-				}*/
-				$results=$this->_listArray; 
-				
-				$currentPage = LengthAwarePaginator::resolveCurrentPage(); 
-				$itemCollection = collect($results); 
-				//dd($domainSearch); 
-				$perPage = 10; 
-				$currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->all(); 
-				$paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage); 
-				$paginatedItems->setPath(\Request::url()); 
-				$paginatedItems->appends(\Request::query())->render(); 
-				if(WebService::checkBlacklistWord($string_search, $this->_wordBlacklist))
-				{
-					$this->_ads='true'; 
-				}
+//				$postSearch=Posts::searchByQuery([
+//					'multi_match' => [
+//						'query' => $string_search,
+//						'fields' => ['posts_title','posts_title_convert'],
+//						//'type'=>'phrase',
+//						//'slop'=>3
+//					]
+//				], $aggregations = null, $sourceFields = null, $limit = 1000, $offset = null, $sort = null);
+//				$results_post = collect($postSearch)->map(function($x,$y){return $x;})->toArray();
+//				foreach($results_post as $item){
+//					$this->_listResult['type']='post';
+//					$this->_listResult['id']=$item['id'];
+//					$this->_listResult['title']=$item['posts_title'];
+//					$this->_listResult['description']=$item['posts_description'];
+//					array_push($this->_listArray,$this->_listResult);
+//				}
+//				$affiliateSearch=Affiliate_feed::searchByQuery([
+//					'multi_match' => [
+//						'query' => $string_search,
+//						'fields' => ['title','category'],
+//						//'type'=>'phrase',
+//						//'slop'=>3
+//					]
+//				], $aggregations = null, $sourceFields = null, $limit = 5, $offset = null, $sort = null);
+//				$domainSearch=Domain::searchByQuery([
+//					'multi_match' => [
+//						'query' => $string_search,
+//						'fields' => ['domain_title','domain_description'],
+//						//'type'=>'phrase',
+//						//'slop'=>3
+//					]
+//				], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null);
+//				$newsSearch=News::searchByQuery([
+//					'multi_match' => [
+//						'query' => $string_search,
+//						'fields' => ['title','title_convert'],
+//						//'type'=>'phrase',
+//						//'slop'=>3
+//					]
+//				], $aggregations = null, $sourceFields = null, $limit = 10, $offset = null, $sort = null);
+//				/*$results_domain = collect($domainSearch)->map(function($x,$y){return $x;})->toArray();
+//				foreach($results_domain as $item){
+//					$this->_listResult['type']='domain';
+//					$this->_listResult['id']=$item['id'];
+//					$this->_listResult['title']=$item['domain_title'];
+//					$this->_listResult['description']=$item['domain_description'];
+//					array_push($this->_listArray,$this->_listResult);
+//				}*/
+//				$results=$this->_listArray;
+//
+//				$currentPage = LengthAwarePaginator::resolveCurrentPage();
+//				$itemCollection = collect($results);
+//				//dd($domainSearch);
+//				$perPage = 10;
+//				$currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->all();
+//				$paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage);
+//				$paginatedItems->setPath(\Request::url());
+//				$paginatedItems->appends(\Request::query())->render();
+//				if(WebService::checkBlacklistWord($string_search, $this->_wordBlacklist))
+//				{
+//					$this->_ads='true';
+//				}
 				$return=array(
-					'keyword'=>$string_search, 
-					'getItems'=>$paginatedItems, 
-					'affiliateSearch'=>$affiliateSearch, 
-					'domainSearch'=>$domainSearch, 
-					'newsSearch'=>$newsSearch, 
-					'getPosts'=>array(), 
-					'ads'=>$this->_ads
+					'keyword'=>$string_search,
+					'getItems'=>array(),
+					'affiliateSearch'=>[],
+					'domainSearch'=>[],
+					'newsSearch'=>[],
+					'getPosts'=>array(),
+//					'ads'=>$this->_ads
 				); 
 				return $this->_theme->scope('search', $return)->render();
 			}else{
