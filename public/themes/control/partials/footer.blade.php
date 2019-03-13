@@ -128,7 +128,7 @@
 	</div>
 	@if(!empty($channel['color']->footerScript)){!!$channel['color']->footerScript!!}@endif
 	<?php
-	Theme::asset()->container('footer')->add('jquery.lazy', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.min.js', array('core-script'));
-	Theme::asset()->container('footer')->add('jquery.lazy.plugins', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.plugins.min.js', array('core-script'));
+	Theme::asset()->container('footer')->add('jquery.lazy', 'js/jquery.lazy.min.js', array('core-script'));
+	Theme::asset()->container('footer')->add('jquery.lazy.plugins', 'js/jquery.lazy.plugins.min.js', array('core-script'));
 	Theme::asset()->container('footer')->usePath()->add('custom', 'js/custom.min.js?v=9', array('core-script'));
 	?>

@@ -1,0 +1,374 @@
+/**
+ * Created by ADMIN on 16/7/2016.
+ */
+var webApp = angular.module('application',[],function($interpolateProvider){
+    $interpolateProvider.startSymbol('[[');
+    $interpolateProvider.endSymbol(']]');
+});
+// Search
+webApp.factory('Seach',function($http){
+    return {
+        // search action
+        query : function(keywords,select){
+            return $http({
+                method: 'GET',
+                url : '/ajax/search',
+                params:{
+                    keywords : keywords,
+                    select : select
+                }
+            });
+
+        }
+    }//end function
+});
+// End Search
+webApp.controller('searchController',function($scope, $http, Seach){
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '-ads_price';
+    $scope.filter_type = '';
+    $scope.filter_cat = '';
+    $scope.filter_location = '';
+    $scope.getSearchInit = function(pageNumber){
+
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        Seach.query($scope.key_word,pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+
+                $scope.range = pages;
+
+            });//end success funcion
+
+
+    }
+});
+//User
+webApp.controller('userController',function($scope, $http, User){
+    $scope.loading = true;
+    User.get()
+        .success(function(data) {
+            $scope.topUser = data;
+            $scope.loading = false;
+        });
+
+});
+
+webApp.factory('User',function($http){
+    return {
+        // get all the comments
+        get : function() {
+            return $http.get('/ajax/topUser');
+        },
+    }
+});
+// End User
+webApp.factory('AdsManagement',function($http){
+    return {
+        getAdsByUser: function(userName,page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/getAdsByUser',
+                params:{
+                    userName : userName,
+                    page: page
+                }
+            });
+        },
+        getAdsUserManage : function(page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/adsmanager',
+                dataType: 'json',
+                params:{
+                    page: page
+
+                }
+            });
+
+        },
+        getAdsByCategoryID: function(categoryID,page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/getAdsByCategoryID',
+                params:{
+                    categoryID : categoryID,
+                    page: page
+
+                }
+            });
+        },
+
+        getAdsByLocationID: function(locationID,page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/getAdsByLocationID',
+                params:{
+                    locationID : locationID,
+                    page: page
+
+                }
+            });
+        },
+
+        getAdsByTypeID: function(typeID,page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/getAdsByTypeID',
+                params:{
+                    typeID : typeID,
+                    page: page
+
+                }
+            });
+        },
+
+    }//end function
+});
+
+// User Ads management
+webApp.controller('UserAdsManager',function($scope, $http, AdsManagement){
+
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '';
+    $scope.filter_type = '';
+    $scope.filter_cat = '';
+    $scope.filter_location = '';
+    $scope.getPosts = function(pageNumber){
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        AdsManagement.getAdsUserManage(pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+
+                $scope.range = pages;
+
+            });//end success funcion
+
+    };//end function
+});
+
+
+//User ads
+webApp.controller('AdsUserController',function($scope, $http, AdsManagement){
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '';
+    $scope.filter_type = '';
+    $scope.filter_cat = '';
+    $scope.filter_location = '';
+    $scope.getPosts = function(pageNumber){
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        AdsManagement.getAdsByUser($scope.userName,pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+
+                $scope.range = pages;
+
+            });//end success funcion
+
+    };//end function
+
+
+});
+
+
+// category ads
+
+webApp.controller('AdsCategoryController',function($scope, $http, AdsManagement){
+
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '';
+    $scope.filter_type = '';
+    $scope.filter_location='';
+
+
+    $scope.getPosts = function(pageNumber){
+
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        AdsManagement.getAdsByCategoryID($scope.categoryID,pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+
+                $scope.range = pages;
+
+            });//end success funcion
+
+    };//end function
+
+});
+
+
+// location ads
+
+webApp.controller('AdsLocationController',function($scope, $http, AdsManagement){
+
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '';
+    $scope.filter_cat = '';
+    $scope.filter_type = '';
+
+    $scope.getPosts = function(pageNumber){
+
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        AdsManagement.getAdsByLocationID($scope.locationID,pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+
+                $scope.range = pages;
+
+            });//end success funcion
+
+    };//end function
+
+});
+
+
+// type ads
+
+webApp.controller('AdsTypeController',function($scope, $http, AdsManagement){
+
+    $scope.posts = [];
+    $scope.totalPages = 0;
+    $scope.currentPage = 1;
+    $scope.range = [];
+
+    $scope.sortorder = '';
+
+    $scope.getPosts = function(pageNumber){
+
+        if(pageNumber===undefined){
+            pageNumber = '1';
+        }
+        AdsManagement.getAdsByTypeID($scope.typeID,pageNumber)
+            .success(function(response) {
+                $scope.posts        = response.data;
+                $scope.totalPages   = response.last_page;
+                $scope.currentPage  = response.current_page;
+
+                // Pagination Range
+                var pages = [];
+
+                for(var i=1;i<=response.last_page;i++) {
+                    pages.push(i);
+                }
+                $scope.range = pages;
+            });//end success funcion
+
+    };//end function
+
+});
+
+
+webApp.directive('postsPagination', function(){
+    return{
+        restrict: 'E',
+        template: '<ul class="pagination pull-right">'+
+        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getPosts(1)">&laquo;</a></li>'+
+        '<li ng-show="currentPage != 1"><a href="javascript:void(0)" ng-click="getPosts(currentPage-1)">&lsaquo; Prev</a></li>'+
+        '<li ng-repeat="i in range" ng-class="{active : currentPage == i}">'+
+        '<a href="javascript:void(0)" ng-click="getPosts(i)">{{i}}</a>'+
+        '</li>'+
+        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getPosts(currentPage+1)">Next &rsaquo;</a></li>'+
+        '<li ng-show="currentPage != totalPages"><a href="javascript:void(0)" ng-click="getPosts(totalPages)">&raquo;</a></li>'+
+        '</ul>'
+    };
+});
+
+
+// Message
+webApp.controller('MessageController',function($scope, $http, MessageManagement){
+
+    $scope.messageUnread = 0;
+    $scope.getMessageUnread = function(){
+        MessageManagement.messageUnread($scope.lastpage)
+            .success(function (data, status, headers, config) {
+                $scope.messageUnread = data[0].message_unread;
+            });
+    };
+});
+
+webApp.factory('MessageManagement',function($http){
+    return {
+        messageUnread: function(status,page){
+            return $http({
+                method: 'GET',
+                url : '/ajax/message/getMessagesUnread',
+                dataType: 'json'
+            });
+        }
+    }//end function
+});

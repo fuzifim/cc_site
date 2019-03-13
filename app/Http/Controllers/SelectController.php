@@ -35,49 +35,46 @@ class SelectController extends Controller
 	public function __construct(){
 		$this->_security=false; 
 		$this->_parame=Route::current()->parameters(); 
-		$this->_domain=WebService::getDomain($this->_parame['domain']); 
-		$this->beforeFilter(function()
-		{
-			if(empty($this->_domain->domain)){
-				return Redirect::to('//'.config('app.url'));
-			}elseif($this->_domain->domain_primary!='default'){
-				foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
-					if($domain->domain->domain_primary=='default'){
-						return Redirect::to('//'.$domain->domain->domain);
-					}
-				}
-			}else{
-				$this->_channel=$this->_domain->domainJoinChannel->channel; 
-				$this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default'); 
-				//$this->_channel->increment('channel_view',1);
-				if(Auth::check()){
-					$user=Auth::user(); 
-					if($user->hasRole(['admin', 'manage'])){
-						$this->_security=true;
-					}
-					$getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first(); 
-					if(!empty($getRoleChannel->id)){
-						$getRole=Role::findOrFail($getRoleChannel->role_id); 
-						$role_permissions = $getRole->perms()->get();
-						foreach ($role_permissions as $permission) {
-							if ($permission->name == 'manager_channel') {
-								$this->_security=true;
-							}
-						}
-					}
-				}
-				view()->share(
-					'channel',array(
-						'domain'=>$this->_domain, 
-						'info'=>$this->_channel, 
-						'security'=>$this->_security, 
-						'category'=>$this->_channel->getCategory, 
-						'theme'=>$this->_theme, 
-						'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
-					)
-				);
-			}
-		});
+		$this->_domain=WebService::getDomain($this->_parame['domain']);
+        if(empty($this->_domain->domain)){
+            return Redirect::to('//'.config('app.url'));
+        }elseif($this->_domain->domain_primary!='default'){
+            foreach($this->_domain->domainJoinChannel->channel->domainAll as $domain){
+                if($domain->domain->domain_primary=='default'){
+                    return Redirect::to('//'.$domain->domain->domain);
+                }
+            }
+        }else{
+            $this->_channel=$this->_domain->domainJoinChannel->channel;
+            $this->_theme=Theme::uses($this->_channel->channelAttributeTheme->theme->temp_location)->layout('default');
+            //$this->_channel->increment('channel_view',1);
+            if(Auth::check()){
+                $user=Auth::user();
+                if($user->hasRole(['admin', 'manage'])){
+                    $this->_security=true;
+                }
+                $getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',Auth::user()->id)->first();
+                if(!empty($getRoleChannel->id)){
+                    $getRole=Role::findOrFail($getRoleChannel->role_id);
+                    $role_permissions = $getRole->perms()->get();
+                    foreach ($role_permissions as $permission) {
+                        if ($permission->name == 'manager_channel') {
+                            $this->_security=true;
+                        }
+                    }
+                }
+            }
+            view()->share(
+                'channel',array(
+                    'domain'=>$this->_domain,
+                    'info'=>$this->_channel,
+                    'security'=>$this->_security,
+                    'category'=>$this->_channel->getCategory,
+                    'theme'=>$this->_theme,
+                    'color'=>(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false
+                )
+            );
+        }
 	}
 	public function selectSend()
     {
