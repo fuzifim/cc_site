@@ -11,25 +11,24 @@
 	$channel['theme']->setTitle($company->company_name);
 	$channel['theme']->setKeywords($company->company_name);
 	$channel['theme']->setDescription($addressFull); 
-	if(!empty($channel['info']->channelAttributeBanner[0]->media->media_name)){$channel['theme']->setImage(config('app.link_media').$channel['info']->channelAttributeBanner[0]->media->media_path.'thumb/'.$channel['info']->channelAttributeBanner[0]->media->media_name);} 
+	if(!empty($channel['info']->channelAttributeBanner[0]->media->media_name)){$channel['theme']->setImage(config('app.link_media').$channel['info']->channelAttributeBanner[0]->media->media_path.'thumb/'.$channel['info']->channelAttributeBanner[0]->media->media_name);}
+	Theme::asset()->usePath()->add('jquery.gritter', 'css/jquery.gritter.css', array('core-style'));
+	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'));
+	if($channel['security']==true){
+		Theme::asset()->usePath()->add('bootstrap-timepicker.min', 'css/bootstrap-timepicker.min.css', array('core-style'));
+		Theme::asset()->container('footer')->usePath()->add('jquery-ui-1.10.3.min', 'js/jquery-ui-1.10.3.min.js', array('core-script'));
+		Theme::asset()->container('footer')->usePath()->add('bootstrap-timepicker.min', 'js/bootstrap-timepicker.min.js', array('core-script'));
+		Theme::asset()->container('footer')->usePath()->add('js/jquery.maskedinput.min', 'js/jquery.maskedinput.min.js', array('core-script'));
+		Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'));
+	}
 ?>
-{!!Theme::asset()->usePath()->add('jquery.gritter', 'css/jquery.gritter.css', array('core-style'))!!}
-
-{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'))!!}
-@if($channel['security']==true)
-{!!Theme::asset()->usePath()->add('bootstrap-timepicker.min', 'css/bootstrap-timepicker.min.css', array('core-style'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery-ui-1.10.3.min', 'js/jquery-ui-1.10.3.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('bootstrap-timepicker.min', 'js/bootstrap-timepicker.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('js/jquery.maskedinput.min', 'js/jquery.maskedinput.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'))!!}
-@endif
 <section>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}

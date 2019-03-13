@@ -1,16 +1,12 @@
 <?php
 namespace App;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
-use Auth;
-class User extends Model implements AuthenticatableContract,CanResetPasswordContract
+class User extends Authenticatable
 	{
 		use EntrustUserTrait;
-		use Authenticatable,CanResetPassword;
+        use Notifiable;
 		protected $table = 'users';
 		protected $fillable = ['name', 'email', 'password'];
 		protected $hidden = ['password', 'remember_token']; 

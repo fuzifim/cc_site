@@ -56,10 +56,10 @@
 			</div>
 		</div>
 	</div>
-	{!!Theme::asset()->container('footer')->add('jquery.lazy', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.min.js', array('core-script'))!!}
-	{!!Theme::asset()->container('footer')->add('jquery.lazy.plugins', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.plugins.min.js', array('core-script'))!!}
-	{!!Theme::asset()->container('footer')->usePath()->add('custom', 'js/custom.js?v=14', array('core-script'))!!}
 <?
+Theme::asset()->container('footer')->add('jquery.lazy', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.min.js', array('core-script'));
+Theme::asset()->container('footer')->add('jquery.lazy.plugins', '//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.6/jquery.lazy.plugins.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('custom', 'js/custom.js?v=14', array('core-script'));
 	$dependencies = array(); 
 	Theme::asset()->writeScript('searchAll','
 		jQuery.ajax({

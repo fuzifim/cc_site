@@ -101,114 +101,110 @@ class ConstructController extends Controller
 				return Channel::find(2); 
 			});  
 		}
-		$this->beforeFilter(function()
-		{
-			
-			if(!empty($this->_channel)){
-				$this->_fullUrl=Request::fullUrl(); 
-				$checkFullUrl=parse_url($this->_fullUrl);
-				if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
-					return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
-				}
-			}
-			if(Auth::check()){
-				$this->_user=Auth::user(); 
-				$getFinance=Finance::where('user_id','=',$this->_user->id)->get(); 
-				if(count($getFinance)>0){
-					foreach($getFinance as $finance){
-						if($finance->pay_type=='add'){
-							$this->_financeUserTotal=$this->_financeUserTotal+$finance->money; 
-						}else if($finance->pay_type=='remove'){
-							$this->_financeUserTotal=$this->_financeUserTotal-$finance->money; 
-						}
-					}
-				}
-				if($this->_user->hasRole(['admin', 'manage'])){
-					$this->_security=true;
-				}
-				$getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',$this->_user->id)->first(); 
-				if(!empty($getRoleChannel->id)){
-					$getRole=Role::findOrFail($getRoleChannel->role_id); 
-					$role_permissions = $getRole->perms()->get();
-					foreach ($role_permissions as $permission) {
-						if ($permission->name == 'manager_channel') {
-							$this->_security=true;
-						}
-					}
-				}
-			}
-			$this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
-			{
-				if($this->_channel->domainJoinPrimary->domain->domain_primary!='default'){
-					if(count($this->_channel->domainAll)>0){
-						foreach($this->_channel->domainAll as $domain){
-							if($domain->domain->domain_primary=='default'){
-								return $domain->domain->domain; 
-							}
-						}
-					}else{
-						return $this->_channel->domainJoinPrimary->domain->domain; 
-					}
-				}else{
-					return $this->_channel->domainJoinPrimary->domain->domain; 
-				}
-			});
-			
-			$this->_domainParentPrimary = config('app.url');
-			
-			if($this->_channel->channel_parent_id!=0){
-				$getServiceValue=json_decode($this->_channel->channelService->attribute_value); 
-				$this->_limitSize=$getServiceValue->limit_cloud; 
-				$this->_totalPosts=count($this->_channel->joinPosts); 
-				$this->_limitPosts=$getServiceValue->limit_post; 
-				$this->_totalSize=0; 
-				$this->_totalSize = Cache::store('memcached')->remember('channelTotalSize_new_'.$this->_channel->id, 1, function()
-				{
-					if(count($this->_channel->joinMedia)>0){
-						foreach($this->_channel->joinMedia as $joinMedia){
-							$this->_totalSize=$this->_totalSize+$joinMedia->media->media_size; 
-						}
-					}
-				});
-				$this->_percenSize=(Webservice::formatBytesToMb($this->_totalSize)/$this->_limitSize)*100; 
-				$this->_percenPosts=($this->_totalPosts/$this->_limitPosts)*100; 
-				if(!empty($this->_channel->channelAttributeColor->channel_attribute_value)){
-					$contentAttributeDecode=json_decode($this->_channel->channelAttributeColor->channel_attribute_value); 
-					if(!empty($contentAttributeDecode->fanpageFacebook)){
-						$linkFanpageFacebook = parse_url($contentAttributeDecode->fanpageFacebook);
-						$this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook['path']);
-					}
-					if(!empty($contentAttributeDecode->zaloAccount)){
-						$this->_socialLinkZalo=$contentAttributeDecode->zaloAccount;
-					}
-				}
-				$this->_channelColor=(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false; 
-				$this->_channelCategory=$this->_channel->getCategory; 
-			}
+        if(!empty($this->_channel)){
+            $this->_fullUrl=Request::fullUrl();
+            $checkFullUrl=parse_url($this->_fullUrl);
+            if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
+                return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
+            }
+        }
+        if(Auth::check()){
+            $this->_user=Auth::user();
+            $getFinance=Finance::where('user_id','=',$this->_user->id)->get();
+            if(count($getFinance)>0){
+                foreach($getFinance as $finance){
+                    if($finance->pay_type=='add'){
+                        $this->_financeUserTotal=$this->_financeUserTotal+$finance->money;
+                    }else if($finance->pay_type=='remove'){
+                        $this->_financeUserTotal=$this->_financeUserTotal-$finance->money;
+                    }
+                }
+            }
+            if($this->_user->hasRole(['admin', 'manage'])){
+                $this->_security=true;
+            }
+            $getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',$this->_user->id)->first();
+            if(!empty($getRoleChannel->id)){
+                $getRole=Role::findOrFail($getRoleChannel->role_id);
+                $role_permissions = $getRole->perms()->get();
+                foreach ($role_permissions as $permission) {
+                    if ($permission->name == 'manager_channel') {
+                        $this->_security=true;
+                    }
+                }
+            }
+        }
+        $this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
+        {
+            if($this->_channel->domainJoinPrimary->domain->domain_primary!='default'){
+                if(count($this->_channel->domainAll)>0){
+                    foreach($this->_channel->domainAll as $domain){
+                        if($domain->domain->domain_primary=='default'){
+                            return $domain->domain->domain;
+                        }
+                    }
+                }else{
+                    return $this->_channel->domainJoinPrimary->domain->domain;
+                }
+            }else{
+                return $this->_channel->domainJoinPrimary->domain->domain;
+            }
+        });
 
-			view()->share(
-				'channel',array(
-					'region'=>$this->_region, 
-					'financeUserTotal'=>$this->_financeUserTotal, 
-					'limitSize'=>$this->_limitSize, 
-					'totalSize'=>Webservice::formatBytesToMb($this->_totalSize), 
-					'percenSize'=>$this->_percenSize, 
-					'limitPosts'=>$this->_limitPosts, 
-					'totalPosts'=>$this->_totalPosts, 
-					'percenPosts'=>$this->_percenPosts, 
-					'domain'=>$this->_domain, 
-					'info'=>$this->_channel, 
-					'security'=>$this->_security, 
-					'category'=>$this->_channelCategory, 
-					'theme'=>$this->_theme, 
-					'domainPrimary'=>$this->_domainPrimary, 
-					'domainParentPrimary'=>$this->_domainParentPrimary, 
-					'nameFanpageFacebook'=>mb_strtolower($this->_sociallinkFanpageFacebook),
-					'zaloAccount'=>$this->_socialLinkZalo, 
-					'color'=>$this->_channelColor, 
-					'_parser'=>$this->_parser
-				)
-			);
-		});
+        $this->_domainParentPrimary = config('app.url');
+
+        if($this->_channel->channel_parent_id!=0){
+            $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
+            $this->_limitSize=$getServiceValue->limit_cloud;
+            $this->_totalPosts=count($this->_channel->joinPosts);
+            $this->_limitPosts=$getServiceValue->limit_post;
+            $this->_totalSize=0;
+            $this->_totalSize = Cache::store('memcached')->remember('channelTotalSize_new_'.$this->_channel->id, 1, function()
+            {
+                if(count($this->_channel->joinMedia)>0){
+                    foreach($this->_channel->joinMedia as $joinMedia){
+                        $this->_totalSize=$this->_totalSize+$joinMedia->media->media_size;
+                    }
+                }
+            });
+            $this->_percenSize=(Webservice::formatBytesToMb($this->_totalSize)/$this->_limitSize)*100;
+            $this->_percenPosts=($this->_totalPosts/$this->_limitPosts)*100;
+            if(!empty($this->_channel->channelAttributeColor->channel_attribute_value)){
+                $contentAttributeDecode=json_decode($this->_channel->channelAttributeColor->channel_attribute_value);
+                if(!empty($contentAttributeDecode->fanpageFacebook)){
+                    $linkFanpageFacebook = parse_url($contentAttributeDecode->fanpageFacebook);
+                    $this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook['path']);
+                }
+                if(!empty($contentAttributeDecode->zaloAccount)){
+                    $this->_socialLinkZalo=$contentAttributeDecode->zaloAccount;
+                }
+            }
+            $this->_channelColor=(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false;
+            $this->_channelCategory=$this->_channel->getCategory;
+        }
+
+        view()->share(
+            'channel',array(
+                'region'=>$this->_region,
+                'financeUserTotal'=>$this->_financeUserTotal,
+                'limitSize'=>$this->_limitSize,
+                'totalSize'=>Webservice::formatBytesToMb($this->_totalSize),
+                'percenSize'=>$this->_percenSize,
+                'limitPosts'=>$this->_limitPosts,
+                'totalPosts'=>$this->_totalPosts,
+                'percenPosts'=>$this->_percenPosts,
+                'domain'=>$this->_domain,
+                'info'=>$this->_channel,
+                'security'=>$this->_security,
+                'category'=>$this->_channelCategory,
+                'theme'=>$this->_theme,
+                'domainPrimary'=>$this->_domainPrimary,
+                'domainParentPrimary'=>$this->_domainParentPrimary,
+                'nameFanpageFacebook'=>mb_strtolower($this->_sociallinkFanpageFacebook),
+                'zaloAccount'=>$this->_socialLinkZalo,
+                'color'=>$this->_channelColor,
+                '_parser'=>$this->_parser
+            )
+        );
 	}
 }
