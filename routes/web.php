@@ -377,7 +377,7 @@ Route::group(['domain' => '{domain}'], function()
             Route::post('/change/domain/{id}', array(
                 'as' => 'channel.hosting.change.domain.save',
                 'uses' => 'HostingController@changeDomainSave'));
-            Route::post('/delete/{id}', array(
+            Route::post('/delete', array(
                 'as' => 'channel.hosting.delete',
                 'uses' => 'HostingController@hostingDelete'));
             Route::get('/login', array(
