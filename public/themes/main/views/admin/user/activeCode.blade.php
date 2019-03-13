@@ -1,12 +1,12 @@
 <?
 	$channel['theme']->setTitle('Kích hoạt tài khoản');
 	$channel['theme']->setKeywords('Kích hoạt tài khoản');
-	$channel['theme']->setDescription('Kích hoạt tài khoản đăng ký trên '.$channel['info']->channel_name); 
+	$channel['theme']->setDescription('Kích hoạt tài khoản đăng ký trên '.$channel['info']->channel_name);
+	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
+	Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'));
 ?>
-{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
 <section>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}

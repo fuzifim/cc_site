@@ -10,25 +10,23 @@
 	$channel['theme']->setKeywords($title);
 	$channel['theme']->setDescription($description); 
 	$disable=true;
+
+Theme::asset()->usePath()->add('jquery.tagsinput', 'css/jquery.tagsinput.css', array('core-style'));
+Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery.tagsinput.min', 'js/jquery.tagsinput.min.js', array('core-script'));
+Theme::asset()->add('summernote', 'assets/js/summernote/dist/summernote.css', array('core-style'));
+Theme::asset()->container('footer')->add('summernote', 'assets/js/summernote/dist/summernote.js', array('core-script'));
+Theme::asset()->container('footer')->add('summernote-vi-VN', 'assets/js/summernote/lang/summernote-vi-VN.js', array('core-script'));
+Theme::asset()->container('footer')->add('summernote-image-attributes', 'assets/js/summernote/dist/summernote-image-attributes.js', array('core-script'));
 ?>
-{!!Theme::asset()->usePath()->add('jquery.tagsinput', 'css/jquery.tagsinput.css', array('core-style'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('modernizr', 'js/modernizr.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('toggles', 'js/toggles.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.cookies', 'js/jquery.cookies.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jquery.gritter.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.validate.min', 'js/jquery.validate.min.js', array('core-script'))!!}
-
-{!!Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.min.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->usePath()->add('jquery.tagsinput.min', 'js/jquery.tagsinput.min.js', array('core-script'))!!}
-{!!Theme::asset()->add('summernote', 'assets/js/summernote/dist/summernote.css', array('core-style'))!!}
-{!!Theme::asset()->container('footer')->add('summernote', 'assets/js/summernote/dist/summernote.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->add('summernote-vi-VN', 'assets/js/summernote/lang/summernote-vi-VN.js', array('core-script'))!!}
-{!!Theme::asset()->container('footer')->add('summernote-image-attributes', 'assets/js/summernote/dist/summernote-image-attributes.js', array('core-script'))!!}
-
-	
 <section>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
