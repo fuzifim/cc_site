@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b35d0526278729b2fe70c8db61f4409",
+    "content-hash": "baf27bfeb5bbeef8d0f238cb592a4a6c",
     "packages": [
         {
             "name": "adamwathan/eloquent-oauth",
@@ -499,44 +499,6 @@
                 "laravel"
             ],
             "time": "2017-06-24T11:10:49+00:00"
-        },
-        {
-            "name": "dawson/youtube",
-            "version": "1.1.0-beta",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/JoeDawson/youtube.git",
-                "reference": "fd535390fbf2612c1ab2f670599f8221cc1cf1a1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/JoeDawson/youtube/zipball/fd535390fbf2612c1ab2f670599f8221cc1cf1a1",
-                "reference": "fd535390fbf2612c1ab2f670599f8221cc1cf1a1",
-                "shasum": ""
-            },
-            "require": {
-                "google/apiclient": "1.1.*",
-                "illuminate/support": ">=5.0.0",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Dawson\\Youtube": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Joe Dawson",
-                    "email": "hi@joedawson.me"
-                }
-            ],
-            "description": "Upload a video to YouTube with Laravel 5.",
-            "time": "2015-09-18T22:37:59+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -1169,49 +1131,6 @@
                 "widget"
             ],
             "time": "2018-09-15T12:19:09+00:00"
-        },
-        {
-            "name": "google/apiclient",
-            "version": "v1.1.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "85309a3520bb5f53368d43e35fd24f43c9556323"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/85309a3520bb5f53368d43e35fd24f43c9556323",
-                "reference": "85309a3520bb5f53368d43e35fd24f43c9556323",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "3.7.*",
-                "squizlabs/php_codesniffer": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-v1-master": "1.1.x-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/Google/autoload.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Client library for Google APIs",
-            "homepage": "http://developers.google.com/api-client-library/php",
-            "keywords": [
-                "google"
-            ],
-            "time": "2016-06-06T21:22:48+00:00"
         },
         {
             "name": "google/recaptcha",
@@ -8167,7 +8086,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "dawson/youtube": 10,
         "greggilbert/recaptcha": 20,
         "zizaco/entrust": 20,
         "willdurand/geocoder": 0,
