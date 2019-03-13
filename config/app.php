@@ -20,7 +20,7 @@ return [
 	'phone'=>'0903706288',
     'emailfix'=>'contact@cungcap.net',
     // Application Name
-    'appname' => 'Đa kênh', 
+    'name' => 'Cung Cap',
     'title_default'=>'Quảng cáo đa kênh',
     'keywords_default' => '',
     'description_default' => 'Tạo website có luôn kênh quảng cáo hoàn toàn miễn phí và còn nhiều hơn thế nữa... ',
@@ -101,7 +101,7 @@ return [
     | application. If disabled, a simple generic error page is shown.
     |
     */
-
+    'env' => env('APP_ENV', 'production'),
     'debug' => env('APP_DEBUG'),
 
     /*
@@ -201,13 +201,13 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+        Illuminate\Notifications\NotificationServiceProvider::class,
         Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Routing\ControllerServiceProvider::class,
         Illuminate\Cookie\CookieServiceProvider::class,
         Illuminate\Database\DatabaseServiceProvider::class,
         Illuminate\Encryption\EncryptionServiceProvider::class,
@@ -261,7 +261,7 @@ return [
     */
 
     'aliases' => [
-
+        'Notification'=> Illuminate\Support\Facades\Notification::class,
         'App'       => Illuminate\Support\Facades\App::class,
         'Artisan'   => Illuminate\Support\Facades\Artisan::class,
         'Auth'      => Illuminate\Support\Facades\Auth::class,
