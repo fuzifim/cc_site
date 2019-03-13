@@ -19,7 +19,7 @@
 					<div class="col-md-4">
 						<div class="form-group">
 							<b><strong>CÔNG TY CỔ PHẦN CUNG CẤP</strong></b><br>
-							<small>104 Hoàng Diệu 2, P. Linh Chiểu, Q. Thủ Đức, HCM</small><br> 
+							<small><i class="glyphicon glyphicon-map-marker"></i> 104 Hoàng Diệu 2, P. Linh Chiểu, Q. Thủ Đức, HCM</small><br>
 							<small>MST: 0314609089 - Email: <a href="mailto:contact@cungcap.net">contact@cungcap.net</a></small><br><small>Web: <a href='https://cungcap.net'>cungcap.net</a> - <a href='http://cungcap.com.vn'>cungcap.com.vn</a> - <a href='http://cungcap.vn'>cungcap.vn</a></small><br>
 							
 							<small>Cung Cấp không chịu bất kỳ trách nhiệm nào bởi người dùng đăng lên</small>
