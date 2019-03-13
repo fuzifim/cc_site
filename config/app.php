@@ -236,7 +236,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
-        Collective\Remote\RemoteServiceProvider::class,
 		Greggilbert\Recaptcha\RecaptchaServiceProvider::class,
 		Darryldecode\Cart\CartServiceProvider::class,
         Facuz\Theme\ThemeServiceProvider::class,

@@ -16,7 +16,6 @@
         "adamwathan/eloquent-oauth-l5" : "^0.5.2",
         "roumen/sitemap": "^2.5",
         "facebook/graph-sdk": "v5.*",
-        "laravelcollective/remote": "5.0",
 		"google/recaptcha": "~1.1",
 		"greggilbert/recaptcha": "dev-master",
         "darryldecode/cart": "~3.0",
