@@ -61,7 +61,7 @@ class ConstructController extends Controller
 	public $_pieces=array(); 
 	public $_rulesDomain; 
 	public function __construct(){
-		//$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('words_blacklist.txt')); 
+		//$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('words_blacklist.txt'));
 		$this->_security=false; 
 		$this->_parame=Route::current()->parameters(); 
 		$this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
@@ -72,11 +72,12 @@ class ConstructController extends Controller
 		});
 		$this->_region = Cache::store('file')->remember('region',1, function()
 		{
-		    if(!empty($_SERVER['GEOIP_COUNTRY_CODE'])){
-                return Regions::where('lang','=',mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE']))->first();
-            }else{
-                return Regions::find(704);
-            }
+//		    if(!empty($_SERVER['GEOIP_COUNTRY_CODE'])){
+//                return Regions::where('lang','=',mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE']))->first();
+//            }else{
+//                return Regions::find(704);
+//            }
+            return Regions::find(704);
         });
 		$parsedUrl=parse_url(Request::url()); 
 		if(!empty($parsedUrl['host'])){
