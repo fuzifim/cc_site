@@ -102,13 +102,13 @@ class ConstructController extends Controller
 				return Channel::find(2); 
 			});  
 		}
-        if(!empty($this->_channel)){
-            $this->_fullUrl=Request::fullUrl();
-            $checkFullUrl=parse_url($this->_fullUrl);
-            if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
-                return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
-            }
-        }
+//        if(!empty($this->_channel)){
+//            $this->_fullUrl=Request::fullUrl();
+//            $checkFullUrl=parse_url($this->_fullUrl);
+//            if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
+//                return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
+//            }
+//        }
         if(Auth::check()){
             $this->_user=Auth::user();
             $getFinance=Finance::where('user_id','=',$this->_user->id)->get();
