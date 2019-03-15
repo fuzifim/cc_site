@@ -185,6 +185,7 @@ class ConstructController extends Controller
         view()->share(
             'channel',array(
                 'region'=>$this->_region,
+                'financeUserTotal'=>$this->_financeUserTotal,
                 'limitSize'=>$this->_limitSize,
                 'totalSize'=>Webservice::formatBytesToMb($this->_totalSize),
                 'percenSize'=>$this->_percenSize,
