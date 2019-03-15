@@ -40,7 +40,7 @@ class ConstructController extends Controller
 	public $_channelCategory; 
 	public $_theme; 
 	public $_parame; 
-	public $_security; 
+	public $_security=false;
 	public $_limitSize;
 	public $_totalSize; 
 	public $_percenSize; 
@@ -57,12 +57,14 @@ class ConstructController extends Controller
 	public $_wordBlacklist; 
 	public $_financeUserTotal=0; 
 	public $_fullUrl; 
-	public $_user; 
+	protected $_user;
 	public $_pieces=array(); 
-	public $_rulesDomain; 
+	public $_rulesDomain;
 	public function __construct(){
-		//$this->_wordBlacklist=preg_split("/(\r\n|\n|\r)/",File::get('words_blacklist.txt'));
-		$this->_security=false; 
+        $this->middleware(function ($request, $next) {
+            $this->userSecurity();
+            return $next($request);
+        });
 		$this->_parame=Route::current()->parameters(); 
 		$this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
 		{
@@ -72,11 +74,6 @@ class ConstructController extends Controller
 		});
 		$this->_region = Cache::store('file')->remember('region',1, function()
 		{
-//		    if(!empty($_SERVER['GEOIP_COUNTRY_CODE'])){
-//                return Regions::where('lang','=',mb_strtolower($_SERVER['GEOIP_COUNTRY_CODE']))->first();
-//            }else{
-//                return Regions::find(704);
-//            }
             return Regions::find(704);
         });
 		$parsedUrl=parse_url(Request::url()); 
@@ -102,39 +99,7 @@ class ConstructController extends Controller
 				return Channel::find(2); 
 			});  
 		}
-//        if(!empty($this->_channel)){
-//            $this->_fullUrl=Request::fullUrl();
-//            $checkFullUrl=parse_url($this->_fullUrl);
-//            if($checkFullUrl['host']==config('app.url') && $checkFullUrl['scheme']!='https'){
-//                return Redirect::to(str_replace("http","https",$this->_fullUrl),301);
-//            }
-//        }
-        if(Auth::check()){
-            $this->_user=Auth::user();
-            $getFinance=Finance::where('user_id','=',$this->_user->id)->get();
-            if(count($getFinance)>0){
-                foreach($getFinance as $finance){
-                    if($finance->pay_type=='add'){
-                        $this->_financeUserTotal=$this->_financeUserTotal+$finance->money;
-                    }else if($finance->pay_type=='remove'){
-                        $this->_financeUserTotal=$this->_financeUserTotal-$finance->money;
-                    }
-                }
-            }
-            if($this->_user->hasRole(['admin', 'manage'])){
-                $this->_security=true;
-            }
-            $getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',$this->_user->id)->first();
-            if(!empty($getRoleChannel->id)){
-                $getRole=Role::findOrFail($getRoleChannel->role_id);
-                $role_permissions = $getRole->perms()->get();
-                foreach ($role_permissions as $permission) {
-                    if ($permission->name == 'manager_channel') {
-                        $this->_security=true;
-                    }
-                }
-            }
-        }
+
         $this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
         {
             if($this->_channel->domainJoinPrimary->domain->domain_primary!='default'){
@@ -183,11 +148,43 @@ class ConstructController extends Controller
             $this->_channelColor=(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false;
             $this->_channelCategory=$this->_channel->getCategory;
         }
+        $this->viewShare();
+    }
+    private function userSecurity()
+    {
+        if(Auth::check()){
+            $this->_user=Auth::user();
+            $getFinance=Finance::where('user_id','=',$this->_user->id)->get();
+            if(count($getFinance)>0){
+                foreach($getFinance as $finance){
+                    if($finance->pay_type=='add'){
+                        $this->_financeUserTotal=$this->_financeUserTotal+$finance->money;
+                    }else if($finance->pay_type=='remove'){
+                        $this->_financeUserTotal=$this->_financeUserTotal-$finance->money;
+                    }
+                }
+            }
+            if($this->_user->hasRole(['admin', 'manage'])){
+                $this->_security=true;
+            }
+            $getRoleChannel=Channel_role::where('parent_id','=',$this->_channel->id)->where('user_id','=',$this->_user->id)->first();
+            if(!empty($getRoleChannel->id)){
+                $getRole=Role::findOrFail($getRoleChannel->role_id);
+                $role_permissions = $getRole->perms()->get();
+                foreach ($role_permissions as $permission) {
+                    if ($permission->name == 'manager_channel') {
+                        $this->_security=true;
+                    }
+                }
+            }
+        }
+        $this->viewShare();
 
+    }
+    private function viewShare(){
         view()->share(
             'channel',array(
                 'region'=>$this->_region,
-                'financeUserTotal'=>$this->_financeUserTotal,
                 'limitSize'=>$this->_limitSize,
                 'totalSize'=>Webservice::formatBytesToMb($this->_totalSize),
                 'percenSize'=>$this->_percenSize,
@@ -207,5 +204,5 @@ class ConstructController extends Controller
                 '_parser'=>$this->_parser
             )
         );
-	}
+    }
 }

@@ -40,8 +40,6 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
-$app->register('Nathanmac\Utilities\Parser\ParserServiceProvider');
-class_alias('Nathanmac\Utilities\Parser\Facades\Parser', 'Parser');
 /*
 |--------------------------------------------------------------------------
 | Return The Application

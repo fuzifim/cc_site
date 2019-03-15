@@ -5,83 +5,68 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.5.9",
-        "laravel/framework": "5.5.*",
-		"laravelcollective/html": "5.5.*",
-        "symfony/dom-crawler": "3.1.*",
-        "symfony/css-selector": "3.1.*",
-        "laravel/socialite": "3.0.0",
-        "davejamesmiller/laravel-breadcrumbs": "^3.0",
-        "jenssegers/agent": "^2.3",
-        "adamwathan/eloquent-oauth-l5" : "^0.5.2",
-        "roumen/sitemap": "^2.5",
-        "facebook/graph-sdk": "v5.*",
-		"google/recaptcha": "~1.1",
-		"greggilbert/recaptcha": "dev-master",
-        "darryldecode/cart": "~3.0",
-		"facuz/laravel-themes": "^3.1",
-		"zizaco/entrust": "5.2.x-dev", 
-		"Nathanmac/Parser": "4.*",
-		"jeremykendall/php-domain-parser": "^5.3",
-        "pbmedia/laravel-ffmpeg": "^1.1",
-        "graham-campbell/digitalocean": "^4.0",
+        "php": "^7.1.3",
+        "fideloper/proxy": "^4.0",
+        "laravel/framework": "5.8.*",
+        "laravel/tinker": "^1.0",
+        "facuz/laravel-themes": "^3.1",
+        "zizaco/entrust": "5.2.x-dev",
+        "jeremykendall/php-domain-parser": "^5.3",
         "guzzlehttp/guzzle": "^6.3",
-		"willdurand/geocoder": "@stable",
-        "kriswallsmith/buzz": "@stable",
-        "php-ffmpeg/php-ffmpeg": "^0.11.0",
+        "laravel/socialite": "3.0.0",
+        "adamwathan/eloquent-oauth-l5" : "^0.5.2",
+        "darryldecode/cart": "~4.0",
         "alexpechkarev/google-maps": "1.0.9",
-        "lullabot/amp": "^1.0.0", 
-		"donatello-za/rake-php-plus": "^1.0",
-		"gufy/cpanel-php":"~1.0",
-		"elasticquent/elasticquent": "dev-master",
-        "appsketch/adfly": "^1.1",
-		"league/flysystem-aws-s3-v3": "^1.0"
+        "lullabot/amp": "^1.0.0",
+        "donatello-za/rake-php-plus": "^1.0",
+        "elasticquent/elasticquent": "dev-master",
+        "league/flysystem-aws-s3-v3": "^1.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~6.0",
-        "phpspec/phpspec": "~2.1",
-        "filp/whoops": "~2.0"
+        "filp/whoops": "^2.0",
+        "fzaninotto/faker": "^1.4",
+        "mockery/mockery": "^1.0",
+        "nunomaduro/collision": "^2.0",
+        "phpunit/phpunit": "^7.0"
     },
     "autoload": {
         "classmap": [
-            "database",
-			"app/Libraries",
+            "database/seeds",
+            "database/factories",
             "app/WebService"
         ],
         "psr-4": {
             "App\\": "app/"
-        },
-		"files": [
-			"app/Libraries/Helpers.php"
-		]
+        }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+            ]
+        }
     },
     "scripts": {
-        "post-install-cmd": [
-            "php artisan clear-compiled",
-            "php artisan optimize"
-        ],
-        "post-update-cmd": [
-            "php artisan clear-compiled",
-            "php artisan optimize"
-            
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "php -r \"copy('.env.example', '.env');\"",
-            "php artisan key:generate"
+            "@php artisan key:generate"
         ],
         "post-autoload-dump": [
-          "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-          "@php artisan package:discover"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
         ]
     },
     "config": {
-        "preferred-install": "dist"
-    }
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
