@@ -236,7 +236,8 @@ return [
         Facuz\Theme\ThemeServiceProvider::class,
 		Zizaco\Entrust\EntrustServiceProvider::class,
 		GoogleMaps\ServiceProvider\GoogleMapsServiceProvider::class,
-		Elasticquent\ElasticquentServiceProvider::class
+		Elasticquent\ElasticquentServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class
     ],
 
     /*
