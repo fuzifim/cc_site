@@ -77,6 +77,17 @@ return [
                 'database' => env('DB_MONGO') // sets the authentication database required by mongo 3
             ]
         ],
+        'mongodb_old' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST_MONGO', '123456789'),
+            'port'     => env('DB_PORT_MONGO', 27017),
+            'username' => env('MONGO_USER', 'username'),
+            'password' => env('MONGO_PASS', 'password'),
+            'database' => env('MONGO_DB', 'database'),
+            'options' => array (
+                'database' => env('MONGO_DB', 'database')
+            )
+        ],
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

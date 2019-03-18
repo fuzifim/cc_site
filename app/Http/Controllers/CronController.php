@@ -89,6 +89,13 @@ class CronController extends ConstructController
 	public function __construct(){
 		parent::__construct(); 
 	}
+	public function insertDomain(){
+        $getDomain=DB::connection('mongodb_old')->collection('note')->where('type','domain')
+            ->where('index','<',3)->limit(1000)->get();
+        foreach ($getDomain as $domain){
+
+        }
+    }
 	public function index()
     {
 		//return false; 
