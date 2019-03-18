@@ -231,7 +231,7 @@
 				</div>
 			<div class="form-group">
 				<label class="error" for="postContent"></label>
-				<textarea name="postContent" id="summernote" class="form-control" required>@if(!empty($post->posts_description)){{$post->posts_description}}@endif</textarea>
+				<textarea name="postContent" id="summernote" class="form-control" required>@if(!empty($post->posts_description)){!! $post->posts_description !!}@endif</textarea>
 			</div>
 			<div class="form-group text-right">
 				@if(!empty($post->id))<a class="btn btn-danger postDelete" href="#" style="margin-right:20px; "><i class="glyphicon glyphicon-trash"></i> xóa</a> @endif
