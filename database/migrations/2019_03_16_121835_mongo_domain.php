@@ -15,7 +15,7 @@ class MongoDomain extends Migration
     public function up()
     {
         Schema::connection($this->connection)
-            ->table('mongo_domains', function (Blueprint $collection)
+            ->table('mongo_domain', function (Blueprint $collection)
             {
                 $collection->index('base_64');
             });
@@ -29,7 +29,7 @@ class MongoDomain extends Migration
     public function down()
     {
         Schema::connection($this->connection)
-            ->table('mongo_domains', function (Blueprint $collection)
+            ->table('mongo_domain', function (Blueprint $collection)
             {
                 $collection->drop();
             });
