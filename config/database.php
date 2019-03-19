@@ -68,24 +68,24 @@ return [
         ],
         'mongodb' => [
             'driver'   => 'mongodb',
-            'host'     => env('DB_HOST', 'localhost'),
+            'host'     => env('DB_HOST_MONGO', 'localhost'),
             'port'     => env('DB_PORT_MONGO', 27017),
-            'database' => env('DB_MONGO'),
+            'database' => 'cungcap',
             'username' => env('DB_USERNAME_MONGO'),
             'password' => env('DB_PASSWORD_MONGO'),
             'options'  => [
-                'database' => env('DB_MONGO') // sets the authentication database required by mongo 3
+                'database' => 'cungcap' // sets the authentication database required by mongo 3
             ]
         ],
         'mongodb_old' => [
             'driver'   => 'mongodb',
-            'host'     => env('DB_HOST_MONGO', '123456789'),
-            'port'     => env('DB_PORT_MONGO', 27017),
-            'username' => env('MONGO_USER', 'username'),
-            'password' => env('MONGO_PASS', 'password'),
-            'database' => env('MONGO_DB', 'database'),
+            'host'     => env('DB_HOST_MONGO_OLD', '123456789'),
+            'port'     => env('DB_PORT_MONGO_OLD', 27017),
+            'username' => env('MONGO_USER_OLD', 'username'),
+            'password' => env('MONGO_PASS_OLD', 'password'),
+            'database' => env('MONGO_DB_OLD', 'database'),
             'options' => array (
-                'database' => env('MONGO_DB', 'database')
+                'database' => env('MONGO_DB_OLD', 'database')
             )
         ],
         'pgsql' => [

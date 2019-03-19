@@ -93,13 +93,13 @@ class ConstructController extends Controller
 				$this->_theme=Theme::uses('control')->layout('default'); 
 			}
 		}else{
-			$this->_siteSuccess='redirect'; 
+			$this->_siteSuccess='redirect';
+            $this->_theme=Theme::uses('main')->layout('default');
 			$this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
 			{
-				return Channel::find(2); 
-			});  
+				return Channel::find(2);
+			});
 		}
-
         $this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
         {
             if($this->_channel->domainJoinPrimary->domain->domain_primary!='default'){

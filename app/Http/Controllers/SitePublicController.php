@@ -132,12 +132,14 @@ class SitePublicController extends ConstructController
 	public $_semrushMetrics; 
 	public $_dnsReport; 
 	public $_ipAddressInfo; 
-	public $_whoisRecord; 
+	public $_whoisRecord;
+	public $_domainInfo;
 	public function __construct(){
 		parent::__construct(); 
 	}
 	public function index(Request $request)
     {
+        //dd(DB::connection('mongodb')->collection('mongo_domain')->limit(10)->get());
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
 			$error=''; 
@@ -182,7 +184,13 @@ class SitePublicController extends ConstructController
 			}
 		}else if($this->_siteSuccess=='redirect'){ 
 			$parsedUrl=parse_url($request->url()); 
-			$checkDomain=str_replace('.cungcap.net','',$parsedUrl['host']); 
+			$checkDomain=str_replace('.'.config('app.url'),'',$parsedUrl['host']);
+            $checkRecore=substr($checkDomain, -2);
+            if($checkRecore=='.d'){
+                $checkDomain=substr($checkDomain, 0, -2);
+            }else{
+                return Redirect::to('http://'.$checkDomain.'.d.'.config('app.url'),301);
+            }
 			$this->_pieces = explode("-", $checkDomain); 
 			if(!empty($this->_pieces[0]) && $this->_pieces[0]=='post'){
 				//$this->_siteSuccess='infoPost'; 
@@ -195,11 +203,25 @@ class SitePublicController extends ConstructController
 			}elseif(!empty($this->_pieces[0]) && $this->_pieces[0]=='www'){
 				return Redirect::to('https://cungcap.net/',301);
 			}else{
-				return Redirect::to('http://'.$checkDomain.'.d.cungcap.net',301);
+			    $this->_domainInfo=$checkDomain;
+			    return $this->DomainInfo();
 			}
-			
 		}
 	}
+	public function DomainInfo(){
+        if(!empty($this->_domainInfo)){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('base_64',base64_encode($this->_domainInfo))->first();
+            if(!empty($domain['domain'])){
+                $return=array(
+                    'domain'=>$domain
+                );
+                return $this->_theme->scope('domain.viewInfo', $return)->render();
+            }else{
+                echo 'domain not found';
+            }
+        }
+    }
 	public function addNewDomainInfomation()
     {
 		//return 'false';
