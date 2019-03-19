@@ -13,7 +13,7 @@ class SchedulingController extends Controller
      */
     public function insertDomain(){
         $getDomain=DB::connection('mongodb_old')->collection('note')->where('type','domain')
-            ->where('index','<',4)->limit(500)->get();
+            ->where('index','<',4)->limit(1000)->get();
         foreach ($getDomain as $item){
             $checkDomain=DB::connection('mongodb')->collection('mongo_domain')
                 ->where('base_64',base64_encode($item['domain']))->first();
