@@ -5,12 +5,7 @@ use Illuminate\Http\Request;
 use DB;
 class SchedulingController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public $_domain;
     public function insertDomain(){
         $getDomain=DB::connection('mongodb_old')->collection('note')->where('type','domain')
             ->where('index','<',4)->limit(1000)->get();
@@ -45,5 +40,8 @@ class SchedulingController extends Controller
                 echo 'Domain exist <br>';
             }
         }
+    }
+    public function crawInfoDomain(){
+        
     }
 }

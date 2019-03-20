@@ -59,8 +59,9 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
             <div class="row row-pad-5">
                 <div class="col-md-8">
                     <h1><strong>{!! $domain['domain'] !!}</strong></h1>
-                    <strong>Tiêu đề: {!! $domain['title'] !!}</strong>
-                    <p>{!! $domain['description'] !!}</p>
+                    @if(!empty($domain['title']))<strong>Tiêu đề: {!! $domain['title'] !!}</strong>@endif
+                    @if(!empty($domain['description']))<p>{!! $domain['description'] !!}</p>@endif
+                    @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
                         <div class="panel panel-primary">
                             <div class="panel-heading">Thông tin tên miền {!! $domain['domain'] !!}</div>
@@ -69,6 +70,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             </div>
                         </div>
                     </div>
+                    @endif
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
                             <ins class="adsbygoogle"
