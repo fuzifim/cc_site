@@ -59,12 +59,12 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
             <div class="row row-pad-5">
                 <div class="col-md-8">
                     <h1><strong>{!! $domain['domain'] !!}</strong></h1>
-                    @if(!empty($domain['title']))<strong>Tiêu đề: {!! $domain['title'] !!}</strong>@endif
+                    @if(!empty($domain['title']))<strong>Title: {!! $domain['title'] !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! $domain['description'] !!}</p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
                         <div class="panel panel-primary">
-                            <div class="panel-heading">Thông tin tên miền {!! $domain['domain'] !!}</div>
+                            <div class="panel-heading">Domain infomation {!! $domain['domain'] !!}</div>
                             <div class="panel-body">
                                 <strong>{{$domain['domain']}}</strong>@if(!empty($decodeWhois->creationDate)) created at {{$decodeWhois->creationDate}}  @endif @if(!empty($decodeWhois->expirationDate)) and expiration date {{$decodeWhois->expirationDate}}. @endif @if(!empty($decodeWhois->registrar)) Registrar by <strong>{!!$decodeWhois->registrar!!}</strong>.@endif @if(!empty($decodeWhois->nameServer)) Name server: @if(!empty($decodeWhois->nameServer[0])){{$decodeWhois->nameServer[0]}}@endif @if(!empty($decodeWhois->nameServer[1]))and {{$decodeWhois->nameServer[1]}}@endif @endif. @if(!empty($note->attribute['rank'])) It has a global traffic rank of {{$note->attribute['rank']}} in the world @if(!empty($note->attribute['country_code']) && !empty($note->attribute['rank_country'])) and rank at <strong>{{$note->attribute['country_code']}}</strong> is {{$note->attribute['rank_country']}}@endif @endif
                             </div>
@@ -200,7 +200,16 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     @endif
                 </div>
                 <div class="col-md-4">
-
+                    @if(count($newDomain))
+                        <ul class="list-group">
+                            @foreach($newDomain as $item)
+                            <li class="list-group-item">
+                                {!! $item['domain'] !!}<br>
+                                <small>{!! $item['updated_at']->toDateTime()->format('Y-m-d H:i:s') !!}</small>
+                            </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
             </div>
         </div>

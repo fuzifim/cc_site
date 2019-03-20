@@ -42,6 +42,6 @@ class SchedulingController extends Controller
         }
     }
     public function crawInfoDomain(){
-        
+
     }
 }

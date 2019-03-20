@@ -210,11 +210,22 @@ class SitePublicController extends ConstructController
 	}
 	public function DomainInfo(){
         if(!empty($this->_domainInfo)){
-            $domain=DB::connection('mongodb')->collection('mongo_domain')
-                ->where('base_64',base64_encode($this->_domainInfo))->first();
+            $domain = Cache::store('memcached')->remember('infoDomain_'.base64_encode($this->_domainInfo), 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($this->_domainInfo))->first();
+            });
             if(!empty($domain['domain'])){
+                $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+                {
+                    return DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('status','active')
+                        ->orderBy('updated_at','desc')
+                        ->limit(20)->get();
+                });
                 $return=array(
-                    'domain'=>$domain
+                    'domain'=>$domain,
+                    'newDomain'=>$newDomain
                 );
                 return $this->_theme->scope('domain.viewInfo', $return)->render();
             }else{
