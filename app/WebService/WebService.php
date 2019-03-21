@@ -813,7 +813,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
         return $res;
     }
 	function checkBlacklistWord($str){
-        $blacklist=preg_split("/(\r\n|\n|\r)/",File::get('data/words_blacklist.txt'));
+        $blacklist=preg_split("/(\r\n|\n|\r)/",File::get(public_path('data/words_blacklist.txt')));
         foreach($blacklist as $a) {
 			if (stripos($str,$a) !== false) 
 			{
