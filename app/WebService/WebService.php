@@ -806,8 +806,15 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
             }
         }
     }
-	function checkBlacklistWord($str, array $blacklist){
-		foreach($blacklist as $a) {
+    function has_ssl( $domain ) {
+        $ssl_check = @fsockopen( 'ssl://' . $domain, 443, $errno, $errstr, 30 );
+        $res = !! $ssl_check;
+        if ( $ssl_check ) { fclose( $ssl_check ); }
+        return $res;
+    }
+	function checkBlacklistWord($str){
+        $blacklist=preg_split("/(\r\n|\n|\r)/",File::get('data/words_blacklist.txt'));
+        foreach($blacklist as $a) {
 			if (stripos($str,$a) !== false) 
 			{
 				return false; 

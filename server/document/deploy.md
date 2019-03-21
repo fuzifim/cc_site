@@ -45,4 +45,9 @@ $attribute=array(
     'url_xs'=>'https://cungcap.net/themes/main/assets/img/logo-red-blue.svg', 
     'url_icon'=>'https://cungcap.net/themes/main/assets/img/logo-red-blue.svg'
 ); 
-```
+``` 
+###Step process 
+1. domain info 
+2. whois 
+3. rank 
+4. ip (DNS Record)

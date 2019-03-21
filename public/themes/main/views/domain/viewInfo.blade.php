@@ -205,7 +205,14 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @foreach($newDomain as $item)
                             <li class="list-group-item">
                                 {!! $item['domain'] !!}<br>
-                                <small>{!! $item['updated_at']->toDateTime()->format('Y-m-d H:i:s') !!}</small>
+                                <?php
+                                if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                                    $date= $item['updated_at']->toDateTime()->format('Y-m-d H:i:s');
+                                }else{
+                                    $date= $item['updated_at'];
+                                }
+                                ?>
+                                <small>{!! $date !!}</small>
                             </li>
                             @endforeach
                         </ul>
