@@ -30,7 +30,7 @@ if(!empty($domain['attribute']['content'])){
 }else{
     $domainContent=array();
 }
-$channel['theme']->setTitle($domain['title']);
+$channel['theme']->setTitle($domain['domain'].' '.$domain['title']);
 $channel['theme']->setKeywords($domain['keywords']);
 $channel['theme']->setDescription($description.' - '.$domain['description']);
 $ads='true';
@@ -204,7 +204,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         <ul class="list-group">
                             @foreach($newDomain as $item)
                             <li class="list-group-item">
-                                {!! $item['domain'] !!}<br>
+                                <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! $item['domain'] !!}</a><br>
                                 <?php
                                 if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                     $date= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');

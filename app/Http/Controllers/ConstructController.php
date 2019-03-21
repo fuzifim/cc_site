@@ -72,17 +72,13 @@ class ConstructController extends Controller
 			$rules = \Pdp\Rules::createFromPath($pdp_url); 
 			return $rules; 
 		});
-		$this->_region = Cache::store('file')->remember('region',1, function()
-		{
-            return Regions::find(704);
-        });
 		$parsedUrl=parse_url(Request::url()); 
 		if(!empty($parsedUrl['host'])){
 			$checkDomain=str_replace('www.','',$parsedUrl['host']); 
 			$this->_domain = Cache::store('memcached')->remember('thisDomain'.$checkDomain, 5, function() use($checkDomain)
 			{
-				return Domain::where('domain_encode','=',base64_encode($checkDomain))->first(); 
-			}); 
+				return Domain::where('domain_encode','=',base64_encode($checkDomain))->first();
+			});
 		}
 		if(!empty($this->_domain->domain)){
 			$this->_siteSuccess='infoChannel'; 
@@ -118,7 +114,10 @@ class ConstructController extends Controller
         });
 
         $this->_domainParentPrimary = config('app.url');
-
+        $this->_region = Cache::store('file')->remember('region',1, function()
+        {
+            return Regions::find(704);
+        });
         if($this->_channel->channel_parent_id!=0){
             $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
             $this->_limitSize=$getServiceValue->limit_cloud;

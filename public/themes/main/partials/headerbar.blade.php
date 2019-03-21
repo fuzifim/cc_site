@@ -5,7 +5,7 @@
 			<button type="button" class="navbar-toggle collapsed btn-top-nav" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><i class="fa fa-bars"></i></button> 
 		</div>
 		@if(Cart::getContent()->count()>0)<span class="pull-right badge badge-danger visible-xs">{{Cart::getContent()->count()}}</span>@endif
-		<a class="navbar-brand logo_header" href="{{route('channel.home',$channel['domainPrimary'])}}"><img class="" id="logoChannel" src="{{asset('assets/img/logo-red-white.svg')}}" alt="{!!$channel['info']->channel_name!!}" title="{!!$channel['info']->channel_name!!}"></a>
+		<a class="navbar-brand logo_header" href="{{route('channel.home',$channel['domainPrimary'])}}"><img class="" id="logoChannel" src="https://cungcap.net/assets/img/logo-red-white.svg" alt="{!!$channel['info']->channel_name!!}" title="{!!$channel['info']->channel_name!!}"></a>
 	  </div>
 		<div id="navbarSearch" class="collapse" aria-expanded="false" style="height: 1px;">
 		  
