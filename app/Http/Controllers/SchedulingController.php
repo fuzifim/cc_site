@@ -47,10 +47,23 @@ class SchedulingController extends Controller
             }
         }
     }
+    public function getIpRecord(){
+        return false;
+        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
+            ->where('craw_next','ip')
+            ->limit(1)->get();
+        foreach ($getDomain as $domain){
+            $this->_domain=$domain['domain'];
+            if(empty($domain['attribute']['dns_record'])){
+                $result=$this->getIpDomain();
+                dd($result);
+            }
+        }
+    }
     public function getRankDomain(){
         $getDomain=DB::connection('mongodb')->collection('mongo_domain')
             ->where('craw_next','rank')
-            ->limit(1)->get();
+            ->limit(3)->get();
         foreach ($getDomain as $domain){
             $this->_domain=$domain['domain'];
             $result=$this->getRank();
@@ -190,6 +203,22 @@ class SchedulingController extends Controller
                         'attribute'=>$domainAttribute
                     ]);
             }
+        }
+    }
+    public function getIpDomain(){
+        $replaceDomain=str_replace('www.', '',$this->_domain);
+        $getRecord=@dns_get_record($replaceDomain,DNS_ALL);
+        if($getRecord){
+            return array(
+                'result'=>'success',
+                'domain'=>$this->_domain,
+                'dns_record'=>$this->utf8_converter($getRecord)
+            );
+        }else{
+            return array(
+                'result'=>'error',
+                'domain'=>$this->_domain
+            );
         }
     }
     public function getRank(){
@@ -379,5 +408,15 @@ class SchedulingController extends Controller
                 'message'=>'connect_request'
             );
         }
+    }
+    function utf8_converter($array)
+    {
+        array_walk_recursive($array, function(&$item, $key){
+            if(!mb_detect_encoding($item, 'utf-8', true)){
+                $item = utf8_encode($item);
+            }
+        });
+
+        return $array;
     }
 }
