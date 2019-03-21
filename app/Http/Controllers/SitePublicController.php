@@ -139,11 +139,8 @@ class SitePublicController extends ConstructController
 	}
 	public function index(Request $request)
     {
-//        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
-//            ->where('craw_next','ip')
-//            ->orderBy('updated_at','desc')
-//            ->limit(10)->get();
-//        dd($getDomain);
+//        $date=new \MongoDB\BSON\UTCDateTime(Carbon::now());
+//        dd($date->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s'));
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
 			$error=''; 
