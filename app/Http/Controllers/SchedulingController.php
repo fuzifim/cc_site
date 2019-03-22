@@ -12,6 +12,52 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public function insertVideo(){
+        $getVideo=DB::connection('mongodb_old')->collection('note')
+            ->where('type','video')
+            ->where('index','<',3)
+            ->limit(500)->get();
+        foreach ($getVideo as $item){
+            $checkVideo=DB::connection('mongodb')->collection('mongo_video')
+                ->where('base_64',base64_encode($item['title']))->first();
+            if(empty($checkVideo['title'])){
+                $getParent=array(
+                    'title'=>''
+                );
+                if(!empty($item['parent'])){
+                    $getParent=DB::connection('mongodb_old')->collection('note')
+                        ->where('type','category')
+                        ->where('_id',$item['parent'])
+                        ->first();
+                    DB::connection('mongodb')->collection('mongo_video')
+                        ->insertGetId(
+                            [
+                                'parent'=>$getParent['title'],
+                                'title' => $item['title'],
+                                'base_64' => base64_encode($item['title']),
+                                'description'=>$item['description'],
+                                'yid'=>$item['yid'],
+                                'image'=>$item['image'],
+                                'thumb'=>$item['thumb'],
+                                'view'=>$item['view'],
+                                'status'=>$item['status'],
+                                'created_at'=>$item['created_at'],
+                                'updated_at'=>$item['updated_at']
+                            ]
+                        );
+                    DB::connection('mongodb_old')->collection('note')->where('type','video')
+                        ->where('title_encode',base64_encode($item['title']))
+                        ->update(['index' => 3]);
+                    echo $item['title'].' insert success <br>';
+                }
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','video')
+                    ->where('title_encode',base64_encode($item['title']))
+                    ->update(['index' => 3]);
+                echo $item['title'].' update success <br>';
+            }
+        }
+    }
     public function insertCategory(){
         $getCategory=DB::connection('mongodb_old')->collection('note')
             ->where('type','category')
