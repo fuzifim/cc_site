@@ -59,6 +59,14 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
             <div class="row row-pad-5">
                 <div class="col-md-8">
                     <h1><strong>{!! $domain['domain'] !!}</strong></h1>
+                    <?php
+                    if ($domain['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                        $updated_at= $domain['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+                    }else{
+                        $updated_at= $domain['updated_at'];
+                    }
+                    ?>
+                    <small>Updated at {!! $updated_at !!}</small><br>
                     @if(!empty($domain['title']))<strong>Title: {!! $domain['title'] !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! $domain['description'] !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
