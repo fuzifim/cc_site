@@ -75,26 +75,47 @@ class ConstructController extends Controller
 		$parsedUrl=parse_url(Request::url()); 
 		if(!empty($parsedUrl['host'])){
 			$checkDomain=str_replace('www.','',$parsedUrl['host']);
-			$this->_domain = Cache::store('memcached')->remember('thisDomain'.$checkDomain, 5, function() use($checkDomain)
-			{
-				return Domain::where('domain_encode','=',base64_encode($checkDomain))->first();
-			});
-		}
-		if(!empty($this->_domain->domain)){
-			$this->_siteSuccess='infoChannel'; 
-			$this->_channel = $this->_domain->domainJoinChannel->channel; 
-			if($this->_channel->channel_parent_id==0){ 
-				$this->_theme=Theme::uses('main')->layout('default');
-			}else{
-				$this->_theme=Theme::uses('control')->layout('default'); 
-			}
-		}else{
-			$this->_siteSuccess='redirect';
-            $this->_theme=Theme::uses('main')->layout('default');
-			$this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
-			{
-				return Channel::find(2);
-			});
+            $domainType='';
+            if (Cache::store('memcached')->has('domain_type_'.$checkDomain)) {
+                $domainType=Cache::store('memcached')->get('domain_type_'.$checkDomain);
+            }
+            if($domainType=='domainInfo'){
+                $this->_siteSuccess='redirect';
+                $this->_theme=Theme::uses('main')->layout('default');
+                $this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
+                {
+                    return Channel::find(2);
+                });
+            }else{
+                $this->_region = Cache::store('file')->remember('region',1, function()
+                {
+                    return Regions::find(704);
+                });
+                $this->_domain = Cache::store('memcached')->remember('thisDomain'.$checkDomain, 5, function() use($checkDomain)
+                {
+                    return Domain::where('domain_encode','=',base64_encode($checkDomain))->first();
+                });
+                if(!empty($this->_domain->domain)){
+                    $this->_siteSuccess='infoChannel';
+                    $this->_channel = $this->_domain->domainJoinChannel->channel;
+                    if($this->_channel->channel_parent_id==0){
+                        $this->_theme=Theme::uses('main')->layout('default');
+                    }else{
+                        $this->_theme=Theme::uses('control')->layout('default');
+                    }
+                }else{
+                    $this->_siteSuccess='redirect';
+                    $this->_theme=Theme::uses('main')->layout('default');
+                    $this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
+                    {
+                        return Channel::find(2);
+                    });
+                    Cache::store('memcached')->remember('domain_type_'.$checkDomain, 500, function()
+                    {
+                        return 'domainInfo';
+                    });
+                }
+            }
 		}
         $this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
         {
@@ -112,12 +133,7 @@ class ConstructController extends Controller
                 return $this->_channel->domainJoinPrimary->domain->domain;
             }
         });
-
         $this->_domainParentPrimary = config('app.url');
-        $this->_region = Cache::store('file')->remember('region',1, function()
-        {
-            return Regions::find(704);
-        });
         if($this->_channel->channel_parent_id!=0){
             $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
             $this->_limitSize=$getServiceValue->limit_cloud;

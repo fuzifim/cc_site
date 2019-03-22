@@ -38,6 +38,7 @@ $channel['theme']->setDescription('list domain rank, domain at '.$country->count
                 </div>
                 <div class="col-md-4">
                     @if(count($newDomain))
+                        <h4>Domain new updated</h4>
                         <ul class="list-group">
                             @foreach($newDomain as $item)
                                 <li class="list-group-item">
