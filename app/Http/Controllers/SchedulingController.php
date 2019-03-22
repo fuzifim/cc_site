@@ -12,6 +12,36 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public function insertIp(){
+        $getIp=DB::connection('mongodb_old')->collection('note')->where('type','ip')
+            ->where('update_time','<',3)
+            ->limit(1000)->get();
+        foreach ($getIp as $item){
+            $checkIp=DB::connection('mongodb')->collection('mongo_ip')
+                ->where('base_64',base64_encode($item['title']))->first();
+            if(empty($checkIp['ip'])){
+                DB::connection('mongodb')->collection('mongo_ip')
+                    ->insertGetId(
+                        [
+                            'ip' => $item['title'],
+                            'base_64' => base64_encode($item['title']),
+                            'description'=>$item['description'],
+                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]
+                    );
+                DB::connection('mongodb_old')->collection('note')->where('type','ip')
+                    ->where('title_encode',base64_encode($item['title']))
+                    ->update(['update_time' => 3]);
+                echo $item['title'].' insert success <br>';
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','ip')
+                    ->where('title_encode',base64_encode($item['title']))
+                    ->update(['update_time' => 3]);
+                echo $item['title'].' update success <br>';
+            }
+        }
+    }
     public function insertDomain(){
         $getDomain=DB::connection('mongodb_old')->collection('note')->where('type','domain')
             ->where('index','<',4)->limit(1000)->get();
@@ -47,16 +77,97 @@ class SchedulingController extends Controller
             }
         }
     }
+    public function updateCountry(){
+        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
+            ->where('craw_next','update_country')
+            ->limit(3)->get();
+        foreach ($getDomain as $domain){
+            $this->_domain=$domain['domain'];
+            if(!empty($domain['attribute']['country_code'])){
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($domain['domain']))
+                    ->update([
+                        'status_domain_country'=>'active',
+                        'domain_country_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_6',
+                        'country'=>$domain['attribute']['country_code'],
+                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                    ]);
+            }else{
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($domain['domain']))
+                    ->update([
+                        'status_domain_country'=>'error',
+                        'domain_country_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_6'
+                    ]);
+            }
+        }
+    }
     public function getIpRecord(){
-        return false;
         $getDomain=DB::connection('mongodb')->collection('mongo_domain')
             ->where('craw_next','ip')
-            ->limit(1)->get();
+            ->limit(3)->get();
         foreach ($getDomain as $domain){
             $this->_domain=$domain['domain'];
             if(empty($domain['attribute']['dns_record'])){
                 $result=$this->getIpDomain();
-                dd($result);
+                if($result['result']=='error'){
+                    DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('base_64',base64_encode($domain['domain']))
+                        ->update([
+                            'status_domain_ip'=>'error',
+                            'domain_ip_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'update_country'
+                        ]);
+                    echo $domain['domain']. ' insert ip error';
+                }else if($result['result']=='success'){
+                    $domainAttribute=$domain['attribute'];
+                    $noteMer=array('dns_record'=>$result['dns_record']);
+                    $domainAttribute= array_merge($domainAttribute, $noteMer);
+                    DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('base_64',base64_encode($domain['domain']))
+                        ->update([
+                            'status_domain_ip'=>'active',
+                            'domain_ip_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'update_country',
+                            'attribute'=>$domainAttribute,
+                            'ip'=>$result['ip'],
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]);
+                    echo $domain['domain']. ' insert ip success';
+                }
+            }else if(empty($domain['ip'])){
+                $ipDomain=gethostbyname($domain['domain']);
+                $ip='';
+                if($ipDomain!=$domain['domain']){
+                    $ip=$ipDomain;
+                }
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($domain['domain']))
+                    ->update([
+                        'status_domain_ip'=>'active',
+                        'domain_ip_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'update_country',
+                        'ip'=>$ip,
+                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                    ]);
+                echo $domain['domain']. ' update only ip<p>';
+            }else{
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($domain['domain']))
+                    ->update([
+                        'status_domain_ip'=>'error',
+                        'domain_ip_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'update_country'
+                    ]);
+                echo $domain['domain']. ' insert or update ip error';
             }
         }
     }
@@ -209,9 +320,15 @@ class SchedulingController extends Controller
         $replaceDomain=str_replace('www.', '',$this->_domain);
         $getRecord=@dns_get_record($replaceDomain,DNS_ALL);
         if($getRecord){
+            $ipDomain=gethostbyname($this->_domain);
+            $ip='';
+            if($ipDomain!=$this->_domain){
+                $ip=$ipDomain;
+            }
             return array(
                 'result'=>'success',
                 'domain'=>$this->_domain,
+                'ip'=>$ip,
                 'dns_record'=>$this->utf8_converter($getRecord)
             );
         }else{
@@ -374,7 +491,7 @@ class SchedulingController extends Controller
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>@get_headers($this->_domain_link),
-                    'contents'=>iconv('UTF-8', 'UTF-8//IGNORE', $getResponse)
+                    'contents'=>iconv('UTF-8', 'UTF-8//IGNORE', utf8_decode($getResponse))
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){

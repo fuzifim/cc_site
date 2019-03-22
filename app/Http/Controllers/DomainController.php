@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Model\Regions;
 use Illuminate\Pagination\Paginator;
-use Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Auth;
 use App\Permission;
@@ -33,6 +34,8 @@ use Cart;
 use DateTime; 
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use DB;
+use Cache;
 class DomainController extends ConstructController
 {
 	public $_domainRegister;  
@@ -48,6 +51,33 @@ class DomainController extends ConstructController
 		parent::__construct(); 
 	}
 	/*-- new --*/
+        public function getDomainByCountryCode(Request $request){
+            $page = $request->has('page') ? $request->query('page') : 1;
+            $country=Cache::store('memcached')->remember('region_code_'.$this->_parame['iso'], 50, function()
+            {
+                return DB::table('regions')->where('iso',$this->_parame['iso'])->first();
+            });
+            $getDomain=Cache::store('memcached')->remember('domain_by_country_'.$this->_parame['iso'].'_'.$page, 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('country',$this->_parame['iso'])
+                    ->orderBy('updated_at','desc')
+                    ->simplePaginate(20);
+            });
+            $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_domain')
+                    //->where('status','active')
+                    ->orderBy('updated_at','desc')
+                    ->limit(20)->get();
+            });
+            $view = array(
+                'country'=>$country,
+                'getDomain'=>$getDomain,
+                'newDomain'=>$newDomain
+            );
+            return $this->_theme->scope('domain.listByCountry', $view)->render();
+        }
 		public function inetSignin()
 		{
 			$client = new Client([

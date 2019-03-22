@@ -29,7 +29,7 @@ Route::group(['domain' => '{domain}'], function()
     });
     Route::get('/test', array(
         'as' => 'test',
-        'uses' => 'SchedulingController@crawInfoDomain'));
+        'uses' => 'SchedulingController@updateCountry'));
     Route::get('/importdata', array(
         'as' => 'test',
         'uses' => 'TestController@importData'));
@@ -74,7 +74,11 @@ Route::group(['domain' => '{domain}'], function()
         'as' => 'go.to.url',
         'uses' => 'PagesController@gotoUrl'))->where('url', '.*');
     //-- End Pages
-
+    //--Tools
+    Route::get('/domain/country/{iso}', array(
+        'as' => 'domain.country.iso',
+        'uses' => 'DomainController@getDomainByCountryCode'));
+    //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',
         'uses' => 'PostsController@moveAttribute'));

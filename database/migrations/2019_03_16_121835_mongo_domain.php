@@ -18,6 +18,8 @@ class MongoDomain extends Migration
             ->table('mongo_domain', function (Blueprint $collection)
             {
                 $collection->index('base_64');
+                $collection->index('country');
+                $collection->index('ip');
             });
     }
 

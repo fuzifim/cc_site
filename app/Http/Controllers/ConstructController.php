@@ -74,7 +74,7 @@ class ConstructController extends Controller
 		});
 		$parsedUrl=parse_url(Request::url()); 
 		if(!empty($parsedUrl['host'])){
-			$checkDomain=str_replace('www.','',$parsedUrl['host']); 
+			$checkDomain=str_replace('www.','',$parsedUrl['host']);
 			$this->_domain = Cache::store('memcached')->remember('thisDomain'.$checkDomain, 5, function() use($checkDomain)
 			{
 				return Domain::where('domain_encode','=',base64_encode($checkDomain))->first();

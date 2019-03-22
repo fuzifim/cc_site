@@ -47,7 +47,9 @@ $attribute=array(
 ); 
 ``` 
 ###Step process 
-1. domain info 
-2. whois 
-3. rank 
-4. ip (DNS Record)
+1. key('') domain info 
+2. key(whois) whois 
+3. key(rank) rank 
+4. key(ip) ip (DNS Record)
+5. key(update_country) Update country 
+6. key(step_6)
