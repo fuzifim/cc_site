@@ -13,7 +13,57 @@ class SchedulingController extends Controller
     public $_domain;
     public $_domain_link;
     public function insertCategory(){
-
+        $getCategory=DB::connection('mongodb_old')->collection('note')
+            ->where('type','category')
+            ->where('index','<',4)
+            ->limit(500)->get();
+        foreach($getCategory as $item){
+            $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('base_64',base64_encode($item['title']))->first();
+            if(empty($checkKeyword['keyword'])){
+                $getParent=array(
+                    'title'=>''
+                );
+                if(!empty($item['parent'])){
+                    $getParent=DB::connection('mongodb_old')->collection('note')
+                        ->where('type','category')
+                        ->where('_id',$item['parent'])
+                        ->first();
+                }
+                if(!empty($item['description'])){
+                    $description=$item['description'];
+                }else{
+                    $description='';
+                }
+                if(!empty($item['image'])){
+                    $image=$item['image'];
+                }else{
+                    $image='';
+                }
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->insertGetId(
+                        [
+                            'parent'=>$getParent['title'],
+                            'keyword' => $item['title'],
+                            'base_64' => base64_encode($item['title']),
+                            'description'=>$description,
+                            'image'=>$image,
+                            'status'=>$item['status'],
+                            'created_at'=>$item['created_at'],
+                            'updated_at'=>$item['updated_at']
+                        ]
+                    );
+                DB::connection('mongodb_old')->collection('note')->where('type','category')
+                    ->where('title_encode',base64_encode($item['title']))
+                    ->update(['index' => 4]);
+                echo $item['title'].' insert success <br>';
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','category')
+                    ->where('title_encode',base64_encode($item['title']))
+                    ->update(['index' => 4]);
+                echo $item['title'].' update success <br>';
+            }
+        }
     }
     public function insertIp(){
         $getIp=DB::connection('mongodb_old')->collection('note')->where('type','ip')
