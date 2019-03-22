@@ -12,6 +12,9 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public function insertCategory(){
+
+    }
     public function insertIp(){
         $getIp=DB::connection('mongodb_old')->collection('note')->where('type','ip')
             ->where('update_time','<',3)
