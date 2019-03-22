@@ -78,6 +78,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/domain/country/{iso}', array(
         'as' => 'domain.country.iso',
         'uses' => 'DomainController@getDomainByCountryCode'));
+    Route::get('/domain/ip/{ip}', array(
+        'as' => 'domain.by.ip',
+        'uses' => 'DomainController@getDomainByIp'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',

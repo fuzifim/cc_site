@@ -46,7 +46,7 @@ class PagesController extends ConstructController
 		$return=array(
 			'url'=>$url
 		); 
-		return Redirect::to($url);
+		//return Redirect::to($url);
 		return $this->_theme->scope('goto', $return)->render();
 	}
 }

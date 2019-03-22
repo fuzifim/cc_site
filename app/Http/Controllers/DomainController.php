@@ -78,6 +78,29 @@ class DomainController extends ConstructController
             );
             return $this->_theme->scope('domain.listByCountry', $view)->render();
         }
+    public function getDomainByIp(Request $request){
+        $page = $request->has('page') ? $request->query('page') : 1;
+        $getDomain=Cache::store('memcached')->remember('domain_by_country_'.$this->_parame['ip'].'_'.$page, 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                ->where('ip',$this->_parame['ip'])
+                ->orderBy('updated_at','desc')
+                ->simplePaginate(20);
+        });
+        $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                //->where('status','active')
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
+        $view = array(
+            'getDomain'=>$getDomain,
+            'newDomain'=>$newDomain,
+            'ip'=>$this->_parame['ip']
+        );
+        return $this->_theme->scope('domain.listByIp', $view)->render();
+    }
 		public function inetSignin()
 		{
 			$client = new Client([

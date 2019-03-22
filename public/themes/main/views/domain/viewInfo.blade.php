@@ -78,6 +78,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @endif
                         </p>
                     @endif
+                    @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
                         <div class="panel panel-primary">
@@ -101,7 +102,14 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         </div>
                     @endif
                     <div class="form-group">
-                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" data-url="" rel="nofollow" target="blank">Visit this site click here
+                        <?php
+                            if(!empty($domain['scheme'])){
+                                $scheme=$domain['scheme'];
+                            }else{
+                                $scheme='http';
+                            }
+                        ?>
+                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$scheme.'://'.$domain['domain'])) !!}" rel="nofollow" target="blank">Visit to site click here
                             <p><strong>{!! $domain['domain'] !!}</strong></p>
                         </a>
                     </div>
