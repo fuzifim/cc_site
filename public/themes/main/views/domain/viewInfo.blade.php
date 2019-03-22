@@ -61,7 +61,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     <h1><strong>{!! $domain['domain'] !!}</strong></h1>
                     @if(!empty($domain['title']))<strong>Title: {!! $domain['title'] !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! $domain['description'] !!}</p>@endif
-                    @if(empty($domain['title']) && $domain['description'])
+                    @if(empty($domain['title']) && empty($domain['description']))
                     <div class="alert alert-info">
                         This domain {!! $domain['domain'] !!} not any information, please access  next time
                     </div>
