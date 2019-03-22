@@ -1,13 +1,13 @@
 <?php
-$channel['theme']->setTitle('Domain by ip '.$ip);
+$channel['theme']->setTitle('Cung cấp tên miền có địa chỉ '.$ip);
 $channel['theme']->setKeywords('');
-$channel['theme']->setDescription('list domain rank, domain by ip '.$ip);
+$channel['theme']->setDescription('cung cấp danh sách tên miền có địa chỉ ip là '.$ip);
 ?>
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
         <div class="pageheader">
-            <h1>Domain by ip {!! $ip !!}</h1>
+            <h1>Cung cấp tên miền có địa chỉ ip {!! $ip !!}</h1>
             <span></span>
         </div>
         <div class="contentpanel">

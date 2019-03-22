@@ -1,13 +1,13 @@
 <?php
-$channel['theme']->setTitle('Domain info at '.$country->country);
+$channel['theme']->setTitle('Cung cấp tên miền tại '.$country->country);
 $channel['theme']->setKeywords('');
-$channel['theme']->setDescription('list domain rank, domain at '.$country->country. ' domain info');
+$channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$country->country);
 ?>
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
         <div class="pageheader">
-            <h1>Domain info at {!! $country->country !!}</h1>
+            <h1>Cung cấp tên miền tại {!! $country->country !!}</h1>
             <span></span>
         </div>
         <div class="contentpanel">
