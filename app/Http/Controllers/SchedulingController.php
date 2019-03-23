@@ -12,6 +12,51 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public function insertSite(){
+        $getSite=DB::connection('mongodb_old')->collection('note')
+            ->where('type','site')
+            ->where('index','<',3)
+            ->limit(5)->get();
+        foreach ($getSite as $item){
+            $checkSite=DB::connection('mongodb')->collection('mongo_site')
+                ->where('base_64',base64_encode($item['link']))->first();
+            if(empty($checkSite['title'])){
+                $getParent=array(
+                    'domain'=>''
+                );
+                if(!empty($item['parent'])) {
+                    $getParent = DB::connection('mongodb_old')->collection('note')
+                        ->where('type', 'domain')
+                        ->where('_id', $item['parent'])
+                        ->first();
+                }
+                DB::connection('mongodb')->collection('mongo_site')
+                    ->insertGetId(
+                        [
+                            'parent'=>$getParent['domain'],
+                            'title' => $item['title'],
+                            'link' => $item['link'],
+                            'base_64' => base64_encode($item['link']),
+                            'description'=>$item['description'],
+                            'attribute'=>$item['attribute'],
+                            'view'=>$item['view'],
+                            'status'=>$item['status'],
+                            'created_at'=>$item['created_at'],
+                            'updated_at'=>$item['updated_at']
+                        ]
+                    );
+                DB::connection('mongodb_old')->collection('note')->where('type','site')
+                    ->where('link_encode',base64_encode($item['link']))
+                    ->update(['index' => 3]);
+                echo $item['title'].' insert success <br>';
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','site')
+                    ->where('link_encode',base64_encode($item['link']))
+                    ->update(['index' => 3]);
+                echo $item['title'].' update success <br>';
+            }
+        }
+    }
     public function insertVideo(){
         $getVideo=DB::connection('mongodb_old')->collection('note')
             ->where('type','video')

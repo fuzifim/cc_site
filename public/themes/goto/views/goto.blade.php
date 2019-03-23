@@ -43,7 +43,7 @@ window.setInterval(function() {
 			</script>
 		</div>
 		<div class="form-group">
-		<a class="btn btn-success btn-block" id="linkContinue" href=""><h2>Click here to continue <span id="timeLeft">5</span></h2></a>
+		<a class="btn btn-success btn-block" id="linkContinue" href="">Click here to continue <span id="timeLeft">5</span></a>
 		</div>
 	</div>
 </div>
