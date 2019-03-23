@@ -16,7 +16,7 @@ class SchedulingController extends Controller
         $getSite=DB::connection('mongodb_old')->collection('note')
             ->where('type','site')
             ->where('index','<',3)
-            ->limit(5)->get();
+            ->limit(100)->get();
         foreach ($getSite as $item){
             $checkSite=DB::connection('mongodb')->collection('mongo_site')
                 ->where('base_64',base64_encode($item['link']))->first();
