@@ -46,12 +46,12 @@ class SchedulingController extends Controller
                         ]
                     );
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
-                    ->where('link_encode',base64_encode($item['link']))
+                    ->where('_id',(string)$item['_id'])
                     ->update(['index' => 3]);
                 echo $item['title'].' insert success <br>';
             }else{
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
-                    ->where('link_encode',base64_encode($item['link']))
+                    ->where('_id',(string)$item['_id'])
                     ->update(['index' => 3]);
                 echo $item['title'].' update success <br>';
             }
