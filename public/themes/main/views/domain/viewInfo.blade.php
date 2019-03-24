@@ -76,7 +76,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     @endif
                     @if(!empty($domain['attribute']['rank']))
                         <p>
-                            <span class="label label-primary">Global rank: {!! $domain['attribute']['rank'] !!}</span>
+                            <span class="label label-primary">Global rank: {!! Site::price($domain['attribute']['rank']) !!}</span>
                             @if(!empty($domain['attribute']['country_code']))
                                 <?php
                                     $regionCode=Cache::store('memcached')->remember('region_code_'.$domain['attribute']['country_code'], 50, function() use($domain)
@@ -86,7 +86,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                             ->first();
                                     });
                                 ?>
-                                <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($regionCode->iso) !!}"></i> <a href="{!! route('domain.country.iso',array(config('app.url'),$regionCode->iso)) !!}">{!! $regionCode->country !!}</a>@if(!empty($domain['attribute']['rank_country'])): {!! $domain['attribute']['rank_country'] !!}@endif
+                                <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($regionCode->iso) !!}"></i> <a href="{!! route('domain.country.iso',array(config('app.url'),$regionCode->iso)) !!}">{!! $regionCode->country !!}</a>@if(!empty($domain['attribute']['rank_country'])): {!! Site::price($domain['attribute']['rank_country']) !!}@endif
                                 </span>
                             @endif
                         </p>

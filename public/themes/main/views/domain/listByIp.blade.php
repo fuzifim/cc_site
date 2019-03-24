@@ -20,9 +20,9 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có địa 
                                 <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! $item['domain'] !!}</a><br>
                                 @if(!empty($item['attribute']['rank']))
                                     <p>
-                                        <span class="label label-primary">Global rank: {!! $item['attribute']['rank'] !!}</span>
+                                        <span class="label label-primary">Global rank: {!! Site::price($item['attribute']['rank']) !!}</span>
                                         @if(!empty($item['attribute']['country_code']))
-                                            <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($item['attribute']['country_code']) !!}"></i> {!! $item['attribute']['country_code'] !!}@if(!empty($item['attribute']['rank_country'])): {!! $item['attribute']['rank_country'] !!}@endif
+                                            <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($item['attribute']['country_code']) !!}"></i> {!! $item['attribute']['country_code'] !!}@if(!empty($item['attribute']['rank_country'])): {!! Site::price($item['attribute']['rank_country']) !!}@endif
                                             </span>
                                         @endif
                                     </p>
