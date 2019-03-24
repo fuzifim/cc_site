@@ -196,9 +196,11 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             <div class="panel-heading">
                                 Header infomation for {!! $domain['domain'] !!}
                             </div>
-                            @foreach($domain['get_header'] as $header)
-                                <span>{!! $header !!}</span><br>
-                            @endforeach
+                            <div class="panel-body">
+                                @foreach($domain['get_header'] as $header)
+                                    <span>{!! $header !!}</span><br>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
                     @if($ads=='true' && config('app.env')!='local')
