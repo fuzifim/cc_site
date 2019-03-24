@@ -26,7 +26,7 @@ class SchedulingController extends Controller
             }else{
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
                     ->where('_id',(string)$item['_id'])
-                    ->update(['index_replay' => 1);
+                    ->update(['index_replay' => 1]);
             }
             if($item['index_replay']==3){
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
