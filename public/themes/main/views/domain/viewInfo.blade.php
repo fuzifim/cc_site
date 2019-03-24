@@ -191,6 +191,10 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                 @endif
                             </div>
                         </div>
+                    @elseif(!empty($domain['get_header']))
+                        @foreach($domain['get_header'] as $header)
+                            <span>{!! $header !!}</span><br>
+                        @endforeach
                     @endif
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">

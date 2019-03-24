@@ -139,9 +139,9 @@ class SitePublicController extends ConstructController
 	}
 	public function index(Request $request)
     {
-//        $getDomain=DB::connection('mongodb')->collection('mongo_site')
+//        $getDomain=DB::connection('mongodb')->collection('mongo_domain')
 //            //->where('type','site')
-//            //->where('index','<',3)
+//            ->orderBy('updated_at','desc')
 //            ->limit(10)->get();
 //        dd($getDomain);
 		$pieces=$this->_pieces; 
