@@ -25,7 +25,7 @@ class SchedulingController extends Controller
                     'domain'=>''
                 );
                 if(!empty($item['view'])){
-                    $view=$item['view']
+                    $view=$item['view'];
                 }else{
                     $view='';
                 }
