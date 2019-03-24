@@ -18,6 +18,22 @@ class SchedulingController extends Controller
             ->where('index','<',3)
             ->limit(100)->get();
         foreach ($getSite as $item){
+            if(!empty($item['index_replay'])){
+
+                DB::connection('mongodb_old')->collection('note')->where('type','site')
+                    ->where('_id',(string)$item['_id'])
+                    ->update(['index_replay' => $item['index_replay']+1]);
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','site')
+                    ->where('_id',(string)$item['_id'])
+                    ->update(['index_replay' => 1);
+            }
+            if($item['index_replay']==3){
+                DB::connection('mongodb_old')->collection('note')->where('type','site')
+                    ->where('_id',(string)$item['_id'])
+                    ->update(['index' => 3]);
+                echo $item['title'].' update success <br>';
+            }
             $checkSite=DB::connection('mongodb')->collection('mongo_site')
                 ->where('base_64',base64_encode($item['link']))->first();
             if(empty($checkSite['title'])){

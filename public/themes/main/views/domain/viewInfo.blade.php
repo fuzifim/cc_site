@@ -203,6 +203,58 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             </div>
                         </div>
                     @endif
+                    @if(!empty($domain['contents']))
+                        <?php
+                            $html = $domain['contents'];
+                            $dom = new \DOMDocument;
+                            @$dom->loadHTML($html);
+                            $getH1 = $dom->getElementsByTagName('h1');
+                            $getH2 = $dom->getElementsByTagName('h2');
+                            $getH3 = $dom->getElementsByTagName('h3');
+                            $getH4 = $dom->getElementsByTagName('h4');
+                            $getH5 = $dom->getElementsByTagName('h5');
+                        ?>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Tag infomations for {!! $domain['domain'] !!}</div>
+                            <div class="panel-body">
+                                @if($getH1->length>0)
+                                    <p><strong>H1 Tag</strong></p>
+                                    @foreach($getH1 as $h1)
+                                        <span>{!! $h1->nodeValue !!}</span><br>
+                                    @endforeach
+                                    <hr>
+                                @endif
+                                @if($getH2->length>0)
+                                    <p><strong>H2 Tag</strong></p>
+                                    @foreach($getH2 as $h2)
+                                        <span>{!! $h2->nodeValue !!}</span><br>
+                                    @endforeach
+                                     <hr>
+                                @endif
+                                @if($getH3->length>0)
+                                    <p><strong>H3 Tag</strong></p>
+                                    @foreach($getH3 as $h3)
+                                        <span>{!! $h3->nodeValue !!}</span><br>
+                                    @endforeach
+                                    <hr>
+                                @endif
+                                @if($getH4->length>0)
+                                    <p><strong>H4 Tag</strong></p>
+                                    @foreach($getH4 as $h4)
+                                        <span>{!! $h4->nodeValue !!}</span><br>
+                                    @endforeach
+                                    <hr>
+                                @endif
+                                @if($getH5->length>0)
+                                    <p><strong>H5 Tag</strong></p>
+                                    @foreach($getH5 as $h5)
+                                        <span>{!! $h5->nodeValue !!}</span><br>
+                                    @endforeach
+                                    <hr>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
                             <ins class="adsbygoogle"
