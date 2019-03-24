@@ -24,6 +24,11 @@ class SchedulingController extends Controller
                 $getParent=array(
                     'domain'=>''
                 );
+                if(!empty($item['view'])){
+                    $view=$item['view']
+                }else{
+                    $view='';
+                }
                 if(!empty($item['parent'])) {
                     $getParent = DB::connection('mongodb_old')->collection('note')
                         ->where('type', 'domain')
@@ -39,7 +44,7 @@ class SchedulingController extends Controller
                             'base_64' => base64_encode($item['link']),
                             'description'=>$item['description'],
                             'attribute'=>$item['attribute'],
-                            'view'=>$item['view'],
+                            'view'=>$view,
                             'status'=>$item['status'],
                             'created_at'=>$item['created_at'],
                             'updated_at'=>$item['updated_at']
