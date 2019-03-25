@@ -650,8 +650,9 @@ class SchedulingController extends Controller
                 //$dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
             }
             else if ($enc!=="UTF-8"){
-                $dataConvertUtf8 = mb_convert_encoding($dataConvertUtf8, $enc, "UTF-8");
-                $dataConvertUtf8 = iconv('UTF-8', 'utf-8//TRANSLIT', $dataConvertUtf8);
+                //$dataConvertUtf8 = mb_convert_encoding($dataConvertUtf8, $enc, "UTF-8");
+                //$dataConvertUtf8 = iconv('UTF-8', 'UTF-8//TRANSLIT', $dataConvertUtf8);
+                $dataConvertUtf8=WebService::ConvertToUTF8($dataConvertUtf8);
             }
             else {
                 $dataConvertUtf8=mb_strtolower($dataConvertUtf8, 'UTF-8');
