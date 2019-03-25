@@ -54,6 +54,8 @@ class PagesController extends ConstructController
             });
             if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
                 $ads='false';
+            }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
+                $ads='false';
             }
         }
         $return=array(
