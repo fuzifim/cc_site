@@ -656,7 +656,7 @@ class SchedulingController extends Controller
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>@get_headers($this->_domain_link),
-                    'contents'=>iconv('UTF-8', 'UTF-8//IGNORE', $getResponse)
+                    'contents'=>iconv('UTF-8', 'UTF-8//IGNORE', $dataConvertUtf8)
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
