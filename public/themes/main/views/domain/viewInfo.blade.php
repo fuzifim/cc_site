@@ -222,35 +222,35 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             <div class="panel-heading">Tag infomations for {!! $domain['domain'] !!}</div>
                             <div class="panel-body">
                                 @if($getH1->length>0)
-                                    <p><strong>H1 Tag</strong></p>
+                                    <p><strong>H1 Tag</strong> <span class="label label-default">{!! $getH1->length !!}</span></p>
                                     @foreach($getH1 as $h1)
                                         <span>{!! WebService::renameBlacklistWord($h1->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH2->length>0)
-                                    <p><strong>H2 Tag</strong></p>
+                                    <p><strong>H2 Tag</strong> <span class="label label-default">{!! $getH2->length !!}</span></p>
                                     @foreach($getH2 as $h2)
                                         <span>{!! WebService::renameBlacklistWord($h2->nodeValue) !!}</span><br>
                                     @endforeach
                                      <hr>
                                 @endif
                                 @if($getH3->length>0)
-                                    <p><strong>H3 Tag</strong></p>
+                                    <p><strong>H3 Tag</strong> <span class="label label-default">{!! $getH3->length !!}</span></p>
                                     @foreach($getH3 as $h3)
                                         <span>{!! WebService::renameBlacklistWord($h3->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH4->length>0)
-                                    <p><strong>H4 Tag</strong></p>
+                                    <p><strong>H4 Tag</strong> <span class="label label-default">{!! $getH4->length !!}</span></p>
                                     @foreach($getH4 as $h4)
                                         <span>{!! WebService::renameBlacklistWord($h4->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH5->length>0)
-                                    <p><strong>H5 Tag</strong></p>
+                                    <p><strong>H5 Tag</strong> <span class="label label-default">{!! $getH5->length !!}</span></p>
                                     @foreach($getH5 as $h5)
                                         <span>{!! WebService::renameBlacklistWord($h5->nodeValue) !!}</span><br>
                                     @endforeach
