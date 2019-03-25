@@ -58,7 +58,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
         <div class="container">
             <div class="row row-pad-5">
                 <div class="col-md-8">
-                    <h1><strong>{!! WebService::renameBlacklistWord($domain['domain']) !!}</strong></h1>
+                    <h1><strong>{!! $domain['domain'] !!}</strong></h1>
                     <?php
                     if ($domain['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $domain['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
