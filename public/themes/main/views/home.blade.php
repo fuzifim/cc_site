@@ -175,7 +175,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 				</div><!-- panel -->
 			</div>
 			<div class="col-md-6">
-				<div class="channelPrice">Tạo kênh miễn phí</div>
+				<div class="channelPrice">Tạo miễn phí</div>
 				<ul class="list-group">
 					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> 10 bài viết</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> 20MB dung lượng SSD</li>
