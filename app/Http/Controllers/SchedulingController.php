@@ -647,7 +647,7 @@ class SchedulingController extends Controller
             }
             $enc = mb_detect_encoding($dataConvertUtf8, mb_list_encodings(), true);
             if ($enc===false){
-                $dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
+                //$dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
             }
             else if ($enc!=="UTF-8"){
                 $dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
