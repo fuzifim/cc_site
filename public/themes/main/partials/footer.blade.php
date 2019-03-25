@@ -34,6 +34,7 @@
 						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
 						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
 						</small>
+						<hr>
 						<div class="form-group">
 							<?php
 							$newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
