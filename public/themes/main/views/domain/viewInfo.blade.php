@@ -334,6 +334,7 @@ $channel['theme']->asset()->writeScript('customDomain','
     jQuery(document).ready(function(){
         "use strict";
         $("#update_info").click(function(){
+            $(this).addClass("disabled");
             var formData = new FormData();
             formData.append("domain", "'.$domain['domain'].'");
             $.ajax({
