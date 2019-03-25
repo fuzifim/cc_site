@@ -91,11 +91,9 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @endif
                         </p>
                     @endif
-                    @if($channel['security']==true)
                     <div class="form-group">
                         <button type="button" class="btn btn-xs btn-success" id="update_info">update info</button>
                     </div>
-                    @endif
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
