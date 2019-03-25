@@ -84,7 +84,11 @@ class ConstructController extends Controller
                 $this->_theme=Theme::uses('main')->layout('default');
                 $this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
                 {
-                    return Channel::find(2);
+                    if(config('app.env')=='local'){
+                        return Channel::find(1);
+                    }else{
+                        return Channel::find(2);
+                    }
                 });
             }else{
                 $this->_region = Cache::store('file')->remember('region',1, function()

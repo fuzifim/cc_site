@@ -21,8 +21,8 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 		<div class="row row-pad-5">
 			<div class="col-md-6">
 				<div class="formRegisterChannel mb10">
-					<h1><strong>Tạo website</strong></h1>
-					<p>Tạo website để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người. </p>
+					<h1><strong>Cung Cấp</strong></h1>
+					<p>Kênh cung cấp, dành cho những nhà cung cấp</p>
 					<div id="validationWizard" class="basic-wizard" style="position:relative;">
 						<div id="preloaderInBox" style="display:none;">
 							<div id="status"><i class="fa fa-spinner fa-spin"></i></div>
@@ -175,10 +175,10 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 				</div><!-- panel -->
 			</div>
 			<div class="col-md-6">
-				<div class="channelPrice">Kênh cung cấp</div>
+				<div class="channelPrice">Tạo kênh miễn phí</div>
 				<ul class="list-group">
-					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> Không giới hạn bài viết</li>
-					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> Không giới hạn dung lượng SSD</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> 10 bài viết</li>
+					<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> 20MB dung lượng SSD</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .{!! $channel['domainPrimary'] !!}</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-tint text-success"></i> Không tốn phí thiết kế</li>
 					<li class="list-group-item"><i class="glyphicon glyphicon-hdd text-success"></i> Không tốn phí hosting</li>
