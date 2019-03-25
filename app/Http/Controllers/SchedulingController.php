@@ -645,6 +645,16 @@ class SchedulingController extends Controller
                     $status='blacklist';
                 }
             }
+            $enc = mb_detect_encoding($getResponse, mb_list_encodings(), true);
+            if ($enc===false){
+                $getResponse=WebService::str_to_utf8($getResponse);
+            }
+            else if ($enc!=="UTF-8"){
+                $getResponse=WebService::str_to_utf8($getResponse);
+            }
+            else {
+                $getResponse=mb_strtolower($getResponse, 'UTF-8');
+            }
             return array(
                 'result'=>'active',
                 'scheme'=>$scheme,
@@ -656,7 +666,7 @@ class SchedulingController extends Controller
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>@get_headers($this->_domain_link),
-                    'contents'=>WebService::str_to_utf8($dataConvertUtf8)
+                    'contents'=>$getResponse
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
