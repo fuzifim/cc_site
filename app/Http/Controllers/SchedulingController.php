@@ -656,7 +656,7 @@ class SchedulingController extends Controller
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>@get_headers($this->_domain_link),
-                    'contents'=>$dataConvertUtf8
+                    'contents'=>WebService::str_to_utf8($dataConvertUtf8)
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){

@@ -822,6 +822,36 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
 		}
 		return true; 
 	}
+    function str_to_utf8 ($str) {
+
+        if ($this->mb_detect_encoding($str, 'UTF-8', true) === false) {
+            $str = utf8_encode($str);
+        }
+
+        return $str;
+    }
+    function mb_detect_encoding ($string, $enc=null, $ret=null) {
+
+        static $enclist = array(
+            'UTF-8', 'ASCII',
+            'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
+            'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
+            'ISO-8859-13', 'ISO-8859-14', 'ISO-8859-15', 'ISO-8859-16',
+            'Windows-1251', 'Windows-1252', 'Windows-1254',
+        );
+
+        $result = false;
+
+        foreach ($enclist as $item) {
+            $sample = iconv($item, $item, $string);
+            if (md5($sample) == md5($string)) {
+                if ($ret === NULL) { $result = $item; } else { $result = true; }
+                break;
+            }
+        }
+
+        return $result;
+    }
 	function filter_by_value ($array, $index, $value){ 
         if(is_array($array) && count($array)>0)  
         { 

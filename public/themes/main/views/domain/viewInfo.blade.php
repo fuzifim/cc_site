@@ -347,7 +347,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 data: formData,
                 dataType:"json",
                 success:function(result){
-                    console.log(result);
+                    location.reload();
                 },
                 error: function(result) {
                 console.log("error");
