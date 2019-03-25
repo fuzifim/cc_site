@@ -18,6 +18,7 @@ window.setInterval(function() {
 	}
 }, 1000);
 </script>
+@if($ads=='true')
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
 	(adsbygoogle = window.adsbygoogle || []).push({
@@ -25,6 +26,7 @@ window.setInterval(function() {
 		enable_page_level_ads: true
 	});
 </script>
+@endif
 <div class="container">
 	<div class="card-body">
 		<div class="form-group">
@@ -32,6 +34,7 @@ window.setInterval(function() {
 				This URL (<strong><span id="linkUrl"></span></strong>) is not belong to Cung Cap. Net, if you want to continue, please click bellow button to redirect to 
 			</div>
 		</div>
+		@if($ads=='true')
 		<div class="form-group">
 			<ins class="adsbygoogle"
 				 style="display:block"
@@ -42,6 +45,7 @@ window.setInterval(function() {
 				(adsbygoogle = window.adsbygoogle || []).push({});
 			</script>
 		</div>
+		@endif
 		<div class="form-group">
 		<a class="btn btn-success btn-block" id="linkContinue" href="">Click here to continue <span id="timeLeft">5</span></a>
 		</div>
