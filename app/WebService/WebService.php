@@ -843,7 +843,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
         $result = false;
 
         foreach ($enclist as $item) {
-            $sample = iconv($item, $item.'//TRANSLIT', $string);
+            $sample = @iconv($item, $item, $string);
             if (md5($sample) == md5($string)) {
                 if ($ret === NULL) { $result = $item; } else { $result = true; }
                 break;
