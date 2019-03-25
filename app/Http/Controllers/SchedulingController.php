@@ -645,15 +645,15 @@ class SchedulingController extends Controller
                     $status='blacklist';
                 }
             }
-            $enc = mb_detect_encoding($getResponse, mb_list_encodings(), true);
+            $enc = mb_detect_encoding($dataConvertUtf8, mb_list_encodings(), true);
             if ($enc===false){
-                $getResponse=WebService::str_to_utf8($getResponse);
+                $dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
             }
             else if ($enc!=="UTF-8"){
-                $getResponse=WebService::str_to_utf8($getResponse);
+                $dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
             }
             else {
-                $getResponse=mb_strtolower($getResponse, 'UTF-8');
+                $dataConvertUtf8=mb_strtolower($dataConvertUtf8, 'UTF-8');
             }
             return array(
                 'result'=>'active',
@@ -666,7 +666,7 @@ class SchedulingController extends Controller
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>@get_headers($this->_domain_link),
-                    'contents'=>$getResponse
+                    'contents'=>$dataConvertUtf8
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
