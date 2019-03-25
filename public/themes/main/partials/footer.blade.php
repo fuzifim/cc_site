@@ -34,6 +34,23 @@
 						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
 						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
 						</small>
+						<div class="form-group">
+							<?php
+							$newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+							{
+								return DB::connection('mongodb')->collection('mongo_domain')
+										->orderBy('updated_at','desc')
+										->limit(20)->get();
+							});
+							?>
+							@if(count($newDomain)>0)
+								<small>
+									@foreach($newDomain as $item)
+										<a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a>,
+									@endforeach
+								</small>
+							@endif
+						</div>
 					</div>
 				</div>
 			</div>
