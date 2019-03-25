@@ -81,6 +81,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/domain/ip/{ip}', array(
         'as' => 'domain.by.ip',
         'uses' => 'DomainController@getDomainByIp'));
+    Route::post('/domain-update-info', array(
+        'as' => 'domain.update.info',
+        'uses' => 'DomainController@updateDomainInfo'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',

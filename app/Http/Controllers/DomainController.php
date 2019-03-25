@@ -36,6 +36,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DB;
 use Cache;
+use App\Http\Controllers\SchedulingController;
 class DomainController extends ConstructController
 {
 	public $_domainRegister;  
@@ -48,36 +49,102 @@ class DomainController extends ConstructController
 	public $_domainRegisterDateBegin; 
 	public $_domainRegisterDateEnd; 
 	public function __construct(){
-		parent::__construct(); 
+		parent::__construct();
 	}
 	/*-- new --*/
-        public function getDomainByCountryCode(Request $request){
-            $page = $request->has('page') ? $request->query('page') : 1;
-            $country=Cache::store('memcached')->remember('region_code_'.$this->_parame['iso'], 50, function()
-            {
-                return DB::table('regions')->where('iso',$this->_parame['iso'])->first();
-            });
-            $getDomain=Cache::store('memcached')->remember('domain_by_country_'.$this->_parame['iso'].'_'.$page, 1, function()
-            {
-                return DB::connection('mongodb')->collection('mongo_domain')
-                    ->where('country',$this->_parame['iso'])
-                    ->orderBy('updated_at','desc')
-                    ->simplePaginate(20);
-            });
-            $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
-            {
-                return DB::connection('mongodb')->collection('mongo_domain')
-                    //->where('status','active')
-                    ->orderBy('updated_at','desc')
-                    ->limit(20)->get();
-            });
-            $view = array(
-                'country'=>$country,
-                'getDomain'=>$getDomain,
-                'newDomain'=>$newDomain
-            );
-            return $this->_theme->scope('domain.listByCountry', $view)->render();
+    public function updateDomainInfo(Request $request){
+        $getDomain=$request->input('domain');
+        if(!empty($getDomain)){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('base_64',base64_encode($getDomain))
+                ->first();
+            if(!empty($domain['domain'])){
+                $newSchedu= new SchedulingController();
+                $newSchedu->_domain=$domain['domain'];
+                $result=$newSchedu->getInfoSite();
+                if($result['result']=='error'){
+                    DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('base_64',base64_encode($domain['domain']))
+                        ->update([
+                            'scheme' => $result['scheme'],
+                            'status_domain_info'=>$result['result'],
+                            'domain_info_status_message'=>$result['message'],
+                            'domain_info_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            //'craw_next'=>'whois'
+                        ]);
+                }else if($result['result']=='active'){
+                    $domainAttribute=$domain['attribute'];
+                    if(empty($domain['attribute']['ads'])){
+                        if($result['data']['status']=='blacklist'){
+                            $noteMer=array('ads'=>'disable');
+                            $domainAttribute=array_merge($domain['attribute'], $noteMer);
+                        }
+                    }else if($domain['attribute']['ads']!='disable' || $domain['status']=='blacklist' || $domain['status']=='disable' || $domain['status']=='delete'){
+                        if($result['data']['status']=='blacklist'){
+                            $noteMer=array('ads'=>'disable');
+                            $domainAttribute=array_merge($domain['attribute'], $noteMer);
+                        }
+                    }
+                    DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('base_64',base64_encode($domain['domain']))
+                        ->update([
+                            'scheme' => $result['scheme'],
+                            'status_domain_info'=>$result['result'],
+                            'domain_info_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            //'craw_next'=>'whois',
+                            'title'=>$result['data']['title'],
+                            'description'=>$result['data']['description'],
+                            'keywords'=>$result['data']['keywords'],
+                            'image'=>$result['data']['image'],
+                            'get_header'=>$result['data']['get_header'],
+                            'contents'=>$result['data']['contents'],
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'attribute'=>$domainAttribute
+                        ]);
+                }
+                return response()->json(['success'=>true,
+                    'message'=>'update success',
+                ]);
+            }else{
+                return response()->json(['success'=>false,
+                    'message'=>'find notfound domain',
+                ]);
+            }
+        }else{
+            return response()->json(['success'=>false,
+                'message'=>'domain empty',
+            ]);
         }
+    }
+    public function getDomainByCountryCode(Request $request){
+        $page = $request->has('page') ? $request->query('page') : 1;
+        $country=Cache::store('memcached')->remember('region_code_'.$this->_parame['iso'], 50, function()
+        {
+            return DB::table('regions')->where('iso',$this->_parame['iso'])->first();
+        });
+        $getDomain=Cache::store('memcached')->remember('domain_by_country_'.$this->_parame['iso'].'_'.$page, 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                ->where('country',$this->_parame['iso'])
+                ->orderBy('updated_at','desc')
+                ->simplePaginate(20);
+        });
+        $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                //->where('status','active')
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
+        $view = array(
+            'country'=>$country,
+            'getDomain'=>$getDomain,
+            'newDomain'=>$newDomain
+        );
+        return $this->_theme->scope('domain.listByCountry', $view)->render();
+    }
     public function getDomainByIp(Request $request){
         $page = $request->has('page') ? $request->query('page') : 1;
         $getDomain=Cache::store('memcached')->remember('domain_by_country_'.$this->_parame['ip'].'_'.$page, 1, function()

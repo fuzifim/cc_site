@@ -91,6 +91,11 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @endif
                         </p>
                     @endif
+                    @if($channel['security']==true)
+                    <div class="form-group">
+                        <button type="button" class="btn btn-xs btn-success" id="update_info">update info</button>
+                    </div>
+                    @endif
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
@@ -324,3 +329,31 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
         </div>
     </div>
 </section>
+<?php
+$dependencies = array();
+$channel['theme']->asset()->writeScript('customDomain','
+    jQuery(document).ready(function(){
+        "use strict";
+        $("#update_info").click(function(){
+            var formData = new FormData();
+            formData.append("domain", "'.$domain['domain'].'");
+            $.ajax({
+                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-update-info",
+                headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                dataType:"json",
+                success:function(result){
+                    console.log(result);
+                },
+                error: function(result) {
+                console.log("error");
+                }
+            });
+        });
+    });
+', $dependencies);
+?>
