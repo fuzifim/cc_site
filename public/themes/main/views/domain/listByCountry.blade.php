@@ -27,7 +27,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                                         @endif
                                     </p>
                                 @endif
-                                @if(!empty($item['title']))<span>{!! $item['title'] !!}</span>@endif
+                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord($item['title']) !!}</span>@endif
                             </li>
                             @endforeach
                         </ul>

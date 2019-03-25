@@ -822,6 +822,10 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
 		}
 		return true; 
 	}
+    function renameBlacklistWord($str){
+        $blacklist=preg_split("/(\r\n|\n|\r)/",File::get(public_path('data/words_blacklist.txt')));
+        return str_replace($blacklist, "***", $str);
+    }
     function str_to_utf8 ($str) {
 
         if ($this->mb_detect_encoding($str, 'UTF-8', true) === false) {

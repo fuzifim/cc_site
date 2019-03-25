@@ -30,9 +30,9 @@ if(!empty($domain['attribute']['content'])){
 }else{
     $domainContent=array();
 }
-$channel['theme']->setTitle($domain['domain'].' '.$domain['title']);
-$channel['theme']->setKeywords($domain['keywords']);
-$channel['theme']->setDescription($description.' - '.$domain['description']);
+$channel['theme']->setTitle($domain['domain'].' '.WebService::renameBlacklistWord($domain['title']));
+$channel['theme']->setKeywords(WebService::renameBlacklistWord($domain['keywords']));
+$channel['theme']->setDescription($description.' - '.WebService::renameBlacklistWord($domain['description']));
 $ads='true';
 if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
     $ads='false';
@@ -67,8 +67,8 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     }
                     ?>
                     <small>Updated at {!! $updated_at !!}</small><br>
-                    @if(!empty($domain['title']))<strong>Title: {!! $domain['title'] !!}</strong>@endif
-                    @if(!empty($domain['description']))<p>{!! $domain['description'] !!}</p>@endif
+                    @if(!empty($domain['title']))<strong>Title: {!! WebService::renameBlacklistWord($domain['title']) !!}</strong>@endif
+                    @if(!empty($domain['description']))<p>{!! WebService::renameBlacklistWord($domain['description']); !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
                     <div class="alert alert-info">
                         This domain {!! $domain['domain'] !!} not any information, please access  next time
@@ -209,6 +209,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     @if(!empty($domain['contents']))
                         <?php
                             $html = $domain['contents'];
+                            $html=WebService::renameBlacklistWord($html);
                             $dom = new \DOMDocument;
                             @$dom->loadHTML($html);
                             $getH1 = $dom->getElementsByTagName('h1');
@@ -223,35 +224,35 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                 @if($getH1->length>0)
                                     <p><strong>H1 Tag</strong></p>
                                     @foreach($getH1 as $h1)
-                                        <span>{!! $h1->nodeValue !!}</span><br>
+                                        <span>{!! WebService::renameBlacklistWord($h1->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH2->length>0)
                                     <p><strong>H2 Tag</strong></p>
                                     @foreach($getH2 as $h2)
-                                        <span>{!! $h2->nodeValue !!}</span><br>
+                                        <span>{!! WebService::renameBlacklistWord($h2->nodeValue) !!}</span><br>
                                     @endforeach
                                      <hr>
                                 @endif
                                 @if($getH3->length>0)
                                     <p><strong>H3 Tag</strong></p>
                                     @foreach($getH3 as $h3)
-                                        <span>{!! $h3->nodeValue !!}</span><br>
+                                        <span>{!! WebService::renameBlacklistWord($h3->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH4->length>0)
                                     <p><strong>H4 Tag</strong></p>
                                     @foreach($getH4 as $h4)
-                                        <span>{!! $h4->nodeValue !!}</span><br>
+                                        <span>{!! WebService::renameBlacklistWord($h4->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
                                 @if($getH5->length>0)
                                     <p><strong>H5 Tag</strong></p>
                                     @foreach($getH5 as $h5)
-                                        <span>{!! $h5->nodeValue !!}</span><br>
+                                        <span>{!! WebService::renameBlacklistWord($h5->nodeValue) !!}</span><br>
                                     @endforeach
                                     <hr>
                                 @endif
