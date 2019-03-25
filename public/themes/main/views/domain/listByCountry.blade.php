@@ -17,7 +17,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                         <ul class="list-group">
                             @foreach($getDomain as $item)
                             <li class="list-group-item">
-                                <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! $item['domain'] !!}</a><br>
+                                <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
                                 @if(!empty($item['attribute']['rank']))
                                     <p>
                                         <span class="label label-primary">Global rank: {!! Site::price($item['attribute']['rank']) !!}</span>
@@ -42,7 +42,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                         <ul class="list-group">
                             @foreach($newDomain as $item)
                                 <li class="list-group-item">
-                                    <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! $item['domain'] !!}</a><br>
+                                    <a href="http://{!! $item['domain'] !!}.d.{!! config('app.url') !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
                                     <?php
                                     if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                         $date= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
