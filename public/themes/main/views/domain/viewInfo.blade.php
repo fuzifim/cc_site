@@ -91,7 +91,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         @endif
                     @endif
                     </p>
-                    <p><span style="cursor: pointer;" class="label label-success" id="update_info">update info</span></p>
+                    <p><span role="button" class="label label-success" id="update_info">update info</span></p>
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
@@ -206,39 +206,41 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     </div>
                     @endif
                     @if(!empty($domain['attribute']['dns_record']) && count($domain['attribute']['dns_record']))
-                        <table class="table table-condensed">
-                            <thead><tr>
-                                <th>Host</th>
-                                <th>Type</th>
-                                <th>Class</th>
-                                <th>TTL</th>
-                                <th>Extra</th>
-                            </tr></thead>
-                            <tbody>
-                            @foreach($domain['attribute']['dns_record'] as $record)
-                            <tr>
-                                <td>@if(!empty($record['host'])){!! $record['host'] !!}@endif</td>
-                                <td>@if(!empty($record['type'])){!! $record['type'] !!}@endif</td>
-                                <td>@if(!empty($record['class'])){!! $record['class'] !!}@endif</td>
-                                <td>@if(!empty($record['ttl'])){!! $record['ttl'] !!}@endif</td>
-                                <td>
-                                    @if(!empty($record['ip']))
-                                    <b>ip:</b> {!! $record['ip'] !!}<br>
-                                    @endif
-                                    @if(!empty($record['ipv6']))
-                                        <b>Ipv6:</b> {!! $record['ipv6'] !!}<br>
-                                    @endif
-                                    @if(!empty($record['txt']))
-                                        <b>Txt:</b> {!! $record['txt'] !!}<br>
-                                    @endif
-                                    @if(!empty($record['target']))
-                                        <b>Target:</b> {!! $record['target'] !!}<br>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <thead><tr>
+                                    <th>Host</th>
+                                    <th>Type</th>
+                                    <th>Class</th>
+                                    <th>TTL</th>
+                                    <th>Extra</th>
+                                </tr></thead>
+                                <tbody>
+                                @foreach($domain['attribute']['dns_record'] as $record)
+                                <tr>
+                                    <td>@if(!empty($record['host'])){!! $record['host'] !!}@endif</td>
+                                    <td>@if(!empty($record['type'])){!! $record['type'] !!}@endif</td>
+                                    <td>@if(!empty($record['class'])){!! $record['class'] !!}@endif</td>
+                                    <td>@if(!empty($record['ttl'])){!! $record['ttl'] !!}@endif</td>
+                                    <td>
+                                        @if(!empty($record['ip']))
+                                        <b>ip:</b> {!! $record['ip'] !!}<br>
+                                        @endif
+                                        @if(!empty($record['ipv6']))
+                                            <b>Ipv6:</b> {!! $record['ipv6'] !!}<br>
+                                        @endif
+                                        @if(!empty($record['txt']))
+                                            <b>Txt:</b> {!! $record['txt'] !!}<br>
+                                        @endif
+                                        @if(!empty($record['target']))
+                                            <b>Target:</b> {!! $record['target'] !!}<br>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @endif
                     @endif
                     @if($ads=='true' && config('app.env')!='local')
