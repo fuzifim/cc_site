@@ -243,6 +243,18 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         </table>
                     @endif
                     @endif
+                    @if($ads=='true' && config('app.env')!='local')
+                        <div class="form-group">
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-6739685874678212"
+                                 data-ad-slot="7536384219"
+                                 data-ad-format="auto"></ins>
+                            <script>
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
+                        </div>
+                    @endif
                     @if(!empty($domain['contents']))
                         <?php
                             $html = $domain['contents'];
@@ -294,18 +306,6 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                     <hr>
                                 @endif
                             </div>
-                        </div>
-                    @endif
-                    @if($ads=='true' && config('app.env')!='local')
-                        <div class="form-group">
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-6739685874678212"
-                                 data-ad-slot="7536384219"
-                                 data-ad-format="auto"></ins>
-                            <script>
-                                (adsbygoogle = window.adsbygoogle || []).push({});
-                            </script>
                         </div>
                     @endif
                 </div>
