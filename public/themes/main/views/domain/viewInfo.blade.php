@@ -74,26 +74,24 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         This domain {!! $domain['domain'] !!} not any information, please access  next time
                     </div>
                     @endif
+                    <p>
                     @if(!empty($domain['attribute']['rank']))
-                        <p>
-                            <span class="label label-primary">Global rank: {!! Site::price($domain['attribute']['rank']) !!}</span>
-                            @if(!empty($domain['attribute']['country_code']))
-                                <?php
-                                    $regionCode=Cache::store('memcached')->remember('region_code_'.$domain['attribute']['country_code'], 50, function() use($domain)
-                                    {
-                                        return DB::table('regions')
-                                            ->where('iso',$domain['attribute']['country_code'])
-                                            ->first();
-                                    });
-                                ?>
-                                <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($regionCode->iso) !!}"></i> <a href="{!! route('domain.country.iso',array(config('app.url'),$regionCode->iso)) !!}">{!! $regionCode->country !!}</a>@if(!empty($domain['attribute']['rank_country'])): {!! Site::price($domain['attribute']['rank_country']) !!}@endif
-                                </span>
-                            @endif
-                        </p>
+                        <span class="label label-primary">Global rank: {!! Site::price($domain['attribute']['rank']) !!}</span>
+                        @if(!empty($domain['attribute']['country_code']))
+                            <?php
+                                $regionCode=Cache::store('memcached')->remember('region_code_'.$domain['attribute']['country_code'], 50, function() use($domain)
+                                {
+                                    return DB::table('regions')
+                                        ->where('iso',$domain['attribute']['country_code'])
+                                        ->first();
+                                });
+                            ?>
+                            <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($regionCode->iso) !!}"></i> <a href="{!! route('domain.country.iso',array(config('app.url'),$regionCode->iso)) !!}">{!! $regionCode->country !!}</a>@if(!empty($domain['attribute']['rank_country'])): {!! Site::price($domain['attribute']['rank_country']) !!}@endif
+                            </span>
+                        @endif
                     @endif
-                    <div class="form-group">
-                        <button type="button" class="btn btn-xs btn-success" id="update_info">update info</button>
-                    </div>
+                    <a type="button" class="label label-success" id="update_info">update info</a>
+                    </p>
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
@@ -338,6 +336,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 console.log("error");
                 }
             });
+            return false;
         });
     });
 ', $dependencies);
