@@ -57,7 +57,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
     {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
         <div class="container">
             <div class="row row-pad-5">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <h1><strong>{!! $domain['domain'] !!}</strong></h1>
                     <?php
                     if ($domain['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
@@ -303,9 +303,6 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @endforeach
                         </ul>
                     @endif
-                </div>
-                <div class="col-md-4">
-                    
                 </div>
             </div>
         </div>
