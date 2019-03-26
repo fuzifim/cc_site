@@ -667,7 +667,7 @@ class SchedulingController extends Controller
                     'keywords'=>$keywords,
                     'image'=>$image,
                     'status'=>$status,
-                    'get_header'=>@get_headers($this->_domain_link),
+                    'get_header'=>WebService::ConvertToUTF8Array(@get_headers($this->_domain_link)),
                     'contents'=>$dataConvertUtf8
                 )
             );

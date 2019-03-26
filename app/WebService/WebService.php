@@ -871,6 +871,19 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
 
         return $out;
     }
+    function ConvertToUTF8Array($array){
+	    $out=array();
+        foreach ($array as $text){
+            $encoding = mb_detect_encoding($text, mb_detect_order(), false);
+
+            if($encoding == "UTF-8")
+            {
+                $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+            }
+            array_push($out, iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text));
+        }
+        return $out;
+    }
 	function filter_by_value ($array, $index, $value){ 
         if(is_array($array) && count($array)>0)  
         { 
