@@ -142,7 +142,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                     <div class="tab-pane active" id="basicInfo">
                                         @if($ads=='true' && config('app.env')!='local')
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <ins class="adsbygoogle"
                                                              style="display:block"
@@ -154,7 +154,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                                         </script>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-8">
                                                     {!!$domainContent->basic_info!!}
                                                 </div>
                                             </div>
