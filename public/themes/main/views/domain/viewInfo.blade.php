@@ -194,17 +194,54 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                 @endif
                             </div>
                         </div>
-                    @elseif(!empty($domain['get_header']))
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                Header infomation for {!! $domain['domain'] !!}
-                            </div>
-                            <div class="panel-body">
-                                @foreach($domain['get_header'] as $header)
-                                    <span>{!! $header !!}</span><br>
-                                @endforeach
-                            </div>
+                    @else
+                    @if(!empty($domain['get_header']))
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Header infomation for {!! $domain['domain'] !!}
                         </div>
+                        <div class="panel-body">
+                            @foreach($domain['get_header'] as $header)
+                                <span>{!! $header !!}</span><br>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    @if(!empty($domain['attribute']['dns_record']) && count($domain['attribute']['dns_record']))
+                        <table class="table table-condensed">
+                            <thead><tr>
+                                <th>Host</th>
+                                <th>Type</th>
+                                <th>Class</th>
+                                <th>TTL</th>
+                                <th>Extra</th>
+                            </tr></thead>
+                            <tbody>
+                            @foreach($domain['attribute']['dns_record'] as $record)
+                            <tr>
+                                <td>@if(!empty($record['host'])){!! $record['host'] !!}@endif</td>
+                                <td>@if(!empty($record['type'])){!! $record['type'] !!}@endif</td>
+                                <td>@if(!empty($record['class'])){!! $record['class'] !!}@endif</td>
+                                <td>@if(!empty($record['ttl'])){!! $record['ttl'] !!}@endif</td>
+                                <td>
+                                    @if(!empty($record['ip']))
+                                    <b>ip:</b> {!! $record['ip'] !!}<br>
+                                    @endif
+                                    @if(!empty($record['ipv6']))
+                                        <b>Ipv6:</b> {!! $record['ipv6'] !!}<br>
+                                    @endif
+                                    @if(!empty($record['txt']))
+                                        <b>Txt:</b> {!! $record['txt'] !!}<br>
+                                    @endif
+                                    @if(!empty($record['target']))
+                                        <b>Target:</b> {!! $record['target'] !!}<br>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                     @endif
                     @if(!empty($domain['contents']))
                         <?php
@@ -270,38 +307,6 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                 (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
-                    @endif
-                    @if(!empty($domain['attribute']['dns_record']) && count($domain['attribute']['dns_record']))
-                        <ul class="list-group form-group mb-2">
-                            @foreach($domain['attribute']['dns_record'] as $record)
-                                <li class="list-group-item">
-                                    @if(!empty($record['host']))
-                                        <p><strong>Host: </strong>{{$record['host']}}</p>
-                                    @endif
-                                    @if(!empty($record['class']))
-                                        <p><strong>Class: </strong>{{$record['class']}}</p>
-                                    @endif
-                                    @if(!empty($record['ttl']))
-                                        <p><strong>Ttl: </strong>{{$record['ttl']}}</p>
-                                    @endif
-                                    @if(!empty($record['type']))
-                                        <p><strong>Type: </strong>{{$record['type']}}</p>
-                                    @endif
-                                    @if(!empty($record['ip']))
-                                        <p><strong>Ip: </strong><a href="#" target="_blank">{{$record['ip']}}</a></p>
-                                    @endif
-                                    @if(!empty($record['ipv6']))
-                                        <p><strong>Ipv6: </strong><a href="#" target="_blank">{{$record['ipv6']}}</a></p>
-                                    @endif
-                                    @if(!empty($record['txt']))
-                                        <p><strong>Txt: </strong>{{$record['txt']}}</p>
-                                    @endif
-                                    @if(!empty($record['target']))
-                                        <p><strong>Target: </strong>{{$record['target']}}</p>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ul>
                     @endif
                 </div>
             </div>
