@@ -90,8 +90,8 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             </span>
                         @endif
                     @endif
-                    <a type="button" class="label label-success" id="update_info">update info</a>
                     </p>
+                    <p><a type="button" class="label label-success" id="update_info">update info</a></p>
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
