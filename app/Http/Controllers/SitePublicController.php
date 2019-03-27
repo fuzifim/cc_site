@@ -139,6 +139,11 @@ class SitePublicController extends ConstructController
 	}
 	public function index(Request $request)
     {
+        $getPhoto=DB::connection('mongodb_old')->collection('note')
+            ->where('type','image')
+            //->where('index','<',3)
+            ->limit(5)->get();
+        dd($getPhoto);
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
 			$error=''; 

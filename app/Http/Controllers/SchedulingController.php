@@ -12,6 +12,49 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public function insertPhoto(){
+        $getPhoto=DB::connection('mongodb_old')->collection('note')
+            ->where('type','image')
+            ->where('index','<',3)
+            ->limit(500)->get();
+        foreach ($getPhoto as $item){
+            $checkSite=DB::connection('mongodb')->collection('mongo_image')
+                ->where('base_64',base64_encode($item['link']))->first();
+            if(empty($checkSite['title'])){
+                $getParent=array(
+                    'title'=>''
+                );
+                if(!empty($item['parent'])) {
+                    $getParent = DB::connection('mongodb_old')->collection('note')
+                        //->where('type', 'category')
+                        ->where('_id', $item['parent'])
+                        ->first();
+                }
+                DB::connection('mongodb')->collection('mongo_image')
+                    ->insertGetId(
+                        [
+                            'parent'=>$getParent['title'],
+                            'title' => $item['title'],
+                            'link' => $item['link'],
+                            'base_64' => base64_encode($item['link']),
+                            'attribute'=>$item['attribute'],
+                            'status'=>$item['status'],
+                            'created_at'=>$item['created_at'],
+                            'updated_at'=>$item['updated_at']
+                        ]
+                    );
+                DB::connection('mongodb_old')->collection('note')->where('type','image')
+                    ->where('_id',(string)$item['_id'])
+                    ->update(['index' => 3]);
+                echo $item['title'].' insert success <br>';
+            }else{
+                DB::connection('mongodb_old')->collection('note')->where('type','image')
+                    ->where('_id',(string)$item['_id'])
+                    ->update(['index' => 3]);
+                echo $item['title'].' insert success <br>';
+            }
+        }
+    }
     public function insertSite(){
         $getSite=DB::connection('mongodb_old')->collection('note')
             ->where('type','site')
