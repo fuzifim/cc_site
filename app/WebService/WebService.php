@@ -885,7 +885,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
             }
             return $out;
         }else{
-	        return $array; 
+	        return $array;
         }
     }
 	function filter_by_value ($array, $index, $value){ 
