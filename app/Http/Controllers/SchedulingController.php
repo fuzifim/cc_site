@@ -16,7 +16,7 @@ class SchedulingController extends Controller
         $getSite=DB::connection('mongodb_old')->collection('note')
             ->where('type','site')
             ->where('index','<',3)
-            ->limit(100)->get();
+            ->limit(1000)->get();
         foreach ($getSite as $item){
             if(!empty($item['index_replay'])){
 
