@@ -862,7 +862,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
         {
             $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
         }
-        $out = @iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text);
+        $out = @iconv(mb_detect_encoding($text, mb_detect_order(), true), "UTF-8//IGNORE", $text);
 
 
         return $out;
@@ -877,14 +877,14 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
                 {
                     $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
                 }
-                array_push($out, iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text));
+                array_push($out, @iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text));
             }
             return $out;
         }else{
 	        return $array;
         }
     }
-    function detectUTF8($text){
+    function detectUTF8($text,$mbStr=true){
         $enc = mb_detect_encoding($text, mb_list_encodings(), true);
         if ($enc===false){
 
@@ -892,7 +892,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
         else if ($enc!=="UTF-8"){
             $text=$this->ConvertToUTF8($text);
         }
-        else {
+        else if($mbStr==true){
             $text=mb_strtolower($text, 'UTF-8');
         }
         return $text;

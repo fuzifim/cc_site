@@ -709,9 +709,9 @@ class SchedulingController extends Controller
                 'scheme'=>$scheme,
                 'data'=>array(
                     'domain'=>$this->_domain,
-                    'title'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $title)), 'UTF-8'),
-                    'description'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $description))),
-                    'keywords'=>WebService::detectUTF8($keywords),
+                    'title'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $title)),false),
+                    'description'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $description)),false),
+                    'keywords'=>WebService::detectUTF8($keywords,false),
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>WebService::ConvertToUTF8Array(@get_headers($this->_domain_link)),
