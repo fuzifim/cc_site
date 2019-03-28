@@ -704,30 +704,18 @@ class SchedulingController extends Controller
                     $status='blacklist';
                 }
             }
-            $enc = mb_detect_encoding($dataConvertUtf8, mb_list_encodings(), true);
-            if ($enc===false){
-                //$dataConvertUtf8=WebService::str_to_utf8($dataConvertUtf8);
-            }
-            else if ($enc!=="UTF-8"){
-                //$dataConvertUtf8 = mb_convert_encoding($dataConvertUtf8, $enc, "UTF-8");
-                //$dataConvertUtf8 = iconv('UTF-8', 'UTF-8//TRANSLIT', $dataConvertUtf8);
-                $dataConvertUtf8=WebService::ConvertToUTF8($dataConvertUtf8);
-            }
-            else {
-                $dataConvertUtf8=mb_strtolower($dataConvertUtf8, 'UTF-8');
-            }
             return array(
                 'result'=>'active',
                 'scheme'=>$scheme,
                 'data'=>array(
                     'domain'=>$this->_domain,
-                    'title'=>iconv('UTF-8', 'UTF-8//IGNORE', str_replace("\n", "", str_replace("\r", "", $title))),
-                    'description'=>iconv('UTF-8', 'UTF-8//IGNORE', str_replace("\n", "", str_replace("\r", "", $description))),
-                    'keywords'=>$keywords,
+                    'title'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $title)),false),
+                    'description'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $description)),false),
+                    'keywords'=>WebService::detectUTF8($keywords,false),
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>WebService::ConvertToUTF8Array(@get_headers($this->_domain_link)),
-                    'contents'=>$dataConvertUtf8
+                    'contents'=>WebService::detectUTF8($dataConvertUtf8)
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
