@@ -30,9 +30,9 @@ if(!empty($domain['attribute']['content'])){
 }else{
     $domainContent=array();
 }
-$channel['theme']->setTitle($domain['domain'].' '.WebService::renameBlacklistWord($domain['title']));
-$channel['theme']->setKeywords(WebService::renameBlacklistWord($domain['keywords']));
-$channel['theme']->setDescription($description.' - '.WebService::renameBlacklistWord($domain['description']));
+$channel['theme']->setTitle($domain['domain'].' '.WebService::renameBlacklistWord(mb_substr($domain['title'],0,250)));
+$channel['theme']->setKeywords(WebService::renameBlacklistWord(mb_substr($domain['keywords'],0,320)));
+$channel['theme']->setDescription($description.' - '.WebService::renameBlacklistWord(mb_substr($domain['description'],0,320)));
 $ads='true';
 if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
     $ads='false';
@@ -68,7 +68,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     ?>
                     <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
                     @if(!empty($domain['title']))<strong>Title: {!! WebService::renameBlacklistWord($domain['title']) !!}</strong>@endif
-                    @if(!empty($domain['description']))<p>{!! WebService::renameBlacklistWord($domain['description']); !!}</p>@endif
+                    @if(!empty($domain['description']))<p>{!! WebService::renameBlacklistWord(mb_substr($domain['description'],0,320)); !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
                     <div class="alert alert-info">
                         This domain {!! $domain['domain'] !!} not any information, please access  next time
