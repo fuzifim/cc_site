@@ -709,13 +709,13 @@ class SchedulingController extends Controller
                 'scheme'=>$scheme,
                 'data'=>array(
                     'domain'=>$this->_domain,
-                    'title'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $title)),false),
-                    'description'=>WebService::detectUTF8(str_replace("\n", "", str_replace("\r", "", $description)),false),
-                    'keywords'=>WebService::detectUTF8($keywords,false),
+                    'title'=>WebService::convertToUTF8(str_replace("\n", "", str_replace("\r", "", $title))),
+                    'description'=>WebService::convertToUTF8(str_replace("\n", "", str_replace("\r", "", $description))),
+                    'keywords'=>WebService::convertToUTF8($keywords),
                     'image'=>$image,
                     'status'=>$status,
                     'get_header'=>WebService::ConvertToUTF8Array(@get_headers($this->_domain_link)),
-                    'contents'=>WebService::detectUTF8($dataConvertUtf8)
+                    'contents'=>WebService::convertToUTF8($dataConvertUtf8)
                 )
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
