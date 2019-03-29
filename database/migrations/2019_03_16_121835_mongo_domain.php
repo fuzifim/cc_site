@@ -20,6 +20,7 @@ class MongoDomain extends Migration
                 $collection->index('base_64');
                 $collection->index('country');
                 $collection->index('ip');
+                $collection->index('craw_next');
             });
     }
 

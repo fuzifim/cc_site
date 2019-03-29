@@ -18,6 +18,7 @@ class MongoKeyword extends Migration
             ->table('mongo_keyword', function (Blueprint $collection)
             {
                 $collection->index('base_64');
+                $collection->index('craw_next');
             });
     }
 

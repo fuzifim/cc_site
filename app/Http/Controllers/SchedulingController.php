@@ -12,6 +12,18 @@ class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    // Step 2 keyword
+    public function keywordCraw(){
+        $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next','exists',false)
+            ->limit(5)->get();
+        foreach ($getKeywords as $item){
+            if(!empty($item['keyword'])){
+
+            }
+        }
+    }
+    //Step 1
     public function insertPhoto(){
         $getPhoto=DB::connection('mongodb_old')->collection('note')
             ->where('type','image')
