@@ -215,6 +215,9 @@ class SitePublicController extends ConstructController
                     ->where('base_64',base64_encode($this->_domainInfo))->first();
             });
             if(!empty($domain['domain'])){
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($this->_domainInfo))
+                    ->increment('view', 1);
                 $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
                 {
                     return DB::connection('mongodb')->collection('mongo_domain')

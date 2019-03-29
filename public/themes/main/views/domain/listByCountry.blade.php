@@ -27,6 +27,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                                         @endif
                                     </p>
                                 @endif
+                                @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small><br>@endif
                                 @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord($item['title']) !!}</span>@endif
                             </li>
                             @endforeach
@@ -50,7 +51,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                                         $date= $item['updated_at'];
                                     }
                                     ?>
-                                    <small>{!! $date !!}</small>
+                                    <small>{!! $date !!}</small> @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
                                 </li>
                             @endforeach
                         </ul>

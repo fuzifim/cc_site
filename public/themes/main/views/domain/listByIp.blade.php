@@ -25,6 +25,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có địa 
                                             <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($item['attribute']['country_code']) !!}"></i> {!! $item['attribute']['country_code'] !!}@if(!empty($item['attribute']['rank_country'])): {!! Site::price($item['attribute']['rank_country']) !!}@endif
                                             </span>
                                         @endif
+                                        @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
                                     </p>
                                 @endif
                                 @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord($item['title']) !!}</span>@endif
@@ -50,7 +51,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có địa 
                                         $date= $item['updated_at'];
                                     }
                                     ?>
-                                    <small>{!! $date !!}</small>
+                                    <small>{!! $date !!}</small> @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
                                 </li>
                             @endforeach
                         </ul>

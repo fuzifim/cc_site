@@ -66,7 +66,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         $updated_at= $domain['updated_at'];
                     }
                     ?>
-                    <small>Updated at {!! $updated_at !!}</small><br>
+                    <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
                     @if(!empty($domain['title']))<strong>Title: {!! WebService::renameBlacklistWord($domain['title']) !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! WebService::renameBlacklistWord($domain['description']); !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
