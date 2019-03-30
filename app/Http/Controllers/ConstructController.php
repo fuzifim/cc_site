@@ -125,7 +125,22 @@ class ConstructController extends Controller
                 }
             }
 		}
-        $this->_domainPrimary = $this->_domain->domain;
+        $this->_domainPrimary = Cache::store('memcached')->remember('domainPrimary_new_'.$this->_channel->id, 1, function()
+        {
+            if($this->_channel->domainJoinPrimary->domain->domain_primary!='default'){
+                if(count($this->_channel->domainAll)>0){
+                    foreach($this->_channel->domainAll as $domain){
+                        if($domain->domain->domain_primary=='default'){
+                            return $domain->domain->domain;
+                        }
+                    }
+                }else{
+                    return $this->_channel->domainJoinPrimary->domain->domain;
+                }
+            }else{
+                return $this->_channel->domainJoinPrimary->domain->domain;
+            }
+        });
         $this->_domainParentPrimary = config('app.url');
         if($this->_channel->channel_parent_id!=0){
             $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
