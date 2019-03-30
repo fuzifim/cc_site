@@ -31,5 +31,6 @@ class Kernel extends ConsoleKernel
         $schedule->call('\App\Http\Controllers\SchedulingController@getIpRecord')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@updateCountry')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->everyFiveMinutes();
+        $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->everyFiveMinutes();
     }
 }

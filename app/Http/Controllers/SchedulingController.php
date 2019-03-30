@@ -43,6 +43,66 @@ class SchedulingController extends Controller
                 );
         }
     }
+    public function keywordSuggest(){
+        $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next','step_2')
+            ->limit(1)->get();
+        foreach($getKeywords as $item){
+            $this->_keyword=$item['keyword'];
+            $result=$this->getSuggestqueries();
+            if(!empty($result['result']) && $result['result']=='success'){
+                $keywordIdArray=[];
+                foreach($result['data'][1] as $value){
+                    if(!empty($value)){
+                        $keyword=WebService::convertToUTF8(substr($value, 0, $this->_max_length_title));
+                        $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                            ->where('base_64',base64_encode($keyword))
+                            ->first();
+                        if(empty($checkKeyword['keyword'])){
+                            $keywordId=DB::connection('mongodb')->collection('mongo_keyword')
+                                ->insertGetId(
+                                    [
+                                        'parent'=>$item['keyword'],
+                                        'keyword' => $keyword,
+                                        'base_64' => base64_encode($keyword),
+                                        'description'=>'',
+                                        'image'=>'',
+                                        'status'=>'pending',
+                                        'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                    ]
+                                );
+                            array_push($keywordIdArray,(string)$keywordId);
+                        }else{
+                            array_push($keywordIdArray,(string)$checkKeyword['_id']);
+                        }
+                    }
+                }
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',(string)$item['_id'])
+                    ->update([
+                        'keyword_relate'=>$keywordIdArray,
+                        'status_craw_suggest'=>'success',
+                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_3',
+                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                    ]);
+                echo 'craw suggest keyword success '.$item['keyword'].'<p>';
+            }else if(!empty($result['result']) && $result['result']=='error'){
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',(string)$item['_id'])
+                    ->update([
+                        'status_craw_suggest'=>'error',
+                        'suggest_status_message'=>$result['message'],
+                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_3'
+                    ]);
+                echo 'craw suggest keyword error '.$item['keyword'].'<p>';
+            }
+        }
+    }
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
@@ -140,6 +200,7 @@ class SchedulingController extends Controller
                     DB::connection('mongodb')->collection('mongo_keyword')
                         ->where('_id',(string)$item['_id'])
                         ->update([
+                            'site_craw_content'=>WebService::convertToUTF8($result['content']),
                             'site_relate'=>$siteArray,
                             'status_craw_site'=>'success',
                             'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
@@ -153,6 +214,7 @@ class SchedulingController extends Controller
                         ->where('_id',(string)$item['_id'])
                         ->update([
                             'status_craw_site'=>'error',
+                            'craw_site_status_message'=>$result['message'],
                             'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'craw_next'=>'step_2'
@@ -1003,7 +1065,8 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'success',
                 'from'=>'google',
-                'data'=>$listArray
+                'data'=>$listArray,
+                'content'=>$dataConvertUtf8
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
             return array(
@@ -1100,7 +1163,8 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'success',
                 'from'=>'yahoo',
-                'data'=>$listArray
+                'data'=>$listArray,
+                'content'=>$dataConvertUtf8
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){
             return array(
@@ -1188,8 +1252,62 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'success',
                 'from'=>'bing',
-                'data'=>$listArray
+                'data'=>$listArray,
+                'content'=>$dataConvertUtf8
             );
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_request'
+            );
+        }
+    }
+    public function getSuggestqueries(){
+
+        try {
+            $url='http://suggestqueries.google.com/complete/search?client=chrome&q='.urlencode($this->_keyword);
+            $client = new Client([
+                'headers' => [
+                    'Content-Type' => 'text/html',
+                    'User-Agent' => 'Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10\r\n'
+                ],
+                'connect_timeout' => '2',
+                'timeout' => '2'
+            ]);
+            $response = $client->request('GET', $url);
+            $content=json_decode($response->getBody()->getContents());
+            if(!empty($content[1]) && count($content[1])>0){
+                return array(
+                    'result'=>'success',
+                    'data'=>$content,
+                    'keyword'=>$this->_keyword
+                );
+            }else{
+                return array(
+                    'result'=>'error',
+                    'message'=>'empty_keyword'
+                );
+            }
         }catch (\GuzzleHttp\Exception\ServerException $e){
             return array(
                 'result'=>'error',
