@@ -30,19 +30,13 @@
 						<div class="row row-pad-5 filemanager channelList">
 						@foreach($getChannel as $subChannel)
 							<?
-								if($subChannel->domainJoinPrimary->domain->domain_primary!='default'){
-									if(count($subChannel->domainAll)>0){
-										foreach($subChannel->domainAll as $domain){
-											if($domain->domain->domain_primary=='default'){
-												$domainPrimary=$domain->domain->domain; 
-											}
-										}
-									}else{
-										$domainPrimary=$subChannel->domainJoinPrimary->domain->domain; 
-									}
-								}else{
-									$domainPrimary=$subChannel->domainJoinPrimary->domain->domain; 
-								}
+							if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
+
+								$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
+							}else{
+
+								$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
+							}
 							?>
 							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 content-list-post">
 							<div class="thmb">
@@ -81,19 +75,13 @@
 								<ul class="channelListFree">
 								@foreach($getChannelFree as $subChannel)
 									<?
-										if($subChannel->domainJoinPrimary->domain->domain_primary!='default'){
-											if(count($subChannel->domainAll)>0){
-												foreach($subChannel->domainAll as $domain){
-													if($domain->domain->domain_primary=='default'){
-														$domainPrimary=$domain->domain->domain; 
-													}
-												}
-											}else{
-												$domainPrimary=$subChannel->domainJoinPrimary->domain->domain; 
-											}
-										}else{
-											$domainPrimary=$subChannel->domainJoinPrimary->domain->domain; 
-										}
+									if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
+
+										$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
+									}else{
+
+										$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
+									}
 									?>
 									<li>
 										@if(!empty($subChannel->channelAttributeLogo->media->media_name))<a class="pull-left" href="{{route('channel.home',$domainPrimary)}}" target="_blank">

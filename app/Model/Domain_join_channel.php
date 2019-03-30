@@ -15,7 +15,7 @@ class Domain_join_channel extends Model
         return $this->hasOne('App\Model\Domain', 'id', 'domain_id');
     }
 	public function domainPrimary(){
-        return $this->hasOne('App\Model\Domain', 'id', 'domain_id');
+        return $this->hasOne('App\Model\Domain', 'id', 'domain_id')->where('domain_location','local');
     }
 	public function service(){
         return $this->hasOne('App\Model\Services', 'id', 'table_parent_id');
