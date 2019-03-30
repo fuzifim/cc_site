@@ -956,8 +956,8 @@ class ChannelController extends ConstructController
 		//$this->_channel->increment('channel_view',1);
 		$getChannel=Channel::where('channel.channel_status','!=','delete')
 			->where('channel.service_attribute_id','!=',1)
-			->where('channel.channel_parent_id','!=',0)
-			->where('channel.channel_date_end','>=',Carbon::now()->format('Y-m-d H:i:s'))
+			//->where('channel.channel_parent_id','!=',0)
+			//->where('channel.channel_date_end','>=',Carbon::now()->format('Y-m-d H:i:s'))
 			//->groupBy('channel.id')
 			->orderBy('channel.channel_updated_at','desc')
 			->select('channel.*')
