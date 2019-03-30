@@ -30,13 +30,15 @@
 						<div class="row row-pad-5 filemanager channelList">
 						@foreach($getChannel as $subChannel)
 							<?
-							if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
+								if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
 
-								$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
-							}else{
+									$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
+								}else if(!empty($subChannel->domainJoinPrimary->domain->domain)){
 
-								$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
-							}
+									$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
+								}else{
+									$domainPrimary=conf('app.url')
+									}
 							?>
 							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 content-list-post">
 							<div class="thmb">
@@ -78,9 +80,11 @@
 									if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
 
 										$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
-									}else{
+									}else if(!empty($subChannel->domainJoinPrimary->domain->domain)){
 
 										$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
+									}else{
+										$domainPrimary=conf('app.url')
 									}
 									?>
 									<li>
