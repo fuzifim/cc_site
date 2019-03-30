@@ -19,7 +19,15 @@ class SchedulingController extends Controller
             ->limit(5)->get();
         foreach ($getKeywords as $item){
             if(!empty($item['keyword'])){
-
+                $getRoleSite=DB::table('role_change_site_craw')->first();
+                if(empty($getRoleSite['site'])){
+                    DB::table('role_change_site_craw')->insertGetId(
+                        [
+                            'site'=>'google',
+                            ''
+                        ]
+                    );
+                }
             }
         }
     }

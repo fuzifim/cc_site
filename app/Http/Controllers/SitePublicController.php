@@ -139,6 +139,9 @@ class SitePublicController extends ConstructController
 	}
 	public function index(Request $request)
     {
+//        $checkSite=DB::connection('mongodb')->collection('mongo_keyword')
+//            ->limit(5)->get();
+//        dd($checkSite);
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
 			$error=''; 
