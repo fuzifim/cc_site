@@ -140,7 +140,7 @@ class SitePublicController extends ConstructController
 	public function index(Request $request)
     {
 //        $checkSite=DB::connection('mongodb')->collection('mongo_keyword')
-//            ->where('craw_next','step_2')
+//            ->where('craw_next','step_3')
 //            ->limit(10)->get();
 //        dd($checkSite);
 		$pieces=$this->_pieces; 
