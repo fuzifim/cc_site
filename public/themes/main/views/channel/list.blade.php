@@ -37,7 +37,7 @@
 
 									$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
 								}else{
-									$domainPrimary=conf('app.url')
+									$domainPrimary=conf('app.url');
 									}
 							?>
 							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 content-list-post">
@@ -84,7 +84,7 @@
 
 										$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
 									}else{
-										$domainPrimary=conf('app.url')
+										$domainPrimary=conf('app.url');
 									}
 									?>
 									<li>
