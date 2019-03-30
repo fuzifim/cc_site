@@ -133,7 +133,7 @@ class SchedulingController extends Controller
                                             'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
                                         ]
                                     );
-                                echo 'insert domain '.$checkSite['domain'].'<p>';
+                                echo 'insert domain '.$data['domain'].'<p>';
                             }
                         }
                     }
