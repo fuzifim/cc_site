@@ -29,7 +29,7 @@ Route::group(['domain' => '{domain}'], function()
     });
     Route::get('/test', array(
         'as' => 'test',
-        'uses' => 'SchedulingController@insertPhoto'));
+        'uses' => 'SchedulingController@keywordCraw'));
     Route::get('/importdata', array(
         'as' => 'test',
         'uses' => 'TestController@importData'));

@@ -135,6 +135,7 @@ class DomainController extends ConstructController
         {
             return DB::connection('mongodb')->collection('mongo_domain')
                 //->where('status','active')
+                ->where('craw_next','exists',true)
                 ->orderBy('updated_at','desc')
                 ->limit(20)->get();
         });
@@ -158,6 +159,7 @@ class DomainController extends ConstructController
         {
             return DB::connection('mongodb')->collection('mongo_domain')
                 //->where('status','active')
+                ->where('craw_next','exists',true)
                 ->orderBy('updated_at','desc')
                 ->limit(20)->get();
         });

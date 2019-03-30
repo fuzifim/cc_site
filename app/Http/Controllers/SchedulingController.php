@@ -7,27 +7,168 @@ use WebService;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
+use Cache;
 
 class SchedulingController extends Controller
 {
     public $_domain;
     public $_domain_link;
+    public $_keyword;
+    public $_rulesDomain;
+    public $_max_length_title=78;
+    public function __construct(){
+        $this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
+        {
+            $pdp_url = public_path('data/public_suffix_list.dat.txt');
+            $rules = \Pdp\Rules::createFromPath($pdp_url);
+            return $rules;
+        });
+    }
+    public function updateSite(){
+        $getSite=DB::connection('mongodb')->collection('mongo_site')
+            ->where('update_site','exists',false)
+            ->limit(5)->get();
+        foreach($getSite as $item){
+            $title=substr($item['title'], 0, $this->_max_length_title);
+            DB::connection('mongodb')->collection('mongo_site')
+                ->where('_id',(string)$item['_id'])
+                ->update(
+                    [
+                        'title'=>$title,
+                        'title_full'=>$item['title'],
+                        'base_64'=>base64_encode($title),
+                        'domain'=>$item['attribute']['domain'],
+                        'update_site'=>1
+                    ]
+                );
+        }
+    }
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
             ->where('craw_next','exists',false)
-            ->limit(5)->get();
+            ->limit(1)->get();
         foreach ($getKeywords as $item){
             if(!empty($item['keyword'])){
+                $this->_keyword=$item['keyword'];
                 $getRoleSite=DB::table('role_change_site_craw')->first();
-                if(empty($getRoleSite['site'])){
+                $result=array();
+                if(empty($getRoleSite->site)){
                     DB::table('role_change_site_craw')->insertGetId(
                         [
                             'site'=>'google',
-                            ''
+                            'craw_at'=>Carbon::now(),
+                            'created_at'=>Carbon::now(),
+                            'updated_at'=>Carbon::now()
                         ]
                     );
+                    $result=$this->getSearchGoogleFrom();
+                }else if($getRoleSite->site=='google' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+                    DB::table('role_change_site_craw')->update([
+                        'site'=>'yahoo',
+                        'craw_at'=>Carbon::now()
+                    ]);
+                    $result=$this->getSearchYahooFrom();
+                }else if($getRoleSite->site=='yahoo' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+                    DB::table('role_change_site_craw')->update([
+                        'site'=>'bing',
+                        'craw_at'=>Carbon::now()
+                    ]);
+                    $result=$this->getSearchBingFrom();
+                }else if($getRoleSite->site=='bing' && Carbon::parse($getRoleSite->craw_at)->addSecond(60)->format('Y-m-d H:i:s') < Carbon::now()->format('Y-m-d H:i:s')){
+                    DB::table('role_change_site_craw')->update([
+                        'site'=>'google',
+                        'craw_at'=>Carbon::now()
+                    ]);
+                    $result=$this->getSearchGoogleFrom();
                 }
+                if(is_array($result) && !empty($result['result']) && $result['result']=='success' && count($result['data'])){
+                    $siteArray=[];
+                    foreach ($result['data'] as $data){
+                        if(!empty($data['title']) && !empty($data['domain'])){
+                            $title=WebService::convertToUTF8(substr($data['title'], 0, $this->_max_length_title));
+                            $checkSite=DB::connection('mongodb')->collection('mongo_site')
+                                ->where('base_64',base64_encode($title))
+                                ->where('domain',$data['domain'])
+                                ->first();
+                            if(empty($checkSite['title'])){
+                                $siteId=DB::connection('mongodb')->collection('mongo_site')
+                                    ->insertGetId(
+                                        [
+                                            'title' => $title,
+                                            'base_64' => base64_encode($title),
+                                            'title_full'=>WebService::convertToUTF8($data['title']),
+                                            'link' => $data['linkFull'],
+                                            'domain'=>$data['domain'],
+                                            'description'=>WebService::convertToUTF8($data['description']),
+                                            'attribute'=>[],
+                                            'view'=>0,
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                array_push($siteArray,(string)$siteId);
+                                echo 'insert site '.$data['linkFull'].'<p>';
+                            }else{
+                                array_push($siteArray,(string)$checkSite['_id']);
+                                echo 'update site relate '.$checkSite['link'].'<p>';
+                            }
+                            $checkDomain=DB::connection('mongodb')->collection('mongo_domain')
+                                ->where('base_64',base64_encode($data['domain']))->first();
+                            if(empty($checkDomain['domain'])){
+                                DB::connection('mongodb')->collection('mongo_domain')
+                                    ->insertGetId(
+                                        [
+                                            'domain' => $data['domain'],
+                                            'base_64' => base64_encode($data['domain']),
+                                            'title'=>'',
+                                            'description'=>'',
+                                            'keywords'=>'',
+                                            'image'=>'',
+                                            'attribute'=>[],
+                                            'view'=>0,
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                echo 'insert domain '.$checkSite['domain'].'<p>';
+                            }
+                        }
+                    }
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'site_relate'=>$siteArray,
+                            'status_craw_site'=>'success',
+                            'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_2',
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]);
+                    echo 'craw keyword success '.$item['keyword'].'<p>';
+                }else if($result['result']=='error'){
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'status_craw_site'=>'error',
+                            'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_2'
+                        ]);
+                    echo 'craw keyword error '.$item['keyword'].'<p>';
+                }
+            }else{
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',(string)$item['_id'])
+                    ->update([
+                        'status_craw_site'=>'error',
+                        'craw_site_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_2'
+                    ]);
+                echo 'craw keyword error '.$item['keyword'].'<p>';
             }
         }
     }
@@ -94,27 +235,30 @@ class SchedulingController extends Controller
     public function insertSite(){
         $getSite=DB::connection('mongodb_old')->collection('note')
             ->where('type','site')
-            ->where('index','<',3)
+            ->where('index','<',4)
             ->limit(1000)->get();
         foreach ($getSite as $item){
-            if(!empty($item['index_replay'])){
-
-                DB::connection('mongodb_old')->collection('note')->where('type','site')
-                    ->where('_id',(string)$item['_id'])
-                    ->update(['index_replay' => $item['index_replay']+1]);
-            }else{
-                DB::connection('mongodb_old')->collection('note')->where('type','site')
-                    ->where('_id',(string)$item['_id'])
-                    ->update(['index_replay' => 1]);
-            }
-            if(!empty($item['index_replay']) && $item['index_replay']==3){
-                DB::connection('mongodb_old')->collection('note')->where('type','site')
-                    ->where('_id',(string)$item['_id'])
-                    ->update(['index' => 3]);
-                echo $item['title'].' update success <br>';
-            }
+//            if(!empty($item['index_replay'])){
+//
+//                DB::connection('mongodb_old')->collection('note')->where('type','site')
+//                    ->where('_id',(string)$item['_id'])
+//                    ->update(['index_replay' => $item['index_replay']+1]);
+//            }else{
+//                DB::connection('mongodb_old')->collection('note')->where('type','site')
+//                    ->where('_id',(string)$item['_id'])
+//                    ->update(['index_replay' => 1]);
+//            }
+//            if(!empty($item['index_replay']) && $item['index_replay']==3){
+//                DB::connection('mongodb_old')->collection('note')->where('type','site')
+//                    ->where('_id',(string)$item['_id'])
+//                    ->update(['index' => 4]);
+//                echo $item['title'].' update success <br>';
+//            }
+            $title=WebService::convertToUTF8(substr($item['title'], 0, $this->_max_length_title));
             $checkSite=DB::connection('mongodb')->collection('mongo_site')
-                ->where('base_64',base64_encode($item['link']))->first();
+                ->where('base_64',base64_encode($title))
+                ->where('domain',$item['attribute']['domain'])
+                ->first();
             if(empty($checkSite['title'])){
                 $getParent=array(
                     'domain'=>''
@@ -124,19 +268,21 @@ class SchedulingController extends Controller
                 }else{
                     $view='';
                 }
-                if(!empty($item['parent'])) {
-                    $getParent = DB::connection('mongodb_old')->collection('note')
-                        ->where('type', 'domain')
-                        ->where('_id', $item['parent'])
-                        ->first();
-                }
+//                if(!empty($item['parent'])) {
+//                    $getParent = DB::connection('mongodb_old')->collection('note')
+//                        ->where('type', 'domain')
+//                        ->where('_id', $item['parent'])
+//                        ->first();
+//                }
                 DB::connection('mongodb')->collection('mongo_site')
                     ->insertGetId(
                         [
                             'parent'=>$getParent['domain'],
-                            'title' => $item['title'],
+                            'title' => $title,
+                            'base_64' => base64_encode($title),
+                            'title_full'=>$item['title'],
                             'link' => $item['link'],
-                            'base_64' => base64_encode($item['link']),
+                            'domain'=>$item['attribute']['domain'],
                             'description'=>$item['description'],
                             'attribute'=>$item['attribute'],
                             'view'=>$view,
@@ -147,12 +293,12 @@ class SchedulingController extends Controller
                     );
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
                     ->where('_id',(string)$item['_id'])
-                    ->update(['index' => 3]);
+                    ->update(['index' => 4]);
                 echo $item['title'].' insert success <br>';
             }else{
                 DB::connection('mongodb_old')->collection('note')->where('type','site')
                     ->where('_id',(string)$item['_id'])
-                    ->update(['index' => 3]);
+                    ->update(['index' => 4]);
                 echo $item['title'].' update success <br>';
             }
         }
@@ -766,6 +912,307 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'error',
                 'scheme'=>$scheme,
+                'message'=>'connect_request'
+            );
+        }
+    }
+    public function getSearchGoogleFrom()
+    {
+        $listArray=[];
+        $itemSearch=[];
+        try {
+            $client = new Client([
+                'headers' => [ 'Content-Type' => 'text/html' ],
+                'connect_timeout' => '5',
+                'timeout' => '5'
+            ]);
+            $response = $client->request('GET', 'https://www.google.com.vn/search?q='.urlencode($this->_keyword));
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            $domainRegister='';
+            foreach ($xpath->evaluate('//div[@id="search"]') as $node) {
+                $doc->saveHtml($node);
+                $metas = $doc->getElementsByTagName('div');
+                for ($i = 0; $i < $metas->length; $i++)
+                {
+                    $meta = $metas->item($i);
+                    if($meta->getAttribute('class') == 'g'){
+                        $getTitle=$meta->getElementsByTagName('h3');
+                        $getImage=$meta->getElementsByTagName('div');
+                        $getDescription=$meta->getElementsByTagName('span');
+                        $getLink=$meta->getElementsByTagName('a');
+                        if($getLink->length>0 && $getTitle->length>0 && $getDescription->length>0){
+                            if(!empty($getTitle->item(0)) && $getTitle->item(0)->getAttribute('class') == 'r'){
+                                if(!empty($getTitle->item(0)->nodeValue)){
+                                    $title=$getTitle->item(0)->nodeValue;
+                                    $itemSearch['title']=$title;
+                                }
+                                if(!empty($getLink->item(0)) && !empty($getLink->item(0)->getAttribute('href'))){
+                                    parse_str($getLink->item(0)->getAttribute('href'), $query );
+                                    if(!empty($query['/url?q'])){
+                                        $itemSearch['linkFull']=$query['/url?q'];
+                                        $parsedUrl=parse_url($query['/url?q']);
+                                        $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+                                        if(!empty($domain->getRegistrableDomain())){
+                                            $itemSearch['domain']=$domain->getRegistrableDomain();
+                                        }
+                                    }
+                                }
+                            }
+                            if(!empty($getImage->length>0) && $getImage->item(0)->getAttribute('class') == 'th'){
+                                $getImageLink=$meta->getElementsByTagName('img');
+                                if($getImageLink->length>0 && !empty($getImageLink->item(0)->getAttribute('src'))){
+                                    $image=$getImageLink->item(0)->getAttribute('src');
+                                    $itemSearch['image']=$image;
+                                }else{
+                                    $itemSearch['image']='';
+                                }
+                            }else{
+                                $itemSearch['image']='';
+                            }
+                            for ($y = 0; $y < $getDescription->length; $y++)
+                            {
+                                $metagetDescription = $getDescription->item($y);
+                                if($metagetDescription->getAttribute('class') == 'st'){
+                                    $description = $metagetDescription->nodeValue;
+                                    $itemSearch['description']=str_replace("\n", "", str_replace("\r", "", $description));
+                                }
+                            }
+                            $status='true';
+                            if(!empty($itemSearch['title'])){
+                                if(!WebService::checkBlacklistWord($itemSearch['title'])){
+                                    $status='false';
+                                }
+                            }
+                            if(!empty($itemSearch['description']))
+                            {
+                                if(!WebService::checkBlacklistWord($itemSearch['description'])){
+                                    $status='false';
+                                }
+                            }
+                            if($status=='true'){
+                                array_push($listArray,$itemSearch);
+                            }
+                        }
+                    }
+                }
+            }
+            return array(
+                'result'=>'success',
+                'from'=>'google',
+                'data'=>$listArray
+            );
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_request'
+            );
+        }
+    }
+    public function getSearchYahooFrom()
+    {
+        $listArray=[];
+        $itemSearch=[];
+        try {
+            $client = new Client([
+                'headers' => [ 'Content-Type' => 'text/html' ],
+                'connect_timeout' => '5',
+                'timeout' => '5'
+            ]);
+            $response = $client->request('GET', 'https://vn.search.yahoo.com/search?p='.urlencode($this->_keyword));
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            foreach ($xpath->evaluate('//div[@id="web"]') as $node) {
+                $html=$doc->saveHtml($node);
+                $metas = $doc->getElementsByTagName('ol');
+                foreach($metas as $meta){
+                    if($meta->getAttribute('class')=='mb-15 reg searchCenterMiddle'){
+                        $getElement = $meta->getElementsByTagName('li');
+                        foreach($getElement as $element){
+                            $getTitle=$element->getElementsByTagName('h3');
+                            $getLink=$element->getElementsByTagName('a');
+                            $getDescription=$element->getElementsByTagName('div');
+
+                            if($getTitle->length>0 && $getLink->length>0 && $getDescription->length>0){
+                                $getLinkFull=$getLink->item(0)->getAttribute('href');
+                                $itemSearch['title']=$getTitle->item(0)->nodeValue;
+                                $getDomainLink=preg_replace('/(.*?RU=)(.*?)(\/RK.*)/', '$2', urldecode($getLinkFull));
+                                if(!empty($getDomainLink)){
+                                    $parsedUrl=parse_url($getDomainLink);
+                                    $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+                                    if(!empty($domain->getRegistrableDomain())){
+                                        $itemSearch['linkFull']=$getDomainLink;
+                                        $itemSearch['domain']=$domain->getRegistrableDomain();
+                                    }
+                                }
+                                foreach($getDescription as $getDes){
+                                    if($getDes->getAttribute('class')=='compText aAbs'){
+                                        $description=$getDes->nodeValue;
+                                        $itemSearch['description']=str_replace("\n", "", str_replace("\r", "", $description));
+                                    }
+                                }
+                                $status='true';
+                                if(!empty($itemSearch['title'])){
+                                    if(!WebService::checkBlacklistWord($itemSearch['title'])){
+                                        $status='false';
+                                    }
+                                }
+                                if(!empty($itemSearch['description']))
+                                {
+                                    if(!WebService::checkBlacklistWord($itemSearch['description'])){
+                                        $status='false';
+                                    }
+                                }
+                                if($status=='true'){
+                                    array_push($listArray,$itemSearch);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return array(
+                'result'=>'success',
+                'from'=>'yahoo',
+                'data'=>$listArray
+            );
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_request'
+            );
+        }
+    }
+    public function getSearchBingFrom()
+    {
+        $listArray=[];
+        $itemSearch=[];
+        try {
+            $client = new Client([
+                'headers' => [ 'Content-Type' => 'text/html' ],
+                'connect_timeout' => '5',
+                'timeout' => '5'
+            ]);
+            $response = $client->request('GET', 'https://www.bing.com/search?q='.urlencode($this->_keyword));
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            foreach ($xpath->evaluate('//ol[@id="b_results"]') as $node) {
+                $doc->saveHtml($node);
+                $metas = $doc->getElementsByTagName('li');
+                for ($i = 0; $i < $metas->length; $i++)
+                {
+                    $meta = $metas->item($i);
+                    if($meta->getAttribute('class') == 'b_algo'){
+                        $getTitle=$meta->getElementsByTagName('h2');
+                        $getLink=$meta->getElementsByTagName('a');
+                        if($getLink->length>0 && $getTitle->length>0){
+                            $getLinkFull=$getLink->item(0)->getAttribute('href');
+                            $itemSearch['title']=$getTitle->item(0)->nodeValue;
+                            $itemSearch['linkFull']=$getLinkFull;
+                            if($meta->getElementsByTagName('p')->length>0){
+                                $itemSearch['description']=str_replace("\n", "", str_replace("\r", "", $meta->getElementsByTagName('p')->item(0)->nodeValue));
+                            }
+                            $parsedUrl=parse_url($getLinkFull);
+                            $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+                            if(!empty($domain->getRegistrableDomain())){
+                                $itemSearch['domain']=$domain->getRegistrableDomain();
+                            }
+                            $status='true';
+                            if(!empty($itemSearch['title'])){
+                                if(!WebService::checkBlacklistWord($itemSearch['title'])){
+                                    $status='false';
+                                }
+                            }
+                            if(!empty($itemSearch['description']))
+                            {
+                                if(!WebService::checkBlacklistWord($itemSearch['description'])){
+                                    $status='false';
+                                }
+                            }
+                            if($status=='true'){
+                                array_push($listArray,$itemSearch);
+                            }
+                        }
+                    }
+                }
+            }
+            return array(
+                'result'=>'success',
+                'from'=>'bing',
+                'data'=>$listArray
+            );
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
                 'message'=>'connect_request'
             );
         }
