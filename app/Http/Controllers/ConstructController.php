@@ -109,6 +109,10 @@ class ConstructController extends Controller
                     $this->_channel = $this->_domain->domainJoinChannel->channel;
                     if($this->_channel->channel_parent_id==0){
                         $this->_theme=Theme::uses('main')->layout('default');
+                        if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
+                            $this->_fullUrl=Request::fullUrl();
+                            return redirect()->to(str_replace("http","https",$this->_fullUrl),301)->send();
+                        }
                     }else{
                         $this->_theme=Theme::uses('control')->layout('default');
                     }

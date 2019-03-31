@@ -25,11 +25,15 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có lượt
                                             <span class="">Rank in <i class="flag flag-16 flag-{!! mb_strtolower($item['attribute']['country_code']) !!}"></i> {!! $item['attribute']['country_code'] !!}@if(!empty($item['attribute']['rank_country'])): {!! Site::price($item['attribute']['rank_country']) !!}@endif
                                             </span>
                                         @endif
-                                        @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
                                     </p>
                                 @endif
-                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord($item['title']) !!}</span>@endif
-                                @if(!empty($item['attribute']['ads']))<p><span class="label label-default">{!! $item['attribute']['ads'] !!}</span> </p>@endif
+                                @if(!empty($item['title']))<span>{!! mb_substr(WebService::renameBlacklistWord($item['title']),0,150) !!}</span>@endif
+                                <p>
+                                @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
+                                @if($channel['security']==true)
+                                    @if(!empty($item['attribute']['ads']))<span class="label label-default">{!! $item['attribute']['ads'] !!}</span> @endif
+                                @endif
+                                </p>
                             </li>
                             @endforeach
                         </ul>
