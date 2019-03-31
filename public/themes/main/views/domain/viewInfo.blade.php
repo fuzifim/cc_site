@@ -351,47 +351,52 @@ $channel['theme']->asset()->writeScript('customDomain','
             return false;
         });
         $("#disable_ads").click(function(){
-            $(this).addClass("disabled");
-            var formData = new FormData();
-            formData.append("domain", "'.$domain['domain'].'");
-            $.ajax({
-                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-disable-ads",
-                headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
-                type: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                dataType:"json",
-                success:function(result){
-                    location.reload();
-                },
-                error: function(result) {
-                console.log("error");
-                }
-            });
+            if(confirm("Bạn có chắc muốn tắt quảng cáo? ")){
+                $(this).addClass("disabled");
+                var formData = new FormData();
+                formData.append("domain", "'.$domain['domain'].'");
+                $.ajax({
+                    url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-disable-ads",
+                    headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    dataType:"json",
+                    success:function(result){
+                        location.reload();
+                    },
+                    error: function(result) {
+                    console.log("error");
+                    }
+                });
+            }
+
             return false;
         });
         $("#active_ads").click(function(){
-            $(this).addClass("disabled");
-            var formData = new FormData();
-            formData.append("domain", "'.$domain['domain'].'");
-            $.ajax({
-                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-active-ads",
-                headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
-                type: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: formData,
-                dataType:"json",
-                success:function(result){
-                    location.reload();
-                },
-                error: function(result) {
-                console.log("error");
-                }
-            });
+            if(confirm("Bạn có chắc muốn kích hoạt quảng cáo? ")){
+                $(this).addClass("disabled");
+                var formData = new FormData();
+                formData.append("domain", "'.$domain['domain'].'");
+                $.ajax({
+                    url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-active-ads",
+                    headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    dataType:"json",
+                    success:function(result){
+                        location.reload();
+                    },
+                    error: function(result) {
+                    console.log("error");
+                    }
+                });
+            }
             return false;
         });
     });
