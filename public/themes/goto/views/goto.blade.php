@@ -43,22 +43,12 @@
 		jQuery("#linkContinue").attr("href",redirUrl);
 		jQuery("#linkUrl").html(redirUrl);
 	});
-	window.setInterval(function() {
-		var timeLeft    = $("#timeLeft").html();
-		if(eval(timeLeft) == 0){
-			//window.location.replace(redirUrl);
-			$(location).attr('href', redirUrl)
-		}else{
-			$("#timeLeft").html(eval(timeLeft)- eval(1));
-		}
-	}, 1000);
 	var count = 5;
 	setInterval(function(){
 		document.getElementById('timeLeft').innerHTML = count;
 		if (count == 0) {
 			window.location = redirUrl;
 		}
-
 		count--;
 	},1000);
 </script>
