@@ -54,7 +54,7 @@
 											$updated_at= $site['updated_at'];
 										}
 										?>
-										<span>{!! $updated_at !!}</span><br>
+										<span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
 										<span>{!! $site['description'] !!}</span><br>
 										<span>{!! $site['link'] !!}</span><br>
 										<i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
