@@ -21,7 +21,7 @@
         "laravel/tinker": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "lullabot/amp": "^1.0.0",
-        "zizaco/entrust": "5.2.x-dev",
+        "zizaco/entrust": "5.2.x-dev"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
