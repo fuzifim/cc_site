@@ -30,31 +30,45 @@
 					}
 					?>
 					<small>Updated at {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>Views: {!! $keyword['view'] !!}</strong></small>@endif
+					@if(!empty($keyword['parent']))
+					<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
+					@endif
+					@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
 					<div class="panel panel-primary">
 						<div class="panel-heading">
 							Site relate for {!! $keyword['keyword'] !!}
 						</div>
-						<div class="">
-							@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
-								<ul class="list-group">
-									@foreach($keyword['site_relate'] as $siteRelate)
-										<?php
-										$site=DB::connection('mongodb')->collection('mongo_site')
-												->where('_id', (string)$siteRelate)->first();
-										?>
-										@if(!empty($site['title']))
-											<li class="list-group-item">
-												<h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$site['link'])) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
-												<span>{!! $site['description'] !!}</span><br>
-												<span>{!! $site['link'] !!}</span><br>
-												<i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
-											</li>
-										@endif
-									@endforeach
-								</ul>
-							@endif
-						</div>
+						<ul class="list-group">
+							@foreach($keyword['site_relate'] as $siteRelate)
+								<?php
+								$site=DB::connection('mongodb')->collection('mongo_site')
+										->where('_id', (string)$siteRelate)->first();
+								?>
+								@if(!empty($site['title']))
+									<li class="list-group-item">
+										<h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$site['link'])) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
+										<span>{!! $site['description'] !!}</span><br>
+										<span>{!! $site['link'] !!}</span><br>
+										<i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+									</li>
+								@endif
+							@endforeach
+						</ul>
+
 					</div>
+					@endif
+					@if(!empty($keyword['keyword_relate']) && count($keyword['keyword_relate'])>0)
+						<div class="form-group">
+							<p><strong>Keyword relate for {!! $keyword['keyword'] !!}</strong></p>
+							@foreach($keyword['keyword_relate'] as $keywordRelate)
+								<?php
+								$keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
+										->where('_id', (string)$keywordRelate)->first();
+								?>
+								<span><a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">{!! $keywordRe['keyword'] !!}</a></span>
+							@endforeach
+						</div>
+					@endif
 				</div>
 			</div>
 		</div>

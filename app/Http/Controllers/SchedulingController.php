@@ -107,6 +107,7 @@ class SchedulingController extends Controller
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
             ->where('craw_next','exists',false)
+            ->orderBy('created_at','asc')
             ->limit(1)->get();
         foreach ($getKeywords as $item){
             if(!empty($item['keyword'])){

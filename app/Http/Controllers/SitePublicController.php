@@ -141,7 +141,8 @@ class SitePublicController extends ConstructController
     {
 //        $checkSite=DB::connection('mongodb')->collection('mongo_keyword')
 //            ->where('craw_next','step_3')
-//            ->limit(20)->get();
+//            ->orderBy('updated_at','desc')
+//            ->limit(10)->get();
 //        dd($checkSite);
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
