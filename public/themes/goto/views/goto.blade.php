@@ -1,23 +1,7 @@
 <?
 	Theme::setTitle('Url Redirect to '.$url);
 ?>
-<script type="application/ld-json" id="json-url">{!!json_encode($url)!!}</script>
-<script type="text/javascript">
-var redirUrl=jQuery.parseJSON(jQuery("#json-url").html());
 
-jQuery(document).ready(function(){
-	jQuery("#linkContinue").attr("href",redirUrl);
-	jQuery("#linkUrl").html(redirUrl);
-});
-window.setInterval(function() {
-	var timeLeft    = $("#timeLeft").html();
-	if(eval(timeLeft) == 0){
-		window.location= (redirUrl);
-	}else{
-		$("#timeLeft").html(eval(timeLeft)- eval(1));
-	}
-}, 1000);
-</script>
 @if($ads=='true')
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
@@ -51,3 +35,20 @@ window.setInterval(function() {
 		</div>
 	</div>
 </div>
+<script type="application/ld-json" id="json-url">{!!json_encode($url)!!}</script>
+<script type="text/javascript">
+	var redirUrl=jQuery.parseJSON(jQuery("#json-url").html());
+
+	jQuery(document).ready(function(){
+		jQuery("#linkContinue").attr("href",redirUrl);
+		jQuery("#linkUrl").html(redirUrl);
+	});
+	window.setInterval(function() {
+		var timeLeft    = $("#timeLeft").html();
+		if(eval(timeLeft) == 0){
+			window.location= (redirUrl);
+		}else{
+			$("#timeLeft").html(eval(timeLeft)- eval(1));
+		}
+	}, 1000);
+</script>
