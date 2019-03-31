@@ -24,7 +24,8 @@ use Redirect;
 use WebService; 
 use Carbon\Carbon; 
 use Lang; 
-use Session; 
+use Session;
+use Cookie;
 use File; 
 use Cache; 
 use App\Model\Node;
@@ -80,6 +81,10 @@ class ConstructController extends Controller
                 $domainType=Cache::store('memcached')->get('domain_type_'.$checkDomain);
             }
             if($domainType=='domainInfo'){
+                if(!empty(Cookie::get('shared_cookie'))){
+                    Session::setId(Cookie::get('shared_cookie'));
+                    Session::start();
+                }
                 $this->_siteSuccess='redirect';
                 $this->_theme=Theme::uses('main')->layout('default');
                 $this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
@@ -109,6 +114,10 @@ class ConstructController extends Controller
                     }
                 }else{
                     $this->_siteSuccess='redirect';
+                    if(!empty(Cookie::get('shared_cookie'))){
+                        Session::setId(Cookie::get('shared_cookie'));
+                        Session::start();
+                    }
                     $this->_theme=Theme::uses('main')->layout('default');
                     $this->_channel = Cache::store('memcached')->remember('channelPrimary_new',1, function()
                     {

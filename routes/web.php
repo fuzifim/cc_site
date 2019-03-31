@@ -27,6 +27,13 @@ Route::group(['domain' => '{domain}'], function()
             'as' => 'post.api',
             'uses' => 'TestController@postApi'));
     });
+    Route::get('set_cookie',function(){
+        return response(base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII='), 200)->header('Content-Type', 'image/png');
+        /* Returns 1px transparent image */
+    });
+    Route::get('getSession',function(){
+        return response(Session::getId(), 200)->header('Content-Type', 'application/json');
+    });
     Route::get('/test', array(
         'as' => 'test',
         'uses' => 'SchedulingController@keywordSuggest'));
@@ -84,6 +91,12 @@ Route::group(['domain' => '{domain}'], function()
     Route::post('/domain-update-info', array(
         'as' => 'domain.update.info',
         'uses' => 'DomainController@updateDomainInfo'));
+    Route::post('/domain-disable-ads', array(
+        'as' => 'domain.disable.ads',
+        'uses' => 'DomainController@disableAds'));
+    Route::post('/domain-active-ads', array(
+        'as' => 'domain.active.ads',
+        'uses' => 'DomainController@activeAds'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',

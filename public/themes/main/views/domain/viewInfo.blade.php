@@ -91,7 +91,16 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         @endif
                     @endif
                     </p>
-                    <p><span role="button" class="label label-success" id="update_info">update info</span></p>
+                    @if($channel['security']==true)
+                        <p>
+                            <span style="cursor: pointer;" class="label label-success" id="update_info">update info</span>
+                            @if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable')
+                                <span style="cursor: pointer;" class="label label-success" id="active_ads">Active ads</span>
+                            @else
+                                <span style="cursor: pointer;" class="label label-danger" id="disable_ads">Disable ads</span>
+                            @endif
+                        </p>
+                    @endif
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
                     @if(!empty($domain['attribute']['whois']))
                     <div class="form-group mt-2">
@@ -313,6 +322,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
         </div>
     </div>
 </section>
+@if($channel['security']==true)
 <?php
 $dependencies = array();
 $channel['theme']->asset()->writeScript('customDomain','
@@ -340,6 +350,51 @@ $channel['theme']->asset()->writeScript('customDomain','
             });
             return false;
         });
+        $("#disable_ads").click(function(){
+            $(this).addClass("disabled");
+            var formData = new FormData();
+            formData.append("domain", "'.$domain['domain'].'");
+            $.ajax({
+                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-disable-ads",
+                headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                dataType:"json",
+                success:function(result){
+                    location.reload();
+                },
+                error: function(result) {
+                console.log("error");
+                }
+            });
+            return false;
+        });
+        $("#active_ads").click(function(){
+            $(this).addClass("disabled");
+            var formData = new FormData();
+            formData.append("domain", "'.$domain['domain'].'");
+            $.ajax({
+                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-active-ads",
+                headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                dataType:"json",
+                success:function(result){
+                    location.reload();
+                },
+                error: function(result) {
+                console.log("error");
+                }
+            });
+            return false;
+        });
     });
 ', $dependencies);
 ?>
+@endif

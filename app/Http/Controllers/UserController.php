@@ -48,6 +48,7 @@ use Response;
 use Input; 
 use Validator; 
 use Session;
+use Cookie;
 use Hash;
 use Mail;
 use URL;
@@ -745,11 +746,13 @@ class UserController extends ConstructController
 			$sessionUrl=URL::previous(); 
 		}
 		if (Auth::attempt(['phone' => Input::get('email'), 'password' => Input::get('password')], true)) {
+            Cookie::queue('shared_cookie', Session::getId(), 999999, null, '.'.config('app.url'));
 			return response()->json(['success'=>true,
 				'message'=>'Đăng nhập thành công! ', 
 				'return_url' => $sessionUrl
 			]);
 		}else if (Auth::attempt(['email'=> Input::get('email'), 'password' => Input::get('password')], true)) {
+            Cookie::queue('shared_cookie', Session::getId(), 999999, null, '.'.config('app.url'));
 			return response()->json(['success'=>true,
 				'message'=>'Đăng nhập thành công! ', 
 				'return_url' => $sessionUrl
@@ -1035,6 +1038,7 @@ class UserController extends ConstructController
 	public function logout()
     {
         Auth::logout();
+        Cookie::forget('shared_cookie');
         return redirect()->route('channel.home',$this->_parame['domain']);
     }
 }

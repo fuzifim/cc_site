@@ -52,6 +52,68 @@ class DomainController extends ConstructController
 		parent::__construct();
 	}
 	/*-- new --*/
+    public function activeAds(Request $request){
+        $getDomain=$request->input('domain');
+        if(!empty($getDomain)){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('base_64',base64_encode($getDomain))
+                ->first();
+            if(!empty($domain['domain'])){
+                $domainAttribute=$domain['attribute'];
+                $noteMer=array('ads'=>'active');
+                $domainAttribute= array_merge($domainAttribute, $noteMer);
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('_id',(string)$domain['_id'])
+                    ->update(
+                        [
+                            'attribute'=>$domainAttribute
+                        ]
+                    );
+                return response()->json(['success'=>true,
+                    'message'=>'update success',
+                ]);
+            }else{
+                return response()->json(['success'=>false,
+                    'message'=>'update faild not found domain',
+                ]);
+            }
+        }else{
+            return response()->json(['success'=>false,
+                'message'=>'update faild not found domain',
+            ]);
+        }
+    }
+    public function disableAds(Request $request){
+        $getDomain=$request->input('domain');
+        if(!empty($getDomain)){
+            $domain=DB::connection('mongodb')->collection('mongo_domain')
+                ->where('base_64',base64_encode($getDomain))
+                ->first();
+            if(!empty($domain['domain'])){
+                $domainAttribute=$domain['attribute'];
+                $noteMer=array('ads'=>'disable');
+                $domainAttribute= array_merge($domainAttribute, $noteMer);
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('_id',(string)$domain['_id'])
+                    ->update(
+                        [
+                            'attribute'=>$domainAttribute
+                        ]
+                    );
+                return response()->json(['success'=>true,
+                    'message'=>'update success',
+                ]);
+            }else{
+                return response()->json(['success'=>false,
+                    'message'=>'update faild not found domain',
+                ]);
+            }
+        }else{
+            return response()->json(['success'=>false,
+                'message'=>'update faild not found domain',
+            ]);
+        }
+    }
     public function updateDomainInfo(Request $request){
         $getDomain=$request->input('domain');
         if(!empty($getDomain)){

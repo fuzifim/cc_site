@@ -19,7 +19,7 @@
 	<div class="contentpanel">
 		<form class="form-login mainbox" style="">
 			<div class="form-group">
-				<a href="{{route('channel.home',$channel['domain']->domain)}}"><i class="glyphicon glyphicon-chevron-left"></i> Trở về {{$channel['info']->channel_name}}</a>
+				<a href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-chevron-left"></i> Trở về {{$channel['info']->channel_name}}</a>
 			</div>
 			<div class="panel panel-default" style="position:relative;"> 
 				<div id="preloaderInBox" style="display:none;">
@@ -36,7 +36,7 @@
 						<input placeholder="Mật khẩu" id="password" type="password" name="password" class="form-control">
 					</div>
 					<div class="form-group">
-						<a href="{{route('forgot.password',$channel['domain']->domain)}}"><i class="glyphicon glyphicon-lock"></i> Quên mật khẩu</a> | <a href="{{route('channel.register',$channel['domain']->domain)}}"><i class="glyphicon glyphicon-ok-sign"></i> Đăng ký tài khoản</a>
+						<a href="{{route('forgot.password',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-lock"></i> Quên mật khẩu</a> | <a href="{{route('channel.register',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-ok-sign"></i> Đăng ký tài khoản</a>
 					</div>
 					<div class="form-group">
 						<a href="{{route('login.social.authorize',array(config('app.url'),'facebook','i'=>$channel['info']->id,'url'=>$channel['domainPrimary']))}}" class="btn btn-xs btn-primary"><span class="fa fa-facebook"></span>  <span class=""> Với Facebook</span></a> 
