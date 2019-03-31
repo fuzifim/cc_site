@@ -102,16 +102,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         </p>
                     @endif
                     @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
-                    @if(!empty($domain['attribute']['whois']))
-                    <div class="form-group mt-2">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">Domain infomation {!! $domain['domain'] !!}</div>
-                            <div class="panel-body">
-                                <strong>{{$domain['domain']}}</strong>@if(!empty($decodeWhois->creationDate)) created at {{$decodeWhois->creationDate}}  @endif @if(!empty($decodeWhois->expirationDate)) and expiration date {{$decodeWhois->expirationDate}}. @endif @if(!empty($decodeWhois->registrar)) Registrar by <strong>{!!$decodeWhois->registrar!!}</strong>.@endif @if(!empty($decodeWhois->nameServer)) Name server: @if(!empty($decodeWhois->nameServer[0])){{$decodeWhois->nameServer[0]}}@endif @if(!empty($decodeWhois->nameServer[1]))and {{$decodeWhois->nameServer[1]}}@endif @endif. @if(!empty($note->attribute['rank'])) It has a global traffic rank of {{$note->attribute['rank']}} in the world @if(!empty($note->attribute['country_code']) && !empty($note->attribute['rank_country'])) and rank at <strong>{{$note->attribute['country_code']}}</strong> is {{$note->attribute['rank_country']}}@endif @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
+
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
                             <ins class="adsbygoogle"
@@ -136,6 +127,16 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             <p><strong>{!! $domain['domain'] !!}</strong></p>
                         </a>
                     </div>
+                    @if(!empty($domain['attribute']['whois']))
+                        <div class="form-group mt-2">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Domain infomation {!! $domain['domain'] !!}</div>
+                                <div class="panel-body">
+                                    <strong>{{$domain['domain']}}</strong>@if(!empty($decodeWhois->creationDate)) created at {{$decodeWhois->creationDate}}  @endif @if(!empty($decodeWhois->expirationDate)) and expiration date {{$decodeWhois->expirationDate}}. @endif @if(!empty($decodeWhois->registrar)) Registrar by <strong>{!!$decodeWhois->registrar!!}</strong>.@endif @if(!empty($decodeWhois->nameServer)) Name server: @if(!empty($decodeWhois->nameServer[0])){{$decodeWhois->nameServer[0]}}@endif @if(!empty($decodeWhois->nameServer[1]))and {{$decodeWhois->nameServer[1]}}@endif @endif. @if(!empty($note->attribute['rank'])) It has a global traffic rank of {{$note->attribute['rank']}} in the world @if(!empty($note->attribute['country_code']) && !empty($note->attribute['rank_country'])) and rank at <strong>{{$note->attribute['country_code']}}</strong> is {{$note->attribute['rank_country']}}@endif @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     @if(!empty($domainContent->basic_info))
                         <div class="form-group mt-2">
                             <ul class="nav nav-tabs">
