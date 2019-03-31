@@ -95,7 +95,7 @@ use App\Model\Node;
 use Session; 
 use Cache; 
 use Lullabot\AMP\AMP;
-use Lullabot\AMP\Validate\Scope; 
+use Lullabot\AMP\Validate\Scope;
 class SitePublicController extends ConstructController
 {
 	public $_site=array(); 
@@ -230,6 +230,22 @@ class SitePublicController extends ConstructController
                         ->orderBy('updated_at','desc')
                         ->limit(20)->get();
                 });
+//                if(!empty($domain['title'])){
+//                    $rake = RakePlus::create($domain['title']);
+//                    $phrase_scores = $rake->sortByScore('desc')->scores();
+//                    if(count($phrase_scores)>0){
+//                        $keyVal=array_slice($phrase_scores, 0);
+//                        $this->_keyword=key($keyVal);
+//                    }
+//                }else if(!empty($domain['description'])){
+//                    $rake = RakePlus::create($domain['description']);
+//                    $phrase_scores = $rake->sortByScore('desc')->scores();
+//                    if(count($phrase_scores)>0){
+//                        $keyVal=array_slice($phrase_scores, 0);
+//                        $this->_keyword=key($keyVal);
+//                    }
+//                }
+//                dd($this->_keyword);
                 $return=array(
                     'domain'=>$domain,
                     'newDomain'=>$newDomain

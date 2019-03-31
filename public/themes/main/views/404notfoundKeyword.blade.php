@@ -13,7 +13,6 @@
 <section>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
-{!!Theme::partial('formSearch', array('region' => $channel['region']))!!}
 	<div class="pageheader">
 		<h1>{!! Theme::get('title') !!}</h1>
 		<span><small>{!! Theme::get('description') !!}</small></span>

@@ -32,7 +32,7 @@ if(!empty($domain['attribute']['content'])){
 }
 $channel['theme']->setTitle($domain['domain'].' '.mb_substr(WebService::renameBlacklistWord($domain['title']),0,150));
 $channel['theme']->setKeywords(mb_substr(WebService::renameBlacklistWord($domain['keywords']),0,320));
-$channel['theme']->setDescription($description.' - '.mb_substr(WebService::renameBlacklistWord($domain['description']),0,320));
+$channel['theme']->setDescription(mb_substr(WebService::renameBlacklistWord($domain['description']),0,320).' - '.$description);
 $ads='true';
 if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
     $ads='false';
