@@ -139,11 +139,6 @@ class SitePublicController extends ConstructController
 	}
 	public function index(Request $request)
     {
-//        $checkSite=DB::connection('mongodb')->collection('mongo_keyword')
-//            ->where('craw_next','step_3')
-//            ->orderBy('updated_at','desc')
-//            ->limit(10)->get();
-//        dd($checkSite);
 		$pieces=$this->_pieces; 
 		if($this->_siteSuccess=='infoChannel'){
 			$error=''; 

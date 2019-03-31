@@ -99,8 +99,11 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-		$domainName=$this->_rulesDomain->resolve('taowebsite.cungcap.net'); 
-		dd($domainName->getPublicSuffix()); 
+        $checkSite=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next','step_3')
+            ->orderBy('updated_at','desc')
+            ->limit(10)->get();
+        dd($checkSite);
 	}
 	public function test2222222222222222222222(){
 		//dd(dns_get_record('cungcap.net',DNS_ALL)); 
