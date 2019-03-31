@@ -47,6 +47,7 @@
 								@if(!empty($site['title']))
 									<li class="list-group-item">
 										<h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$site['link'])) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
+										<span>{!! $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s') !!}</span><br>
 										<span>{!! $site['description'] !!}</span><br>
 										<span>{!! $site['link'] !!}</span><br>
 										<i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
@@ -65,7 +66,7 @@
 								$keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
 										->where('_id', (string)$keywordRelate)->first();
 								?>
-								<span><a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">{!! $keywordRe['keyword'] !!}</a></span>
+								<span><a class="badge" href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">{!! $keywordRe['keyword'] !!}</a></span>
 							@endforeach
 						</div>
 					@endif
