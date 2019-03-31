@@ -110,7 +110,7 @@ class ConstructController extends Controller
                     if($this->_channel->channel_parent_id==0){
                         $this->_theme=Theme::uses('main')->layout('default');
                         if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
-                            return redirect()->to('https://'.config('app.url').Request::getRequestUri(),301)->send();
+                            return redirect()->secure(Request::getRequestUri())->send();
                         }
                     }else{
                         $this->_theme=Theme::uses('control')->layout('default');
