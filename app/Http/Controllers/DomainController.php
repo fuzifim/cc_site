@@ -52,6 +52,28 @@ class DomainController extends ConstructController
 		parent::__construct();
 	}
 	/*-- new --*/
+    public function getDomainTopView(Request $request){
+        $page = $request->has('page') ? $request->query('page') : 1;
+        $getDomain=Cache::store('memcached')->remember('domain_top_view_'.$page, 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                ->orderBy('view','desc')
+                ->simplePaginate(20);
+        });
+        $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_domain')
+                //->where('status','active')
+                ->where('craw_next','exists',true)
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
+        $view = array(
+            'getDomain'=>$getDomain,
+            'newDomain'=>$newDomain
+        );
+        return $this->_theme->scope('domain.topView', $view)->render();
+    }
     public function activeAds(Request $request){
         $getDomain=$request->input('domain');
         if(!empty($getDomain)){

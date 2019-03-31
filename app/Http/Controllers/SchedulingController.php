@@ -169,10 +169,10 @@ class SchedulingController extends Controller
                                         ]
                                     );
                                 array_push($siteArray,(string)$siteId);
-                                echo 'insert site '.$data['linkFull'].'<p>';
+                                echo 'insert site '.$data['linkFull'].' have count '.count($result['data']).'<p>';
                             }else{
                                 array_push($siteArray,(string)$checkSite['_id']);
-                                echo 'update site relate '.$checkSite['link'].'<p>';
+                                echo 'update site relate '.$checkSite['link'].' have count '.count($result['data']).'<p>';
                             }
                             $checkDomain=DB::connection('mongodb')->collection('mongo_domain')
                                 ->where('base_64',base64_encode($data['domain']))->first();

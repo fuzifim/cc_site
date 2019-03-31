@@ -101,7 +101,10 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             @endif
                         </p>
                     @endif
-                    @if(!empty($domain['ip']))<p>Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a></p>@endif
+                    <p>
+                        @if(!empty($domain['ip']))Ip address: <a href="{!! route('domain.by.ip',array(config('app.url'),$domain['ip'])) !!}">{!! $domain['ip'] !!}</a>@endif
+                        <a href="{!! route('domain.top.view',$channel['domainPrimary']) !!}" target="_blank"> <i class="glyphicon glyphicon-star"></i> Top domains</a>
+                    </p>
 
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">

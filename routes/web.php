@@ -88,6 +88,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/domain/ip/{ip}', array(
         'as' => 'domain.by.ip',
         'uses' => 'DomainController@getDomainByIp'));
+    Route::get('/domain/top/view', array(
+        'as' => 'domain.top.view',
+        'uses' => 'DomainController@getDomainTopView'));
     Route::post('/domain-update-info', array(
         'as' => 'domain.update.info',
         'uses' => 'DomainController@updateDomainInfo'));
