@@ -871,7 +871,7 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
       return $newarray; 
     }
 	function characterReplaceUrl($string){
-		$string=strip_tags($string); 
+		$string=strip_tags($string);
         $string=str_replace('/', 'Lw==', $string);
         $string=str_replace('\'', 'Jw==', $string);
         $string=str_replace('"', 'Ig==', $string);

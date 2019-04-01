@@ -638,11 +638,12 @@ class SlugController extends ConstructController
 							); 
 							return $this->_theme->scope('regions.region', $return)->render();
 						}else{
-							return Redirect::to('//'.$this->_domain->domain);
+							//return Redirect::to('//'.$this->_domain->domain);
+                            return Redirect::route('keyword.show',array($this->_domainPrimary,WebService::characterReplaceUrl($this->_parame['slug'])));
 						}
 					}
 				}else{
-					return Redirect::route('channel.home',$this->_domain->domain);
+					return Redirect::route('keyword.show',array($this->_domainPrimary,WebService::characterReplaceUrl($this->_parame['slug'])));
 				}
 			}
 		}

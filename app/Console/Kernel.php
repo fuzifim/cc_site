@@ -24,13 +24,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        #$schedule->call('\App\Http\Controllers\SchedulingController@insertSite')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@crawInfoDomain')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@getWhoisDomain')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@getRankDomain')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@getIpRecord')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@updateCountry')->everyMinute();
-        $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->everyMinute();
-        $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->everyMinute();
+        if(config('app.env')!='local'){
+            $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->everyMinute();
+            $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->everyMinute();
+        }
     }
 }
