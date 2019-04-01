@@ -895,7 +895,6 @@ class SchedulingController extends Controller
                 $this->_domain_link='http://'.$this->_domain;
                 $scheme='http';
             }
-            echo $this->_domain_link; 
             $response = $client->request('GET', $this->_domain_link);
             $getResponse=$response->getBody()->getContents();
             $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
@@ -977,6 +976,12 @@ class SchedulingController extends Controller
                 'result'=>'error',
                 'scheme'=>$scheme,
                 'message'=>'connect_request'
+            );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'scheme'=>$scheme,
+                'message'=>'connect_failed'
             );
         }
     }
@@ -1095,6 +1100,11 @@ class SchedulingController extends Controller
                 'result'=>'error',
                 'message'=>'connect_request'
             );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
         }
     }
     public function getSearchYahooFrom()
@@ -1193,6 +1203,11 @@ class SchedulingController extends Controller
                 'result'=>'error',
                 'message'=>'connect_request'
             );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
         }
     }
     public function getSearchBingFrom()
@@ -1282,6 +1297,11 @@ class SchedulingController extends Controller
                 'result'=>'error',
                 'message'=>'connect_request'
             );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
         }
     }
     public function getSuggestqueries(){
@@ -1334,6 +1354,11 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'error',
                 'message'=>'connect_request'
+            );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
             );
         }
     }
@@ -1391,6 +1416,11 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'error',
                 'message'=>'connect_request'
+            );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
             );
         }
     }
