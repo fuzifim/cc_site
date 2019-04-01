@@ -724,7 +724,6 @@ class SchedulingController extends Controller
             ->limit(3)->get();
         foreach($getDomain as $domain){
             $this->_domain=$domain['domain'];
-            echo $this->_domain; 
             $result=$this->getInfoSite();
             if($result['result']=='error'){
                 DB::connection('mongodb')->collection('mongo_domain')
@@ -896,6 +895,7 @@ class SchedulingController extends Controller
                 $this->_domain_link='http://'.$this->_domain;
                 $scheme='http';
             }
+            echo $this->_domain_link; 
             $response = $client->request('GET', $this->_domain_link);
             $getResponse=$response->getBody()->getContents();
             $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
