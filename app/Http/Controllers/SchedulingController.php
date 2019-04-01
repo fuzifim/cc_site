@@ -724,6 +724,7 @@ class SchedulingController extends Controller
             ->limit(3)->get();
         foreach($getDomain as $domain){
             $this->_domain=$domain['domain'];
+            echo $this->_domain; 
             $result=$this->getInfoSite();
             if($result['result']=='error'){
                 DB::connection('mongodb')->collection('mongo_domain')
@@ -1308,6 +1309,63 @@ class SchedulingController extends Controller
                     'result'=>'error',
                     'message'=>'empty_keyword'
                 );
+            }
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_request'
+            );
+        }
+    }
+    public function getImageFromSearch(){
+        try{
+            $url='https://www.google.com.vn/search?q='.urlencode($this->_keyword).'&tbm=isch';
+            $client = new Client([
+                'headers' => [
+                    'Content-Type' => 'text/html',
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+                ],
+                'connect_timeout' => '2',
+                'timeout' => '2'
+            ]);
+            $response = $client->request('GET', $url);
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            $nodeList = $xpath->query('//div[@id="rg"]');
+            $imageId=[];
+            $listResult=$nodeList->item(0);
+            $metas = $listResult->getElementsByTagName('div');
+            for ($i = 0; $i < $metas->length; $i++) {
+                $meta = $metas->item($i);
+                if ($meta->getAttribute('class') == 'rg_meta notranslate') {
+                    $decodeItem = json_decode($meta->nodeValue);
+                    if (!empty($decodeItem->ou)) {
+
+                    }
+                }
             }
         }catch (\GuzzleHttp\Exception\ServerException $e){
             return array(
