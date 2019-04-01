@@ -24,6 +24,28 @@ class SchedulingController extends Controller
             return $rules;
         });
     }
+    public function UpdateImage(){
+        $updateImage=\App\Model\Mongo_Image::where('update_index','exists',false)->limit(500)->get();
+        foreach ($updateImage as $item){
+            $title=WebService::convertToUTF8(substr($item->title, 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
+            $parse=parse_url($item->link);
+            $check=\App\Model\Mongo_Image::where('base_64',base64_encode($title))
+                ->where('domain',$parse['host'])
+                ->first();
+            if(empty($check->title)){
+                $item->title=$title;
+                $item->titlefull=WebService::convertToUTF8($item->title);
+                $item->base_64=base64_encode($title);
+                $item->domain=$parse['host'];
+                $item->update_index=1;
+                $item->save();
+                echo WebService::convertToUTF8($item->title).'<p>';
+            }else{
+                echo 'Delete '.WebService::convertToUTF8($check->title).'<p>';
+                $item->delete();
+            }
+        }
+    }
     public function updateSite(){
         $getSite=DB::connection('mongodb')->collection('mongo_site')
             ->where('update_site','exists',false)
