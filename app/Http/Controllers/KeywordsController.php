@@ -73,9 +73,7 @@ class KeywordsController extends ConstructController
 	}
 	public function show(){
         $this->_keyword=str_replace('+', ' ', $this->_parame['slug']);
-        //$keywordnew=preg_replace('{(.)\1+}','$1',rtrim(str_replace('+', ' ', preg_replace('/[^\w\s]+/u',' ' ,$this->_parame['slug'])), '+'));
-
-
+        $this->_keyword=WebService::keywordDecodeBase64($this->_keyword);
 		if(WebService::is_valid_url($this->_keyword)!=true) {
             $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
                 ->where('base_64', base64_encode($this->_keyword))->first();

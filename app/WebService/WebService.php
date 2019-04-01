@@ -871,12 +871,46 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
       return $newarray; 
     }
 	function characterReplaceUrl($string){
-		$character=array( '\'', '"', ',' , ';', '<', '>','[',']','{','}','|','^','%','&','$','/' ); 
 		$string=strip_tags($string); 
-		$string=str_replace($character, ' ', $string); 
-		$string=preg_replace('/([+])\\1+/', '$1',str_replace(' ','+',$string)); 
+        $string=str_replace('/', 'Lw==', $string);
+        $string=str_replace('\'', 'Jw==', $string);
+        $string=str_replace('"', 'Ig==', $string);
+        $string=str_replace(',', 'LA==', $string);
+        $string=str_replace(';', 'Ow==', $string);
+        $string=str_replace('<', 'PA==', $string);
+        $string=str_replace('>', 'Pg==', $string);
+        $string=str_replace('[', 'Ww==', $string);
+        $string=str_replace(']', 'XQ==', $string);
+        $string=str_replace('{', 'ew==', $string);
+        $string=str_replace('}', 'fQ==', $string);
+        $string=str_replace('|', 'fA==', $string);
+        $string=str_replace('^', 'Xg==', $string);
+        $string=str_replace('%', 'JQ==', $string);
+        $string=str_replace('&', 'Jg==', $string);
+        $string=str_replace('$', 'JA==', $string);
+        $string=preg_replace('/([+])\\1+/', '$1',str_replace(' ','+',$string));
 		return $string; 
 	}
+	public function keywordDecodeBase64($string){
+        //$keywordnew=preg_replace('{(.)\1+}','$1',rtrim(str_replace('+', ' ', preg_replace('/[^\w\s]+/u',' ' ,$this->_parame['slug'])), '+'));
+        $string=str_replace('Lw==', '/', $string);
+        $string=str_replace('Jw==', '\'', $string);
+        $string=str_replace('Ig==', '"', $string);
+        $string=str_replace('LA==', ',', $string);
+        $string=str_replace('Ow==', ';', $string);
+        $string=str_replace('PA==', '<', $string);
+        $string=str_replace('Pg==', '>', $string);
+        $string=str_replace('Ww==', '[', $string);
+        $string=str_replace('XQ==', ']', $string);
+        $string=str_replace('ew==', '{', $string);
+        $string=str_replace('fQ==', '}', $string);
+        $string=str_replace('fA==', '|', $string);
+        $string=str_replace('Xg==', '^', $string);
+        $string=str_replace('JQ==', '%', $string);
+        $string=str_replace('Jg==', '&', $string);
+        $string=str_replace('JA==', '$', $string);
+        return $string;
+    }
 	function isJson($string) {
 	 json_decode($string);
 	 return (json_last_error() == JSON_ERROR_NONE);
