@@ -676,6 +676,23 @@ public function TTVPCheckout($order_code,$total_amount,$bank_code,$payment_type,
 			);
 		}
 	}
+    public function makeDir($root='img'){
+	    $this->makeDirTmp();
+        $dateFolder=[
+            'day'=>date('d', strtotime(Carbon::now()->format('Y-m-d H:i:s'))),
+            'month'=>date('m', strtotime(Carbon::now()->format('Y-m-d H:i:s'))),
+            'year'=>date('Y', strtotime(Carbon::now()->format('Y-m-d H:i:s')))
+        ];
+        $path = $root.'/'.$dateFolder['year'].'/'.$dateFolder['month'].'/'.$dateFolder['day'];
+
+        return $path;
+    }
+    public function makeDirTmp(){
+        $path = public_path(). '/tmp';
+        if(!File::exists($path)) {
+            File::makeDirectory($path, $mode = 0777, true, true);
+        }
+    }
 	function makeLinks($str) {
 		$reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
 		$urls = array();

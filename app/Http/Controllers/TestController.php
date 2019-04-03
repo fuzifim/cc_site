@@ -99,32 +99,16 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-//	    $url='https://hc.com.vn/media/catalog/product/cache/4/image/9df78eab33525d08d6e5fb8d27136e95/d/i/dien-thoai-vivo-1606_-_y53.jpg';
-//	    $parse=parse_url($url);
-//	    dd($parse['host']);
-        $updateImage=\App\Model\Mongo_Image::where('update_index','exists',false)->limit(10)->get();
-        //dd($updateImage);
-        //dd($updateImage);
-        foreach ($updateImage as $item){
-            $title=WebService::convertToUTF8(substr($item->title, 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
-            $parse=parse_url($item->link);
-            $check=\App\Model\Mongo_Image::where('base_64',base64_encode($title))
-                ->where('domain',$parse['host'])
-                ->first();
-            if(empty($check->title)){
-                $item->title=$title;
-                $item->titlefull=WebService::convertToUTF8($item->title);
-                $item->base_64=base64_encode($title);
-                $item->domain=$parse['host'];
-                $item->update_index=1;
-                $item->save();
-                echo WebService::convertToUTF8($item->title).'<p>';
-            }else{
-                echo 'Delete '.WebService::convertToUTF8($check->title).'<p>';
-                $item->delete();
-            }
-        }
+        $ext = 'http:////cdn.cungcap.net/media/img/2019/04/03/MHYzC-1554268211.png;width=85;height=60;watermark=logo;crop=auto;quality=80;format=jpg';
+        //$ext = strtok($ext, '?');
+//        if ($url = parse_url($ext)) {
+//           echo pathinfo($url['path'], PATHINFO_EXTENSION);
+//        }
+        $url = parse_url($ext);
+        dd(pathinfo($url['path'], PATHINFO_EXTENSION));
+        //dd($ext);
 	}
+
 	public function test2222222222222222222222(){
 		//dd(dns_get_record('cungcap.net',DNS_ALL)); 
 		$getChannel=Channel::where('insert_by','!=','company')->where('move_result','<',2)->limit(100)->get(); 

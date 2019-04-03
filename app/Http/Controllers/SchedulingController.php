@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
+use Imagick;
 use WebService;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Cache;
+use Storage;
+use File;
 
 class SchedulingController extends Controller
 {
@@ -63,6 +66,163 @@ class SchedulingController extends Controller
                         'update_site'=>1
                     ]
                 );
+        }
+    }
+    public function crawImageSearch()
+    {
+        $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next', 'step_3')
+            ->limit(1)->get();
+        foreach ($getKeywords as $item) {
+            $this->_keyword = $item['keyword'];
+            $result = $this->getImageFromSearch();
+            if($result['result']=='success'){
+                if(count($result['data'])){
+                    $imageIdArray=[];
+                    foreach ($result['data'] as $imageItem){
+                        $title=WebService::convertToUTF8(substr($imageItem['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
+                        $parse=parse_url($imageItem['link']);
+                        $check=\App\Model\Mongo_Image::where('base_64',base64_encode($title))
+                            ->where('domain',$parse['host'])
+                            ->first();
+                        if(empty($check->title)){
+                            $dir=WebService::makeDir('media/img');
+                            $name = str_random(5).'-'.time();
+                            $extension = substr($imageItem['link'], strrpos($imageItem['link'], '.') + 1);
+                            try {
+                                $contents = file_get_contents($imageItem['link']);
+                                $filename=$name.'.'.$extension;
+                                Storage::put('tmp/'.$filename, $contents);
+                                $file_path = public_path().'/'.'tmp/'.$filename;
+                                $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
+                                $img=new Imagick($file_path);
+                                $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
+                                $file_path_rename = public_path().'/'.'tmp/'.$filename_rename;
+                                $file_path_thumb_rename = public_path().'/'.'tmp/thumb-'.$filename_rename;
+                                $identifyImage=$img->identifyImage();
+                                $demention = getimagesize($file_path);
+                                $imgThumbnail = new Imagick($file_path);
+                                $widthMd=720; $heightMd=480;
+                                $widthXs=210; $heightXs=118;
+                                if($identifyImage['mimetype'] == "image/gif"){
+                                    $imgThumbnail = $imgThumbnail->coalesceImages();
+                                    foreach ($imgThumbnail as $frame) {
+                                        $frame->scaleImage($widthMd,$heightMd,true);
+                                        $frame->setImageBackgroundColor('white');
+                                        $w = $frame->getImageWidth();
+                                        $h = $frame->getImageHeight();
+                                        $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                    }
+                                    $imgThumbnail = $imgThumbnail->deconstructImages();
+                                }else{
+                                    $imgThumbnail->scaleImage($widthMd,$heightMd,true);
+                                    $imgThumbnail->setImageBackgroundColor('white');
+                                    $w = $imgThumbnail->getImageWidth();
+                                    $h = $imgThumbnail->getImageHeight();
+                                    $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                }
+                                $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                $imgThumbnail->setImageCompressionQuality(95);
+                                $imgThumbnail->writeImage();
+                                $imgThumbnail->writeImages($file_path_rename,true);
+                                $imgXS=new Imagick($file_path);
+                                if($identifyImage['mimetype'] == "image/gif"){
+                                    $imgXS = $imgXS->coalesceImages();
+                                    foreach ($imgXS as $frame) {
+                                        $frame->scaleImage($widthXs,$heightXs,true);
+                                        $frame->setImageBackgroundColor('white');
+                                        $w = $frame->getImageWidth();
+                                        $h = $frame->getImageHeight();
+                                        $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                    }
+                                    $imgXS = $imgXS->deconstructImages();
+                                }else{
+                                    $imgXS->scaleImage($widthXs,$heightXs,true);
+                                    $imgXS->setImageBackgroundColor('white');
+                                    $w = $imgXS->getImageWidth();
+                                    $h = $imgXS->getImageHeight();
+                                    $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                }
+                                $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                $imgXS->setImageCompressionQuality(95);
+                                $imgXS->writeImages($file_path_thumb_rename,true);
+                                Storage::disk('s3')->put($dir.'/thumb-'.$filename_rename, file_get_contents($file_path_thumb_rename));
+                                Storage::disk('s3')->put($dir.'/'.$filename_rename, file_get_contents($file_path_rename));
+                                $image='//cdn.cungcap.net/'.$dir.'/'.$filename_rename;
+                                $image_thumb='//cdn.cungcap.net/'.$dir.'/thumb-'.$filename_rename;
+                                File::delete($file_path);
+                                File::delete($file_path_thumb);
+                                File::delete($file_path_rename);
+                                File::delete($file_path_thumb_rename);
+                                $imageId=DB::connection('mongodb')->collection('mongo_image')
+                                    ->insertGetId(
+                                        [
+                                            'parent_name'=>$item['keyword'],
+                                            'parent_id'=>(string)$item['_id'],
+                                            'title' => $item['keyword'],
+                                            'base_64' => base64_encode($title),
+                                            'titlefull'=>$imageItem['title'],
+                                            'link'=>$imageItem['link'],
+                                            'domain'=>$imageItem['domain'],
+                                            'url'=>$imageItem['url'],
+                                            'attribute'=>array(
+                                                'image'=>$image,
+                                                'thumb'=>$image_thumb,
+                                                'craw_content'=>$imageItem['content'],
+                                                'domain'=>$imageItem['domain']
+                                            ),
+                                            'image_size'=>$demention,
+                                            'image_extension'=>$extension,
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                echo 'Insert image '.$image.'<p>';
+                                array_push($imageIdArray,(string)$imageId);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
+                        }else{
+                            echo 'Update id image for keyword '.$check->link.'<p>';
+                            array_push($imageIdArray,(string)$check->id);
+                        }
+                    }
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'image_relate'=>$imageIdArray,
+                            'status_craw_image'=>'success',
+                            'craw_image_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_4',
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]);
+                    echo 'insert craw image for '.$item['keyword'].'<p>';
+                }else{
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'status_craw_suggest'=>'error',
+                            'suggest_status_message'=>'no_image',
+                            'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_4'
+                        ]);
+                    echo 'craw image for keyword error '.$item['keyword'].'<p>';
+                }
+            }else{
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',(string)$item['_id'])
+                    ->update([
+                        'status_craw_suggest'=>'error',
+                        'suggest_status_message'=>$result['message'],
+                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_4'
+                    ]);
+                echo 'craw image for keyword error '.$item['keyword'].'<p>';
+            }
         }
     }
     public function keywordSuggest(){
@@ -1402,7 +1562,8 @@ class SchedulingController extends Controller
             @$doc->loadHTML($dataConvertUtf8);
             $xpath = new \DOMXpath($doc);
             $nodeList = $xpath->query('//div[@id="rg"]');
-            $imageId=[];
+            $imageList=[];
+            $itemSearch=[];
             $listResult=$nodeList->item(0);
             $metas = $listResult->getElementsByTagName('div');
             for ($i = 0; $i < $metas->length; $i++) {
@@ -1410,10 +1571,24 @@ class SchedulingController extends Controller
                 if ($meta->getAttribute('class') == 'rg_meta notranslate') {
                     $decodeItem = json_decode($meta->nodeValue);
                     if (!empty($decodeItem->ou)) {
-
+                        if(!empty($decodeItem->ru)){
+                            $itemSearch['url']=$decodeItem->ru;
+                        }else{
+                            $itemSearch['url']='';
+                        }
+                        $itemSearch['title']=$decodeItem->pt;
+                        $itemSearch['link']=$decodeItem->ou;
+                        $itemSearch['content']=$meta->nodeValue;
+                        $itemSearch['domain']=$decodeItem->rh;
+                        array_push($imageList,$itemSearch);
                     }
                 }
             }
+            return array(
+                'result'=>'success',
+                'data'=>$imageList,
+                'keyword'=>$this->_keyword
+            );
         }catch (\GuzzleHttp\Exception\ServerException $e){
             return array(
                 'result'=>'error',
