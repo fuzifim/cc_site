@@ -34,7 +34,7 @@
 			<h1><strong>{!! $keyword['keyword'] !!}</strong></h1>
 			<?php
 			if ($keyword['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
-				$updated_at= $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+				$updated_at= $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
 			}else{
 				$updated_at= $keyword['updated_at'];
 			}

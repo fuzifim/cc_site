@@ -100,6 +100,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::post('/domain-active-ads', array(
         'as' => 'domain.active.ads',
         'uses' => 'DomainController@activeAds'));
+    Route::get('/video/{yId}', array(
+        'as' => 'video.youtube.view',
+        'uses' => 'VideoController@viewVideoYoutubeById'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',

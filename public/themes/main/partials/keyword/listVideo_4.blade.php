@@ -10,7 +10,7 @@
                 ?>
                 @if(!empty($video['title']))
                     <div class="col-md-3 col-xs-3">
-                        <img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}">
+                        <a href="{!! route('video.youtube.view',array($channel['domainPrimary'],$video['yid'])) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
                         <?php
                         if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                             $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -19,7 +19,7 @@
                         }
                         ?>
                         <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
-                        <strong><a class="siteLink" id="linkContinue" href="" rel="nofollow" target="blank">{!! substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
+                        <strong><a href="{!! route('video.youtube.view',array($channel['domainPrimary'],$video['yid'])) !!}">{!! substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
                     </div>
                 @endif
             @endforeach
