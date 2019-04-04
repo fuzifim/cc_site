@@ -99,16 +99,12 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-        $ext = 'http:////cdn.cungcap.net/media/img/2019/04/03/MHYzC-1554268211.png;width=85;height=60;watermark=logo;crop=auto;quality=80;format=jpg';
-        //$ext = strtok($ext, '?');
-//        if ($url = parse_url($ext)) {
-//           echo pathinfo($url['path'], PATHINFO_EXTENSION);
-//        }
-        $url = parse_url($ext);
-        dd(pathinfo($url['path'], PATHINFO_EXTENSION));
-        //dd($ext);
+        $getSite=DB::connection('mongodb')->collection('mongo_image')
+            ->where('image_size','exists',true)
+            ->orderBy('updated_at','desc')
+            ->limit(5)->get();
+        dd($getSite);
 	}
-
 	public function test2222222222222222222222(){
 		//dd(dns_get_record('cungcap.net',DNS_ALL)); 
 		$getChannel=Channel::where('insert_by','!=','company')->where('move_result','<',2)->limit(100)->get(); 

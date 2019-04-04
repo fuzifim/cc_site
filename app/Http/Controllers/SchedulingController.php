@@ -159,7 +159,7 @@ class SchedulingController extends Controller
                                         [
                                             'parent_name'=>$item['keyword'],
                                             'parent_id'=>(string)$item['_id'],
-                                            'title' => $item['keyword'],
+                                            'title' => $title,
                                             'base_64' => base64_encode($title),
                                             'titlefull'=>$imageItem['title'],
                                             'link'=>$imageItem['link'],
