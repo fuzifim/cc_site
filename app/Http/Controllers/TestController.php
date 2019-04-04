@@ -99,9 +99,10 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-        $getSite=DB::connection('mongodb')->collection('mongo_image')
-            ->where('image_size','exists',true)
-            ->orderBy('updated_at','desc')
+        $getSite=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next','step_5')
+            //->where('image_size','exists',true)
+            //->orderBy('updated_at','desc')
             ->limit(5)->get();
         dd($getSite);
 	}

@@ -68,6 +68,148 @@ class SchedulingController extends Controller
                 );
         }
     }
+    public function crawVideoSearch(){
+        $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('craw_next', 'step_4')
+            ->limit(1)->get();
+        foreach ($getKeywords as $item) {
+            $this->_keyword = $item['keyword'];
+            $result = $this->getVideoFromYoutube();
+            if($result['result']=='success'){
+                if(count($result['data'])){
+                    $videoIdArray=[];
+                    foreach ($result['data'] as $videoItem){
+                        $check=\App\Model\Mongo_Image::where('yid',$videoItem['idYoutube'])
+                            ->first();
+                        if(empty($check->title)){
+                            try {
+                                $dir=WebService::makeDir('media/img');
+                                $name = str_random(5).'-'.time();
+                                $imageUrl='https://img.youtube.com/vi/'.$videoItem['idYoutube'].'/0.jpg';
+                                $contents = file_get_contents($imageUrl);
+                                $filename=$name.'.jpg';
+                                Storage::put('tmp/'.$filename, $contents);
+                                $file_path = public_path().'/'.'tmp/'.$filename;
+                                $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
+                                $img=new Imagick($file_path);
+                                $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
+                                $identifyImage=$img->identifyImage();
+                                $demention = getimagesize($file_path);
+                                $imgThumbnail = new Imagick($file_path);
+                                $widthMd=720; $heightMd=480;
+                                $widthXs=210; $heightXs=118;
+                                if($identifyImage['mimetype'] == "image/gif"){
+                                    $imgThumbnail = $imgThumbnail->coalesceImages();
+                                    foreach ($imgThumbnail as $frame) {
+                                        $frame->scaleImage($widthMd,$heightMd,true);
+                                        $frame->setImageBackgroundColor('white');
+                                        $w = $frame->getImageWidth();
+                                        $h = $frame->getImageHeight();
+                                        $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                    }
+                                    $imgThumbnail = $imgThumbnail->deconstructImages();
+                                }else{
+                                    $imgThumbnail->scaleImage($widthMd,$heightMd,true);
+                                    $imgThumbnail->setImageBackgroundColor('white');
+                                    $w = $imgThumbnail->getImageWidth();
+                                    $h = $imgThumbnail->getImageHeight();
+                                    $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                }
+                                $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                $imgThumbnail->setImageCompressionQuality(95);
+                                $imgThumbnail->writeImage();
+                                $imgThumbnail->writeImages($file_path,true);
+                                $imgXS=new Imagick($file_path);
+                                if($identifyImage['mimetype'] == "image/gif"){
+                                    $imgXS = $imgXS->coalesceImages();
+                                    foreach ($imgXS as $frame) {
+                                        $frame->scaleImage($widthXs,$heightXs,true);
+                                        $frame->setImageBackgroundColor('white');
+                                        $w = $frame->getImageWidth();
+                                        $h = $frame->getImageHeight();
+                                        $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                    }
+                                    $imgXS = $imgXS->deconstructImages();
+                                }else{
+                                    $imgXS->scaleImage($widthXs,$heightXs,true);
+                                    $imgXS->setImageBackgroundColor('white');
+                                    $w = $imgXS->getImageWidth();
+                                    $h = $imgXS->getImageHeight();
+                                    $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                }
+                                $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                $imgXS->setImageCompressionQuality(95);
+                                $imgXS->writeImages($file_path_thumb,true);
+                                Storage::disk('s3')->put($dir.'/thumb-'.$filename, file_get_contents($file_path_thumb));
+                                Storage::disk('s3')->put($dir.'/'.$filename, file_get_contents($file_path));
+                                $image='//cdn.cungcap.net/'.$dir.'/'.$filename;
+                                $image_thumb='//cdn.cungcap.net/'.$dir.'/thumb-'.$filename;
+                                File::delete($file_path);
+                                File::delete($file_path_thumb);
+                                $videoId=DB::connection('mongodb')->collection('mongo_video')
+                                    ->insertGetId(
+                                        [
+                                            'parent'=>$item['keyword'],
+                                            'parent_id'=>(string)$item['_id'],
+                                            'title' => $videoItem['title'],
+                                            'description'=>$videoItem['description'],
+                                            'yid'=>$videoItem['idYoutube'],
+                                            'image'=>$image,
+                                            'thumb'=>$image_thumb,
+                                            'image_size'=>$demention,
+                                            'view'=>0,
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                echo 'Insert video have image url '.$image.'<p>';
+                                array_push($videoIdArray,(string)$videoId);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
+                        }else{
+                            echo 'Update id video for keyword '.$check->title.'<p>';
+                            array_push($videoIdArray,(string)$check->id);
+                        }
+                    }
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'video_relate'=>$videoIdArray,
+                            'status_craw_video'=>'success',
+                            'craw_video_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_5',
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]);
+                    echo 'insert craw video for '.$item['keyword'].'<p>';
+                }else{
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'status_craw_video'=>'error',
+                            'video_status_message'=>'no_video',
+                            'craw_video_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_5'
+                        ]);
+                    echo 'craw video for keyword error '.$item['keyword'].'<p>';
+                }
+            }else if($result['result']=='error'){
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',(string)$item['_id'])
+                    ->update([
+                        'status_craw_video'=>'error',
+                        'video_status_message'=>$result['message'],
+                        'craw_video_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'craw_next'=>'step_5'
+                    ]);
+                echo 'craw video for keyword error '.$item['keyword'].'<p>';
+            }
+        }
+    }
     public function crawImageSearch()
     {
         $getKeywords = DB::connection('mongodb')->collection('mongo_keyword')
@@ -203,9 +345,9 @@ class SchedulingController extends Controller
                     DB::connection('mongodb')->collection('mongo_keyword')
                         ->where('_id',(string)$item['_id'])
                         ->update([
-                            'status_craw_suggest'=>'error',
-                            'suggest_status_message'=>'no_image',
-                            'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'status_craw_image'=>'error',
+                            'image_status_message'=>'no_image',
+                            'craw_image_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                             'craw_next'=>'step_4'
                         ]);
@@ -215,9 +357,9 @@ class SchedulingController extends Controller
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('_id',(string)$item['_id'])
                     ->update([
-                        'status_craw_suggest'=>'error',
-                        'suggest_status_message'=>$result['message'],
-                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                        'status_craw_image'=>'error',
+                        'imageg_status_message'=>$result['message'],
+                        'craw_image_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_next'=>'step_4'
                     ]);
@@ -1587,6 +1729,96 @@ class SchedulingController extends Controller
             return array(
                 'result'=>'success',
                 'data'=>$imageList,
+                'keyword'=>$this->_keyword
+            );
+        }catch (\GuzzleHttp\Exception\ServerException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_500'
+            );
+        }catch (\GuzzleHttp\Exception\BadResponseException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_bad'
+            );
+        }catch (\GuzzleHttp\Exception\ClientException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_400'
+            );
+        }catch (\GuzzleHttp\Exception\ConnectException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }catch (\GuzzleHttp\Exception\RequestException $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_request'
+            );
+        }catch (\Exception $e){
+            return array(
+                'result'=>'error',
+                'message'=>'connect_failed'
+            );
+        }
+    }
+    public function getVideoFromYoutube(){
+        try{
+            $videoList=[];
+            $itemSearch=[];
+            $url='https://www.youtube.com/results?search_query='.urlencode($this->_keyword);
+            $client = new Client([
+                'headers' => [
+                    'Content-Type' => 'text/html',
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+                ],
+                'connect_timeout' => '2',
+                'timeout' => '2'
+            ]);
+            $response = $client->request('GET', $url);
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            $nodeList = $xpath->query('//ol[@class="item-section"]');
+            $listResult=$nodeList->item(0);
+            $metas = $listResult->getElementsByTagName('li');
+            for ($i = 0; $i < $metas->length; $i++)
+            {
+                $meta = $metas->item($i);
+                $getElement=$meta->getElementsByTagName('div');
+                for ($t = 0; $t < $getElement->length; $t++) {
+                    $element = $getElement->item($t);
+                    if ($element->getAttribute('class') == 'yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix') {
+                        $getItem = $element->getElementsByTagName('h3');
+                        for ($y = 0; $y < $getItem->length; $y++) {
+                            $item=$getItem->item($y);
+                            if($item->getAttribute('class') == 'yt-lockup-title '){
+                                $getLink=$item->getElementsByTagName('a');
+                                parse_str($getLink->item(0)->getAttribute('href'), $query );
+                                if(!empty($query['/watch?v'])){
+                                    $itemSearch['idYoutube']=$query['/watch?v'];
+                                    $itemSearch['title']=$getLink->item(0)->nodeValue;
+                                }
+                            }
+                        }
+                        $getDescription=$element->getElementsByTagName('div');
+                        for ($k = 0; $k < $getDescription->length; $k++)
+                        {
+                            $des=$getDescription->item($k);
+                            if($des->getAttribute('class') == 'yt-lockup-description yt-ui-ellipsis yt-ui-ellipsis-2'){
+                                $itemSearch['description']=$des->nodeValue;
+                            }
+                        }
+                        array_push($videoList,$itemSearch);
+                    }
+                }
+            }
+            return array(
+                'result'=>'success',
+                'data'=>$videoList,
                 'keyword'=>$this->_keyword
             );
         }catch (\GuzzleHttp\Exception\ServerException $e){

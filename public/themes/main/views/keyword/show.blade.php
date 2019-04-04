@@ -20,6 +20,12 @@
 	}else if(!empty($keyword['image_relate']) && count($keyword['image_relate'])>0){
 		$showListImage=2;
 	}
+	$showListVideo=0;
+	if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0 && !empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
+		$showListVideo=1;
+	}else if(!empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
+		$showListVideo=2;
+	}
 ?>
 <section>
 	<div class="mainpanel">
@@ -44,37 +50,24 @@
 					@if($showListImage==1)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
 					@endif
-					@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							Site relate for {!! $keyword['keyword'] !!}
+					@if($showListVideo==0)
+						@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
+							{!!Theme::partial('keyword.listSite', array('keyword' => $keyword))!!}
+						@endif
+					@endif
+					@if($showListVideo==1)
+						<div class="row row-pad-5">
+							<div class="col-md-9">
+								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword))!!}
+								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
+								{!!Theme::partial('keyword.listVideo_2', array('keyword' => $keyword,'from'=>4,'to'=>4))!!}
+							</div>
+							<div class="col-md-3">
+								{!!Theme::partial('keyword.listVideo_3', array('keyword' => $keyword,'from'=>8,'to'=>12))!!}
+							</div>
 						</div>
-						<ul class="list-group">
-							@foreach($keyword['site_relate'] as $siteRelate)
-								<?php
-								$site=DB::connection('mongodb')->collection('mongo_site')
-										->where('_id', (string)$siteRelate)->first();
-								?>
-								@if(!empty($site['title']))
-									<li class="list-group-item">
-										<h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$site['link'])) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
-										<?php
-										if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
-											$updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
-										}else{
-											$updated_at= $site['updated_at'];
-										}
-										?>
-										<span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
-										<span>{!! $site['description'] !!}</span><br>
-										<span>{!! $site['link'] !!}</span><br>
-										<i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}" target="blank">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
-									</li>
-								@endif
-							@endforeach
-						</ul>
-
-					</div>
+					@elseif($showListVideo==2)
+							{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
 					@endif
 					@if($showListImage==2)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}

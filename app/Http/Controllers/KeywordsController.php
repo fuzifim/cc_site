@@ -36,7 +36,8 @@ use Pdp\Parser;
 use DonatelloZa\RakePlus\RakePlus;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
-use Cache; 
+use Cache;
+use Theme;
 class KeywordsController extends ConstructController
 {
 	public $_keyword; 
@@ -84,7 +85,10 @@ class KeywordsController extends ConstructController
                 $return=array(
                     'keyword'=>$getKeyword
                 );
-                return $this->_theme->scope('keyword.show', $return)->render();
+                return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
+                {
+                    return Theme::view('keyword.show', $return);
+                });
             }else{
                 $return=array(
                     'keyword'=>$this->_keyword
