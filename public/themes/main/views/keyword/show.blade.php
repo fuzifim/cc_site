@@ -2,7 +2,7 @@
 	$setKeyword=[];
 	if(!empty($keyword['keyword'])){
 		Theme::setCanonical(route('keyword.show',array(config('app.url'),WebService::characterReplaceUrl($keyword['keyword']))));
-		Theme::setTitle($keyword['keyword']);
+		Theme::setTitle('Cung cấp '.$keyword['keyword']);
 	}
 	if(!empty($keyword['description'])){
 		Theme::setDescription($keyword['description']);
@@ -31,7 +31,7 @@
 	<div class="mainpanel">
 		{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
 		<div class="pageheader form-group">
-			<h1><strong>{!! $keyword['keyword'] !!}</strong></h1>
+			<h1><strong>Cung cấp {!! $keyword['keyword'] !!}</strong></h1>
 			<?php
 			if ($keyword['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
 				$updated_at= $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
@@ -41,7 +41,7 @@
 			?>
 			<small>Updated at {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>Views: {!! $keyword['view'] !!}</strong></small>@endif
 			@if(!empty($keyword['parent']))
-				<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
+				<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">Cung cấp {!! $keyword['parent'] !!}</a></p>
 			@endif
 		</div>
 		<div class="container">
@@ -80,7 +80,7 @@
 								$keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
 										->where('_id', (string)$keywordRelate)->first();
 								?>
-								<span><a class="badge" href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">{!! $keywordRe['keyword'] !!}</a></span>
+								<span><a class="badge" href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">Cung cấp {!! $keywordRe['keyword'] !!}</a></span>
 							@endforeach
 						</div>
 					@endif

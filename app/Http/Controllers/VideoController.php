@@ -33,7 +33,7 @@ class VideoController extends ConstructController
         if(!empty($video['yid'])){
             $videoParent=[];
             if(!empty($video['parent'])){
-                $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent'.base64_encode($video['parent']), 1, function() use($video)
+                $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent_'.base64_encode($video['parent']).'_'.$video['_id'], 1, function() use($video)
                 {
                     return DB::connection('mongodb')->collection('mongo_video')
                         ->where('parent',$video['parent'])
