@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
             $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->cron('*/2 * * * *');
             $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->cron('*/2 * * * *');
         }
-        $schedule->call('\App\Http\Controllers\SchedulingController@crawImageSearch')->cron('*/2 * * * *');
+        $schedule->call('\App\Http\Controllers\SchedulingController@crawImageSearch')->cron('*/5 * * * *');
         $schedule->call('\App\Http\Controllers\SchedulingController@crawVideoSearch')->cron('*/5 * * * *');
     }
 }
