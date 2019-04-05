@@ -1,5 +1,7 @@
 <div class="panel panel-default">
-    <div class="panel-heading">Video relate for {!! $keyword['keyword'] !!}</div>
+    <div class="panel-heading">
+        <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
+    </div>
     <div class="panel-body">
         <div class="row row-pad-5">
             @foreach(array_slice($keyword['video_relate'], $from, $to) as $videoRelate)

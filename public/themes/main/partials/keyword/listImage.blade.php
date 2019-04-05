@@ -1,5 +1,7 @@
 <div class="panel panel-primary">
-    <div class="panel-heading">Image relate for {!! $keyword['keyword'] !!}</div>
+    <div class="panel-heading">
+        <h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
+    </div>
     <div class="panel-body">
         <div class="form-group">
             <?php $a=0; ?>
@@ -13,7 +15,7 @@
                         ->where('_id', (string)$imageRelate)->first();
                     ?>
                     <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['image']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                    <h4 class="text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h4>
+                    <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>
                     <?php break; ?>
                 @endif
             @endforeach

@@ -1,5 +1,7 @@
 <div class="panel panel-primary">
-    <div class="panel-heading">Video relate for {!! $keyword['keyword'] !!}</div>
+    <div class="panel-heading">
+        <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
+    </div>
     <div class="panel-body">
         @foreach(array_chunk($keyword['video_relate'],4) as $chunk)
         <div class="row row-pad-5">

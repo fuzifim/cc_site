@@ -1,6 +1,6 @@
 <div class="panel panel-primary">
     <div class="panel-heading">
-        Site relate for {!! $keyword['keyword'] !!}
+        <h2 class="panel-title">Site relate for {!! $keyword['keyword'] !!}</h2>
     </div>
     <ul class="list-group">
         @foreach($keyword['site_relate'] as $siteRelate)
