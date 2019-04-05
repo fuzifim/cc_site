@@ -17,7 +17,7 @@ Theme::setImage('https:'.$video['image']);
             ?>
             <small>Updated at {!! $updated_at !!}</small> @if(!empty($video['view']))<small><strong>Views: {!! $video['view'] !!}</strong></small>@endif
             @if(!empty($video['parent']))
-                <p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($video['parent'])))}}">Cung cấp {!! $video['parent'] !!}</a></p>
+                <p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($video['parent'])))}}">{!! $video['parent'] !!}</a></p>
             @endif
         </div>
         <div class="container">

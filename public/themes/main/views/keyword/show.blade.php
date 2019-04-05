@@ -80,7 +80,7 @@
 								$keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
 										->where('_id', (string)$keywordRelate)->first();
 								?>
-								<span><a class="badge" href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword'])))}}">Cung cấp {!! $keywordRe['keyword'] !!}</a></span>
+								<span><a class="badge" href="{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword']))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
 							@endforeach
 						</div>
 					@endif

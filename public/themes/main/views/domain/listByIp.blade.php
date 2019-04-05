@@ -63,7 +63,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có địa 
                             </div>
                             @foreach($keywordNewUpdate as $keyword)
                                 <li class="list-group-item">
-                                    <a href="{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['keyword']))) !!}">Cung cấp {!! $keyword['keyword'] !!}</a><br>
+                                    <a href="{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['keyword']))) !!}">{!! $keyword['keyword'] !!}</a><br>
                                     <small class="text-muted">Updated at {!! $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s') !!}</small>
                                 </li>
                             @endforeach
