@@ -31,7 +31,7 @@
 	<div class="mainpanel">
 		{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
 		<div class="pageheader form-group">
-			<h1><strong>Cung cấp {!! $keyword['keyword'] !!}</strong></h1>
+			<h1><strong>{!! $keyword['keyword'] !!}</strong></h1>
 			<?php
 			if ($keyword['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
 				$updated_at= $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
