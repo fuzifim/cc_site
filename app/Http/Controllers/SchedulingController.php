@@ -30,7 +30,7 @@ class SchedulingController extends Controller
     public function UpdateImage(){
         $updateImage=\App\Model\Mongo_Image::where('update_index','exists',false)->limit(500)->get();
         foreach ($updateImage as $item){
-            $title=WebService::convertToUTF8(substr($item->title, 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
+            $title=WebService::convertToUTF8(mb_substr($item->title, 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
             $parse=parse_url($item->link);
             $check=\App\Model\Mongo_Image::where('base_64',base64_encode($title))
                 ->where('domain',$parse['host'])
@@ -54,7 +54,7 @@ class SchedulingController extends Controller
             ->where('update_site','exists',false)
             ->limit(5)->get();
         foreach($getSite as $item){
-            $title=substr($item['title'], 0, $this->_max_length_title);
+            $title=mb_substr($item['title'], 0, $this->_max_length_title);
             DB::connection('mongodb')->collection('mongo_site')
                 ->where('_id',(string)$item['_id'])
                 ->update(
@@ -222,7 +222,7 @@ class SchedulingController extends Controller
                 if(count($result['data'])){
                     $imageIdArray=[];
                     foreach ($result['data'] as $imageItem){
-                        $title=WebService::convertToUTF8(substr($imageItem['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
+                        $title=WebService::convertToUTF8(mb_substr($imageItem['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE));
                         $parse=parse_url($imageItem['link']);
                         $check=\App\Model\Mongo_Image::where('base_64',base64_encode($title))
                             ->where('domain',$parse['host'])
@@ -378,7 +378,7 @@ class SchedulingController extends Controller
                 $keywordIdArray=[];
                 foreach($result['data'][1] as $value){
                     if(!empty($value)){
-                        $keyword=WebService::convertToUTF8(substr($value, 0, $this->_max_length_title));
+                        $keyword=WebService::convertToUTF8(mb_substr($value, 0, $this->_max_length_title));
                         $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
                             ->where('base_64',base64_encode($keyword))
                             ->first();
@@ -471,7 +471,7 @@ class SchedulingController extends Controller
                     $siteArray=[];
                     foreach ($result['data'] as $data){
                         if(!empty($data['title']) && !empty($data['domain'])){
-                            $title=WebService::convertToUTF8(substr($data['title'], 0, $this->_max_length_title));
+                            $title=WebService::convertToUTF8(mb_substr($data['title'], 0, $this->_max_length_title));
                             $checkSite=DB::connection('mongodb')->collection('mongo_site')
                                 ->where('base_64',base64_encode($title))
                                 ->where('domain',$data['domain'])
@@ -641,7 +641,7 @@ class SchedulingController extends Controller
 //                    ->update(['index' => 4]);
 //                echo $item['title'].' update success <br>';
 //            }
-            $title=WebService::convertToUTF8(substr($item['title'], 0, $this->_max_length_title));
+            $title=WebService::convertToUTF8(mb_substr($item['title'], 0, $this->_max_length_title));
             $checkSite=DB::connection('mongodb')->collection('mongo_site')
                 ->where('base_64',base64_encode($title))
                 ->where('domain',$item['attribute']['domain'])
