@@ -20,7 +20,7 @@
                         }
                         ?>
                         <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
-                        <strong><a href="{!! route('video.youtube.view',array($channel['domainPrimary'],$video['yid'])) !!}">Cung cấp video {!! substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
+                        <strong><a href="{!! route('video.youtube.view',array($channel['domainPrimary'],$video['yid'])) !!}">Cung cấp video {!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong><br>
                     </div>
                 @endif
             @endforeach

@@ -41,7 +41,7 @@
 			?>
 			<small>Updated at {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>Views: {!! $keyword['view'] !!}</strong></small>@endif
 			@if(!empty($keyword['parent']))
-				<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">Cung cấp {!! $keyword['parent'] !!}</a></p>
+				<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
 			@endif
 		</div>
 		<div class="container">
