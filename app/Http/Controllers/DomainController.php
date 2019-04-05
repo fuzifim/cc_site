@@ -68,9 +68,18 @@ class DomainController extends ConstructController
                 ->orderBy('updated_at','desc')
                 ->limit(20)->get();
         });
+        $keywordNewUpdate=Cache::store('memcached')->remember('newKeyword', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_keyword')
+                //->where('status','active')
+                ->where('craw_next','exists',true)
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
         $view = array(
             'getDomain'=>$getDomain,
-            'newDomain'=>$newDomain
+            'newDomain'=>$newDomain,
+            'keywordNewUpdate'=>$keywordNewUpdate
         );
         return $this->_theme->scope('domain.topView', $view)->render();
     }
@@ -223,10 +232,19 @@ class DomainController extends ConstructController
                 ->orderBy('updated_at','desc')
                 ->limit(20)->get();
         });
+        $keywordNewUpdate=Cache::store('memcached')->remember('newKeyword', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_keyword')
+                //->where('status','active')
+                ->where('craw_next','exists',true)
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
         $view = array(
             'country'=>$country,
             'getDomain'=>$getDomain,
-            'newDomain'=>$newDomain
+            'newDomain'=>$newDomain,
+            'keywordNewUpdate'=>$keywordNewUpdate
         );
         return $this->_theme->scope('domain.listByCountry', $view)->render();
     }
@@ -247,10 +265,19 @@ class DomainController extends ConstructController
                 ->orderBy('updated_at','desc')
                 ->limit(20)->get();
         });
+        $keywordNewUpdate=Cache::store('memcached')->remember('newKeyword', 1, function()
+        {
+            return DB::connection('mongodb')->collection('mongo_keyword')
+                //->where('status','active')
+                ->where('craw_next','exists',true)
+                ->orderBy('updated_at','desc')
+                ->limit(20)->get();
+        });
         $view = array(
             'getDomain'=>$getDomain,
             'newDomain'=>$newDomain,
-            'ip'=>$this->_parame['ip']
+            'ip'=>$this->_parame['ip'],
+            'keywordNewUpdate'=>$keywordNewUpdate
         );
         return $this->_theme->scope('domain.listByIp', $view)->render();
     }
