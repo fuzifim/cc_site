@@ -103,6 +103,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/video/{yId}', array(
         'as' => 'video.youtube.view',
         'uses' => 'VideoController@viewVideoYoutubeById'));
+    Route::get('/sitemap{type}', array(
+        'as' => 'sitemap',
+        'uses' => 'SitemapsController@sitemap'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',
