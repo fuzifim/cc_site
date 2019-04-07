@@ -676,11 +676,14 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/login', array(
         'as' => 'channel.login',
         'uses' => 'UserController@login'));
-    Route::get('/login/q', array(
+    Route::get('/login-2', array(
         'as' => 'login',
         'uses' => 'UserController@login'));
     Route::post('/login', array(
         'as' => 'channel.login.request',
+        'uses' => 'UserController@loginRequest'));
+    Route::post('/login-2', array(
+        'as' => 'login',
         'uses' => 'UserController@loginRequest'));
     Route::get('/user/active/{code}', array(
         'as' => 'channel.user.active.code',
