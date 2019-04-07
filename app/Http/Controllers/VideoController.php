@@ -32,6 +32,7 @@ class VideoController extends ConstructController
                 ->where('yid',$this->_parame['yId'])->first();
         });
         if(!empty($video['yid'])){
+            dd(Youtube::getVideoInfo($video['yid']));
             $videoParent=[];
             if(!empty($video['parent'])){
                 $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent_'.base64_encode($video['parent']).'_'.$video['_id'], 1, function() use($video)
