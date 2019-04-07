@@ -19,6 +19,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use DB;
 use Cache;
+use Youtube;
 class VideoController extends ConstructController
 {
     public function __construct(){
