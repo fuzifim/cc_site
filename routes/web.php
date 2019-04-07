@@ -691,6 +691,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::post('/forgotpassword', array(
         'as' => 'forgot.password.request',
         'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
+    Route::post('/forgotpassword-2', array(
+        'as' => 'password.reset',
+        'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
     Route::get('/password/reset/{token}', array(
         'as' => 'forgot.password.reset',
         'uses' => 'Auth\PasswordController@getReset'));
