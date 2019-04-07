@@ -26,6 +26,10 @@
 	}else if(!empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
 		$showListVideo=2;
 	}
+	$showEmpty=false;
+	if(empty($keyword['site_relate']) && empty($keyword['image_relate']) && empty($keyword['video_relate'])){
+		$showEmpty=true;
+	}
 ?>
 <section>
 	<div class="mainpanel">
@@ -47,6 +51,9 @@
 		<div class="container">
 			<div class="row row-pad-5">
 				<div class="col-md-12">
+					@if($showEmpty==true)
+						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào! 
+					@endif
 					@if($showListImage==1)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
 					@endif
