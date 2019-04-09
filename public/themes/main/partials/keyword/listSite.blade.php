@@ -10,7 +10,7 @@
             ?>
             @if(!empty($site['title']))
                 <li class="list-group-item">
-                    <h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$site['link'])) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
+                    <h4><a class="siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),urlencode($site['link']))) !!}" rel="nofollow" target="blank">{!! $site['title'] !!}</a></h4>
                     <?php
                     if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
