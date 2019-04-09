@@ -103,6 +103,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/video/{yId}', array(
         'as' => 'video.youtube.view',
         'uses' => 'VideoController@viewVideoYoutubeById'));
+    Route::get('/sitemap{type}', array(
+        'as' => 'sitemap',
+        'uses' => 'SitemapsController@sitemap'));
     //--End Tools
     Route::get('/movePostAttribute', array(
         'as' => 'channel.post.move.attribute',
@@ -676,8 +679,14 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/login', array(
         'as' => 'channel.login',
         'uses' => 'UserController@login'));
+    Route::get('/login-2', array(
+        'as' => 'login',
+        'uses' => 'UserController@login'));
     Route::post('/login', array(
         'as' => 'channel.login.request',
+        'uses' => 'UserController@loginRequest'));
+    Route::post('/login-2', array(
+        'as' => 'login',
         'uses' => 'UserController@loginRequest'));
     Route::get('/user/active/{code}', array(
         'as' => 'channel.user.active.code',
@@ -687,6 +696,9 @@ Route::group(['domain' => '{domain}'], function()
         'uses' => 'Auth\PasswordController@forgotPassword'));
     Route::post('/forgotpassword', array(
         'as' => 'forgot.password.request',
+        'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
+    Route::post('/forgotpassword-2', array(
+        'as' => 'password.reset',
         'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
     Route::get('/password/reset/{token}', array(
         'as' => 'forgot.password.reset',

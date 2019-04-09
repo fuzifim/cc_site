@@ -730,7 +730,7 @@ class UserController extends ConstructController
 				//dd($user); 
 				//Auth::attempt(['id' => $getUserRedirect->user->id, 'password' => $getUserRedirect->user->password]); 
 				User_login_redirect::where('user_id','=',$getUserRedirect->user->id)->delete(); 
-				return redirect()->to($urlRedirect);
+				return redirect()->to('http://'.$urlRedirect);
 			}else{
 				return Redirect::route('channel.home',$this->_domainPrimary);
 			}

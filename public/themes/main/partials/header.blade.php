@@ -25,6 +25,7 @@
 		<meta property="og:image" content="{!! Theme::get('image') !!}" />
 		<meta property="og:image:width" content="720" />
 		<meta property="og:image:height" content="480" />
+		<meta name="google-site-verification" content="1vCnzxB3YhO_OfTffci7DZWSdxsnt7YGzgRvZiqtZUs" />
 		@if(Theme::get('video'))<meta property="og:video" content="{!! Theme::get('video') !!}" />@endif 
 		<link rel="alternate" type="application/rss+xml" title="Cung Cấp RSS" href="https://{{config('app.url')}}/rss/" />
         {!! Theme::asset()->styles() !!}

@@ -12,11 +12,78 @@ use App\Model\Keywords;
 use App\Model\Channel; 
 use App\Model\Node; 
 use Carbon\Carbon;
+use DB;
 class SitemapsController extends ConstructController
 {
 	public function __construct(){
 		parent::__construct(); 
 	}
+    public function sitemap(){
+        //return false;
+        if($this->_parame['type']=='_category.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_category',1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_keyword')
+                    ->select('keyword')
+                    ->where('craw_next','exists',true)
+                    ->orderBy('updated_at','desc')
+                    ->limit(200)->get();
+            });
+        }else if($this->_parame['type']=='_video.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_video',1, function()
+            {
+                return DB::connection('mongodb')->collection('note')->select('_id','type','title', 'created_at')->where('type','video')
+                    ->orderBy('updated_at','desc')
+                    ->limit(1000)->get();
+            });
+        }else if($this->_parame['type']=='_domain.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_domain',1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_domain')
+                    ->select('domain')
+                    ->where('craw_next','exists',true)
+                    ->orderBy('updated_at','desc')
+                    ->limit(200)->get();
+            });
+        }else if($this->_parame['type']=='_news.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_news',1, function()
+            {
+                return DB::connection('mongodb')->collection('note')->select('_id','type','title', 'created_at')->where('type','news')
+                    ->orderBy('updated_at','desc')
+                    ->limit(1000)->get();
+            });
+        }else if($this->_parame['type']=='_company.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_company',1, function()
+            {
+                //return Note::where('type','company')->where('status','active')->orderBy('created_at','desc')->limit(1000)->get();
+                return DB::connection('mongodb')->collection('note')->select('_id','type','title', 'created_at')->where('type','company')
+                    ->orderBy('updated_at','desc')
+                    ->limit(1000)->get();
+            });
+        }else if($this->_parame['type']=='_product.xml'){
+            $sitemapIndex='false';
+            $getNote = Cache::store('memcached')->remember('sitemap_product',1, function()
+            {
+                return DB::connection('mongodb')->collection('note')->select('_id','type','title', 'created_at')->where('type','affiliate')
+                    ->orderBy('updated_at','desc')
+                    ->limit(1000)->get();
+            });
+        }else{
+            $sitemapIndex='true';
+            $getNote=array();
+        }
+        $data=array(
+            'sitemapIndex'=>$sitemapIndex,
+            'getNote'=>$getNote,
+            'type'=>$this->_parame['type']
+        );
+        return response()->view('sitemap.main.sitemap',$data)->header('Content-Type', 'text/xml');
+    }
     public function index()
     {
 		if($this->_channel->channel_parent_id==0){
