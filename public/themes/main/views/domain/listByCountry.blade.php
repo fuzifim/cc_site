@@ -28,7 +28,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                                     </p>
                                 @endif
                                 @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small><br>@endif
-                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord($item['title']) !!}</span>@endif
+                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord(mb_substr($item['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_DESCRIPTION)) !!}</span>@endif
                             </li>
                             @endforeach
                         </ul>
