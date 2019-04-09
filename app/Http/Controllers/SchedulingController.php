@@ -1082,7 +1082,7 @@ class SchedulingController extends Controller
                         'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
                         'craw_next'=>'whois',
                         'title'=>$result['data']['title'],
-                        'description'=>$result['data']['description'],
+                        'description'=>mb_substr($result['data']['description'], 0, \App\Model\Mongo_Image::MAX_LENGTH_DESCRIPTION),
                         'keywords'=>$result['data']['keywords'],
                         'image'=>$result['data']['image'],
                         'get_header'=>$result['data']['get_header'],
