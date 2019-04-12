@@ -96,10 +96,20 @@ class KeywordsController extends ConstructController
                 return $this->_theme->scope('404notfoundKeyword', $return)->render();
             }
         }else{
-            $return=array(
-                'keyword'=>$this->_keyword
-            );
-            return $this->_theme->scope('404notfoundKeyword', $return)->render();
+            $parsedUrl=parse_url($this->_keyword);
+            if(!empty($parsedUrl['host'])){
+                $domain=$this->_rulesDomain->resolve($parsedUrl['host']);
+            }else{
+                $domain=$this->_rulesDomain->resolve($this->_keyword);
+            }
+            if(!empty($domain->getRegistrableDomain())){
+                return redirect()->to('http://'.$domain->getRegistrableDomain().'.d.'.config('app.url'));
+            }else{
+                $return=array(
+                    'keyword'=>$this->_keyword
+                );
+                return $this->_theme->scope('404notfoundKeyword', $return)->render();
+            }
         }
 	}
 	public function redirectIndex()
