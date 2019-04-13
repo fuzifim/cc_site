@@ -42,9 +42,15 @@ class SiteController extends ConstructController
                         ->where('domain',$site['domain'])
                         ->limit(10)->get();
                 });
+                $domain = Cache::store('memcached')->remember('domainInfoSite_'.$this->_parame['id'], 1, function() use($site)
+                {
+                    return DB::connection('mongodb')->collection('mongo_domain')
+                        ->where('base_64',base64_encode($site['domain']))->first();
+                });
                 $return=array(
                     'site'=>$site,
-                    'siteRelate'=>$siteRelate
+                    'siteRelate'=>$siteRelate,
+                    'domain'=>$domain
                 );
                 return Theme::view('site.show',$return);
             }else if(!empty($this->_parame['slug'])){
