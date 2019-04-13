@@ -327,7 +327,7 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                 Site relate for {!! $domain['domain'] !!}
                             </div>
                             <ul class="list-group">
-                                {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false))!!}
+                                {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false,'ads'=>'false'))!!}
                             </ul>
                         </div>
                     @endif

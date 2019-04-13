@@ -68,7 +68,7 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
                         Site relate for {!! $site['domain'] !!}
                     </div>
                     <ul class="list-group">
-                        {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>true))!!}
+                        {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>true,'ads'=>$ads))!!}
                     </ul>
                 </div>
             @endif
