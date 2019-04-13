@@ -28,6 +28,7 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
             @else
                 <h1><strong>{!! $site['title'] !!}</strong></h1>
             @endif
+            <p>Domain: <i class="glyphicon glyphicon-globe"></i> <a href="http://{!! $site['domain'] !!}.d.{!! config('app.url') !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a></p>
             <?php
             if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
@@ -68,7 +69,7 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
                         Site relate for {!! $site['domain'] !!}
                     </div>
                     <ul class="list-group">
-                        {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>true,'ads'=>$ads))!!}
+                        {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false,'ads'=>$ads))!!}
                     </ul>
                 </div>
             @endif
