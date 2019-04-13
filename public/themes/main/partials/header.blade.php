@@ -21,7 +21,7 @@
 		<meta property="og:title" content="{!! Theme::get('title') !!}">
 		<meta property="og:description" content="{!! Theme::get('description') !!}">
 		<meta property="og:type" content="{!! Theme::get('type') !!}">
-		<meta property="og:url" content="{!! Theme::get('url') !!}">
+		@if(!empty(Theme::get('canonical')))<meta property="og:url" content="{!! Theme::get('canonical') !!}">@endif
 		<meta property="og:image" content="{!! Theme::get('image') !!}" />
 		<meta property="og:image:width" content="720" />
 		<meta property="og:image:height" content="480" />

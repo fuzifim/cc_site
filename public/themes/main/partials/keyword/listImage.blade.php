@@ -14,6 +14,12 @@
                     $image=DB::connection('mongodb')->collection('mongo_image')
                         ->where('_id', (string)$imageRelate)->first();
                     ?>
+
+                    @if(empty($keyword['image']))
+                        <?php
+                        Theme::setImage('https:'.$image['attribute']['image']);
+                        ?>
+                    @endif
                     <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['image']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
                     <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>
                     <?php break; ?>

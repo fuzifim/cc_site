@@ -5,6 +5,7 @@
     <ul class="list-group">
         <?php
             $i=0;
+            $description='';
         ?>
         @foreach($keyword['site_relate'] as $siteRelate)
             <?php
@@ -13,6 +14,11 @@
                     ->where('_id', (string)$siteRelate)->first();
             ?>
             @if(!empty($site['title']))
+                @if(empty($keyword['description']) && $i<=3)
+                    <?php
+                        $description=$description.' '.$site['title'];
+                    ?>
+                @endif
                 @if($i==3 || $i==8)
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
@@ -43,6 +49,11 @@
                 </li>
             @endif
         @endforeach
+        @if(empty($keyword['description']) && !empty($description))
+            <?php
+                Theme::setDescription($description);
+            ?>
+        @endif
     </ul>
 
 </div>
