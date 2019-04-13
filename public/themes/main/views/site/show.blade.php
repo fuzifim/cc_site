@@ -8,6 +8,8 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
 }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
     $ads='false';
 }
+?>
+
 @if($ads=='true' && config('app.env')!='local')
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
@@ -17,7 +19,6 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
         });
     </script>
 @endif
-?>
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
