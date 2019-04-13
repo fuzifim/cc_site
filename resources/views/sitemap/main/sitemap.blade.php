@@ -14,7 +14,7 @@
 		@if(count($getNote))
 		@foreach($getNote as $item)
 		<url>
-			<loc>{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($item['keyword']))) !!}</loc>
+			<loc>{!! rroute('keyword.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}</loc>
 		</url>
 		@endforeach
 
@@ -33,18 +33,9 @@
 	@else
 	<url>
         <loc>https://{{config('app.url')}}/sitemap_category.xml</loc>
-    </url> 
-	<url>
-        <loc>https://{{config('app.url')}}/sitemap_video.xml</loc>
-    </url> 
+    </url>
 	<url>
         <loc>https://{{config('app.url')}}/sitemap_domain.xml</loc>
-    </url> 
-	<url>
-        <loc>https://{{config('app.url')}}/sitemap_company.xml</loc>
-    </url> 
-	<url>
-        <loc>https://{{config('app.url')}}/sitemap_news.xml</loc>
-    </url> 
+    </url>
 @endif
 </urlset>
