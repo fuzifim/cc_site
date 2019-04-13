@@ -7,7 +7,11 @@ Theme::setCanonical(route('site.show.id',array($channel['domainPrimary'],$site['
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
         <div class="pageheader form-group">
-            <h1><strong>{!! $site['title'] !!}</strong></h1>
+            @if(!empty($site['title_full']))
+                <h1><strong>{!! $site['title_full'] !!}</strong></h1>
+            @else
+                <h1><strong>{!! $site['title'] !!}</strong></h1>
+            @endif
             <?php
             if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
