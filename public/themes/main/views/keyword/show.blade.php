@@ -30,7 +30,17 @@
 	if(empty($keyword['site_relate']) && empty($keyword['image_relate']) && empty($keyword['video_relate'])){
 		$showEmpty=true;
 	}
+	$ads=true;
 ?>
+@if($ads=='true' && config('app.env')!='local')
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({
+			google_ad_client: "ca-pub-6739685874678212",
+			enable_page_level_ads: true
+		});
+	</script>
+@endif
 <section>
 	<div class="mainpanel">
 		{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
@@ -70,6 +80,18 @@
 					@if($showEmpty==true)
 						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào!
 					@endif
+					@if($ads=='true' && config('app.env')!='local')
+						<div class="form-group">
+							<ins class="adsbygoogle"
+								 style="display:block"
+								 data-ad-client="ca-pub-6739685874678212"
+								 data-ad-slot="7536384219"
+								 data-ad-format="auto"></ins>
+							<script>
+								(adsbygoogle = window.adsbygoogle || []).push({});
+							</script>
+						</div>
+					@endif
 					@if($showListImage==1)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
 					@endif
@@ -79,10 +101,34 @@
 						@endif
 					@endif
 					@if($showListVideo==1)
+						@if($ads=='true' && config('app.env')!='local')
+							<div class="form-group">
+								<ins class="adsbygoogle"
+									 style="display:block"
+									 data-ad-client="ca-pub-6739685874678212"
+									 data-ad-slot="7536384219"
+									 data-ad-format="auto"></ins>
+								<script>
+									(adsbygoogle = window.adsbygoogle || []).push({});
+								</script>
+							</div>
+						@endif
 						<div class="row row-pad-5">
 							<div class="col-md-9">
 								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword))!!}
 								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
+								@if($ads=='true' && config('app.env')!='local')
+									<div class="form-group">
+										<ins class="adsbygoogle"
+											 style="display:block"
+											 data-ad-client="ca-pub-6739685874678212"
+											 data-ad-slot="7536384219"
+											 data-ad-format="auto"></ins>
+										<script>
+											(adsbygoogle = window.adsbygoogle || []).push({});
+										</script>
+									</div>
+								@endif
 								{!!Theme::partial('keyword.listVideo_2', array('keyword' => $keyword,'from'=>4,'to'=>4))!!}
 							</div>
 							<div class="col-md-3">
@@ -90,7 +136,19 @@
 							</div>
 						</div>
 					@elseif($showListVideo==2)
-							{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
+						{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
+						@if($ads=='true' && config('app.env')!='local')
+							<div class="form-group">
+								<ins class="adsbygoogle"
+									 style="display:block"
+									 data-ad-client="ca-pub-6739685874678212"
+									 data-ad-slot="7536384219"
+									 data-ad-format="auto"></ins>
+								<script>
+									(adsbygoogle = window.adsbygoogle || []).push({});
+								</script>
+							</div>
+						@endif
 					@endif
 					@if($showListImage==2)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
