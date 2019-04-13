@@ -35,7 +35,9 @@ class SiteController extends ConstructController
             if(!empty($site['title'])){
                 DB::connection('mongodb')->collection('mongo_site')
                     ->where('_id',(string)$site['_id'])
-                    ->increment('view', 1);
+                    ->update([
+                        'view'=>(int)$site['view']+1
+                    ]);
                 $siteRelate=Cache::store('memcached')->remember('site_relate_'.base64_encode($site['domain']), 1, function() use($site)
                 {
                     return DB::connection('mongodb')->collection('mongo_site')
