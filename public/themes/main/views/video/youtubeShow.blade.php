@@ -3,7 +3,17 @@ Theme::setTitle('Cung cấp video '.$video['title']);
 Theme::setDescription($video['description']);
 Theme::setImage('https:'.$video['image']);
 Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))));
+$ads='true';
 ?>
+@if($ads=='true' && config('app.env')!='local')
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-6739685874678212",
+            enable_page_level_ads: true
+        });
+    </script>
+@endif
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
@@ -48,6 +58,18 @@ Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPri
                             <p>{!! $video['description'] !!}</p>
                         </div>
                     </div>
+                    @if($ads=='true' && config('app.env')!='local')
+                        <div class="form-group">
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-6739685874678212"
+                                 data-ad-slot="7536384219"
+                                 data-ad-format="auto"></ins>
+                            <script>
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
+                        </div>
+                    @endif
                     @if(count($videoParent))
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -70,6 +92,18 @@ Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPri
                 </div>
                 <div class="col-md-4">
                     @if(count($videoParent))
+                        @if($ads=='true' && config('app.env')!='local')
+                            <div class="form-group">
+                                <ins class="adsbygoogle"
+                                     style="display:block"
+                                     data-ad-client="ca-pub-6739685874678212"
+                                     data-ad-slot="7536384219"
+                                     data-ad-format="auto"></ins>
+                                <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
+                            </div>
+                        @endif
                         <div class="panel panel-primary">
                             @foreach(array_slice($videoParent, 12, 8) as $item)
                                 <li class="list-group-item">

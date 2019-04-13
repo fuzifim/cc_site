@@ -30,7 +30,7 @@
 	if(empty($keyword['site_relate']) && empty($keyword['image_relate']) && empty($keyword['video_relate'])){
 		$showEmpty=true;
 	}
-	$ads=true;
+	$ads='true';
 ?>
 @if($ads=='true' && config('app.env')!='local')
 	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
