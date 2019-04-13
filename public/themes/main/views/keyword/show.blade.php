@@ -106,7 +106,7 @@
 							@if(empty($keywordRe['craw_next']))
 								<span class="badge">{!! $keywordRe['keyword'] !!}</span>
 							@else
-								<span><a class="badge" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keywordRe['_id'],str_slug(mb_substr($keywordRe['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
+								<span><a class="badge progress-bar-success" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keywordRe['_id'],str_slug(mb_substr($keywordRe['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
 							@endif
 
 							@endforeach
