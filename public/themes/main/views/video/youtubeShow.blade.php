@@ -33,7 +33,7 @@ Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPri
                     ?>
                     <p>Parent <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $video['parent'] !!}</a></p>
                 @else
-                    <p>Parent <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $video['parent'] !!}</a></p>
+                    <p>Parent <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$video['parent_id'],str_slug(mb_substr($video['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $video['parent'] !!}</a></p>
                 @endif
             @endif
         </div>
