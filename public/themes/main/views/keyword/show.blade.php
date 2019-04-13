@@ -1,7 +1,7 @@
 <?
 	$setKeyword=[];
 	if(!empty($keyword['keyword'])){
-		Theme::setCanonical(route('keyword.show',array(config('app.url'),WebService::characterReplaceUrl($keyword['keyword']))));
+		Theme::setCanonical(route('keyword.show.id',array($channel['domainPrimary'],$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))));
 		Theme::setTitle('Cung cấp '.$keyword['keyword']);
 	}
 	if(!empty($keyword['description'])){
@@ -45,14 +45,30 @@
 			?>
 			<small>Updated at {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>Views: {!! $keyword['view'] !!}</strong></small>@endif
 			@if(!empty($keyword['parent']))
-				<p>Parent <a href="{{route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['parent'])))}}">{!! $keyword['parent'] !!}</a></p>
+				@if(empty($keyword['parent_id']))
+					<?php
+					$parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+							->where('base_64', base64_encode($keyword['parent']))->first();
+					DB::connection('mongodb')->collection('mongo_keyword')
+						->where('_id',(string)$keyword['_id'])
+						->update(
+							[
+								'parent_id'=>(string)$parentKey['_id']
+							]
+						);
+
+					?>
+					<p>Parent <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['parent'] !!}</a></p>
+				@else
+					<p>Parent <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['parent'] !!}</a></p>
+				@endif
 			@endif
 		</div>
 		<div class="container">
 			<div class="row row-pad-5">
 				<div class="col-md-12">
 					@if($showEmpty==true)
-						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào! 
+						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào!
 					@endif
 					@if($showListImage==1)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
@@ -87,7 +103,7 @@
 								$keywordRe=DB::connection('mongodb')->collection('mongo_keyword')
 										->where('_id', (string)$keywordRelate)->first();
 								?>
-								<span><a class="badge" href="{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keywordRe['keyword']))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
+								<span><a class="badge" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keywordRe['_id'],str_slug(mb_substr($keywordRe['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keywordRe['keyword'] !!}</a></span>
 							@endforeach
 						</div>
 					@endif

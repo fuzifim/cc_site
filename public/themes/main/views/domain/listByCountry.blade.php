@@ -28,7 +28,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                                     </p>
                                 @endif
                                 @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small><br>@endif
-                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord(mb_substr($item['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_DESCRIPTION)) !!}</span>@endif
+                                @if(!empty($item['title']))<span>{!! WebService::renameBlacklistWord(mb_substr($item['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE)) !!}</span>@endif
                             </li>
                             @endforeach
                         </ul>
@@ -63,7 +63,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                             </div>
                             @foreach($keywordNewUpdate as $keyword)
                                 <li class="list-group-item">
-                                    <a href="{!! route('keyword.show',array($channel['domainPrimary'],WebService::characterReplaceUrl($keyword['keyword']))) !!}">{!! $keyword['keyword'] !!}</a><br>
+                                    <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['keyword'] !!}</a><br>
                                     <small class="text-muted">Updated at {!! $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s') !!}</small>
                                 </li>
                             @endforeach

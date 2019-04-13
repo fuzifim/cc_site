@@ -321,6 +321,16 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             </div>
                         </div>
                     @endif
+                    @if(count($siteRelate))
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Site relate for {!! $domain['domain'] !!}
+                            </div>
+                            <ul class="list-group">
+                                {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false))!!}
+                            </ul>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

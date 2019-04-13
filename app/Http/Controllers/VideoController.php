@@ -49,4 +49,30 @@ class VideoController extends ConstructController
             return Theme::view('video.youtubeShow',$return);
         }
     }
+    public function videoShowByIdSlug(){
+        if(!empty($this->_parame['yId'])){
+            $video = Cache::store('memcached')->remember('infoVideoYoutube_'.$this->_parame['yId'], 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_video')
+                    ->where('yid',$this->_parame['yId'])->first();
+            });
+            if(!empty($video['yid'])){
+                $videoParent=[];
+                if(!empty($video['parent'])){
+                    $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent_'.base64_encode($video['parent']).'_'.$video['_id'], 1, function() use($video)
+                    {
+                        return DB::connection('mongodb')->collection('mongo_video')
+                            ->where('parent',$video['parent'])
+                            ->where('_id','!=',(string)$video['_id'])
+                            ->get()->toArray();
+                    });
+                }
+                $return=array(
+                    'video'=>$video,
+                    'videoParent'=>$videoParent
+                );
+                return Theme::view('video.youtubeShow',$return);
+            }
+        }
+    }
 }

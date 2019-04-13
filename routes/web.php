@@ -103,6 +103,12 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/video/{yId}', array(
         'as' => 'video.youtube.view',
         'uses' => 'VideoController@viewVideoYoutubeById'));
+    Route::get('/video/{yId}/{slug}', array(
+        'as' => 'video.youtube.view.id.slug',
+        'uses' => 'VideoController@videoShowByIdSlug'));
+    Route::get('/site/{id}/{slug}', array(
+        'as' => 'site.show.id',
+        'uses' => 'SiteController@siteShowByIdSlug'));
     Route::get('/sitemap{type}', array(
         'as' => 'sitemap',
         'uses' => 'SitemapsController@sitemap'));
@@ -198,6 +204,9 @@ Route::group(['domain' => '{domain}'], function()
         Route::get('/', array(
             'as' => 'keyword.list',
             'uses' => 'KeywordsController@index'));
+        Route::get('/{id}/{slug}', array(
+            'as' => 'keyword.show.id',
+            'uses' => 'KeywordsController@showById'));
         Route::get('/{slug}', array(
             'as' => 'keyword.show',
             'uses' => 'KeywordsController@show'));

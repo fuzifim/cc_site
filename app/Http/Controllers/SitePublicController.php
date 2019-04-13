@@ -218,14 +218,20 @@ class SitePublicController extends ConstructController
                 DB::connection('mongodb')->collection('mongo_domain')
                     ->where('base_64',base64_encode($this->_domainInfo))
                     ->increment('view', 1);
-                $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+                $siteRelate=Cache::store('memcached')->remember('site_relate_'.base64_encode($this->_domainInfo), 1, function() use($domain)
                 {
-                    return DB::connection('mongodb')->collection('mongo_domain')
-                        //->where('status','active')
-                        ->where('craw_next','exists',true)
-                        ->orderBy('updated_at','desc')
-                        ->limit(20)->get();
+                    return DB::connection('mongodb')->collection('mongo_site')
+                        ->where('domain',$domain['domain'])
+                        ->limit(10)->get();
                 });
+//                $newDomain=Cache::store('memcached')->remember('newDomain', 1, function()
+//                {
+//                    return DB::connection('mongodb')->collection('mongo_domain')
+//                        //->where('status','active')
+//                        ->where('craw_next','exists',true)
+//                        ->orderBy('updated_at','desc')
+//                        ->limit(20)->get();
+//                });
 //                if(!empty($domain['title'])){
 //                    $rake = RakePlus::create($domain['title']);
 //                    $phrase_scores = $rake->sortByScore('desc')->scores();
@@ -244,7 +250,7 @@ class SitePublicController extends ConstructController
 //                dd($this->_keyword);
                 $return=array(
                     'domain'=>$domain,
-                    'newDomain'=>$newDomain
+                    'siteRelate'=>$siteRelate
                 );
                 return $this->_theme->scope('domain.viewInfo', $return)->render();
             }else{

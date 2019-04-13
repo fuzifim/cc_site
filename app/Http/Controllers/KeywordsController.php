@@ -38,6 +38,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Cache;
 use Theme;
+use App\Model\Mongo_keyword;
 class KeywordsController extends ConstructController
 {
 	public $_keyword; 
@@ -112,6 +113,29 @@ class KeywordsController extends ConstructController
             }
         }
 	}
+	public function showById(){
+	    if(!empty($this->_parame['id'])){
+            $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
+                ->where('_id', $this->_parame['id'])->first();
+            if(!empty($getKeyword['keyword'])){
+                DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('_id',$this->_parame['id'])
+                    ->increment('view', 1);
+                $return=array(
+                    'keyword'=>$getKeyword
+                );
+                return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
+                {
+                    return Theme::view('keyword.show', $return);
+                });
+            }else{
+                $return=array(
+                    'keyword'=>'Keyword notfound'
+                );
+                return $this->_theme->scope('404notfoundKeyword', $return)->render();
+            }
+        }
+    }
 	public function redirectIndex()
     {
 		return Redirect::route('keyword.list',$this->_domainPrimary,301);

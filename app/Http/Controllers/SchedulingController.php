@@ -387,6 +387,7 @@ class SchedulingController extends Controller
                                 ->insertGetId(
                                     [
                                         'parent'=>$item['keyword'],
+                                        'parent_id'=>(string)$item['_id'],
                                         'keyword' => $keyword,
                                         'base_64' => base64_encode($keyword),
                                         'description'=>'',
