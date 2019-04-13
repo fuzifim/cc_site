@@ -97,7 +97,7 @@
 					@endif
 					@if($showListVideo==0)
 						@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
-							{!!Theme::partial('keyword.listSite', array('keyword' => $keyword))!!}
+							{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 						@endif
 					@endif
 					@if($showListVideo==1)
@@ -115,7 +115,7 @@
 						@endif
 						<div class="row row-pad-5">
 							<div class="col-md-9">
-								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword))!!}
+								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
 								@if($ads=='true' && config('app.env')!='local')
 									<div class="form-group">
