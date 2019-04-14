@@ -99,11 +99,23 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-        $getSite=DB::connection('mongodb')->collection('mongo_keyword')
-            ->where('craw_next','step_5')
-            //->where('image_size','exists',true)
-            //->orderBy('updated_at','desc')
-            ->limit(5)->get();
+//        $getSite=DB::connection('mongodb')->collection('mongo_keyword')
+//            ->where('craw_next','step_5')
+//            //->where('image_size','exists',true)
+//            //->orderBy('updated_at','desc')
+//            ->limit(5)->get();
+//        dd($getSite);
+        $getSite= DB::connection('mongodb')->collection('mongo_keyword')
+            ->whereNotExists(function($query)
+            {
+                $query->select(DB::raw(1))
+                    ->from('post_to_social')
+                    ->whereRaw('post_to_social.post_id = mongo_keyword._id');
+                    //->where('post_id')
+                    //->whereRaw("id = '100'");
+            })
+            ->limit(5)
+            ->get();
         dd($getSite);
 	}
 	public function test2222222222222222222222(){
