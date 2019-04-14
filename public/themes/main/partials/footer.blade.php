@@ -34,6 +34,13 @@
 						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
 						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
 						</small>
+						<p>
+							@if(count($channel['newKeyword']))
+								@foreach($channel['newKeyword'] as $item)
+									<a class="badge progress-bar-primary mb-1" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['keyword'] !!}</a>
+								@endforeach
+							@endif
+						</p>
 						</div>
 					</div>
 				</div>

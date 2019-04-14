@@ -29,6 +29,7 @@ use Cookie;
 use File; 
 use Cache; 
 use App\Model\Node;
+use DB;
 class ConstructController extends Controller
 {
 	public $_region; 
@@ -61,6 +62,7 @@ class ConstructController extends Controller
 	protected $_user;
 	public $_pieces=array(); 
 	public $_rulesDomain;
+	public $_newKeyword=array();
 	public function __construct(){
         $this->middleware(function ($request, $next) {
             $this->userSecurity();
@@ -143,6 +145,15 @@ class ConstructController extends Controller
             $this->_domainPrimary=config('app.url');
         }
         $this->_domainParentPrimary = config('app.url');
+		if($this->_channel->channel_parent_id==0){
+            $this->_newKeyword=Cache::store('memcached')->remember('newKeyword', 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('craw_next','exists',true)
+                    ->orderBy('updated_at','desc')
+                    ->limit(20)->get();
+            });
+        }
         if($this->_channel->channel_parent_id!=0){
             $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
             $this->_limitSize=$getServiceValue->limit_cloud;
@@ -226,7 +237,8 @@ class ConstructController extends Controller
                 'nameFanpageFacebook'=>mb_strtolower($this->_sociallinkFanpageFacebook),
                 'zaloAccount'=>$this->_socialLinkZalo,
                 'color'=>$this->_channelColor,
-                '_parser'=>$this->_parser
+                '_parser'=>$this->_parser,
+                'newKeyword'=>$this->_newKeyword
             )
         );
     }
