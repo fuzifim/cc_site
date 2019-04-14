@@ -369,6 +369,7 @@ class SchedulingController extends Controller
     }
     public function keywordSuggest(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('app_domain','exists',false)
             ->where('craw_next','step_2')
             ->limit(1)->get();
         foreach($getKeywords as $item){
@@ -431,6 +432,7 @@ class SchedulingController extends Controller
     // Step 2 keyword
     public function keywordCraw(){
         $getKeywords=DB::connection('mongodb')->collection('mongo_keyword')
+            ->where('app_domain','exists',false)
             ->where('craw_next','exists',false)
             ->orderBy('created_at','asc')
             ->limit(1)->get();
