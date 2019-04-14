@@ -2,7 +2,7 @@
 	$setKeyword=[];
 	if(!empty($keyword['keyword'])){
 		Theme::setCanonical(route('keyword.show.id',array($channel['domainPrimary'],$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))));
-		Theme::setTitle('Cung cấp '.$keyword['keyword']);
+		Theme::setTitle($keyword['keyword']);
 	}
 	if(!empty($keyword['description'])){
 		Theme::setDescription($keyword['description']);
