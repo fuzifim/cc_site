@@ -14,7 +14,7 @@
 		@if(count($getNote))
 		@foreach($getNote as $item)
 		<url>
-			<loc>{!! rroute('keyword.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}</loc>
+			<loc>{!! route('keyword.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}</loc>
 		</url>
 		@endforeach
 
