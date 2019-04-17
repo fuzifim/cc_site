@@ -140,16 +140,6 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                             </div>
                         </div>
                     @endif
-                    @if(count($siteRelate))
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                Site relate for {!! $domain['domain'] !!}
-                            </div>
-                            <ul class="list-group">
-                                {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false,'ads'=>'false'))!!}
-                            </ul>
-                        </div>
-                    @endif
                     @if(!empty($domainContent->basic_info))
                         <div class="form-group mt-2">
                             <ul class="nav nav-tabs">
@@ -329,6 +319,16 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                                     <hr>
                                 @endif
                             </div>
+                        </div>
+                    @endif
+                    @if(count($siteRelate))
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Site relate for {!! $domain['domain'] !!}
+                            </div>
+                            <ul class="list-group">
+                                {!!Theme::partial('site.listSite', array('sites' => $siteRelate,'showDomain'=>false,'ads'=>'false'))!!}
+                            </ul>
                         </div>
                     @endif
                 </div>
