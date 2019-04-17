@@ -288,7 +288,8 @@ Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.m
 				$(".channelTheme").append("<div class=\"appendPreload\"><div id=\"preloaderInBox\"><div id=\"status\"><i class=\"fa fa-spinner fa-spin\"></i></div></div></div>"); 
 				var files = $("#changeImageBackground").prop("files")[0];  
 				var formData = new FormData();
-				formData.append("file", files); 
+				formData.append("file", files);
+				formData.append("postType", "background");
 				$.ajax({
 					url: "'.route("channel.upload.file",$channel["domain"]->domain).'",
 					type: "post", 

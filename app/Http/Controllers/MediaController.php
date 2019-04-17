@@ -623,7 +623,7 @@ class MediaController extends ConstructController
 			$im = new Imagick($file_path);
 			if($mime == "image/gif"){
 				$im = $im->coalesceImages(); 
-				if($demention[0] >1280){
+				if($demention[0] >1280 && $postType!='background'){
 					foreach ($im as $frame) { 
 						$frame->resizeImage( 1280 , null , Imagick::FILTER_LANCZOS, 1, TRUE);
 					} 
@@ -636,7 +636,7 @@ class MediaController extends ConstructController
 				}
 				$im = $im->deconstructImages(); 
 			}else{
-				if($demention[0] >1280){
+				if($demention[0] >1280 && $postType!='background'){
 					$im->resizeImage(1280, null, Imagick::FILTER_LANCZOS, 1);
 				}
 				$im->setImageCompression(Imagick::COMPRESSION_JPEG);
