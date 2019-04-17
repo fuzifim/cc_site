@@ -372,7 +372,7 @@
 							@if($channel['security']==true)
 								<a href="" class="delBannerChannel"  data-id="{{$banner->media->id}}" style="position:absolute; right:5px; top:5px; display:none;z-index:1;"><span class="label label-danger"><i class="glyphicon glyphicon-trash"></i> Xóa</span></a>
 							@endif
-							<img class="imageShow img-responsive bannerSite lazy" src="@if(!empty($banner->media->media_name)){{config('app.link_media').$banner->media->media_path.$banner->media->media_name}}@endif" url-lg="{{config('app.link_media').$banner->media->media_path.$banner->media->media_name}}" alt="{!!$channel['info']->channel_name!!}">
+							<img class="imageShow img-responsive bannerSite lazy" src="@if(!empty($banner->media->media_name)){{config('app.link_media').$banner->media->media_path.'thumb/'.$banner->media->media_name}}@endif" url-lg="{{config('app.link_media').$banner->media->media_path.$banner->media->media_name}}" alt="{!!$channel['info']->channel_name!!}">
 						</div>
 						@endforeach
 						

@@ -26,7 +26,7 @@
 		<meta property="og:image:height" content="480" />
 		@if(Theme::get('video'))<meta property="og:video" content="{!! Theme::get('video') !!}" />@endif
         {!! Theme::asset()->styles() !!}
-		<link media="all" type="text/css" rel="stylesheet" href="{!!Theme::asset()->url('css/style.default.css')!!}?v=57">
+		<link media="all" type="text/css" rel="stylesheet" href="{!!Theme::asset()->url('css/style.default.css')!!}?v=58">
 		<style>
 			@if(!empty($channel['color']->channelTitle)) 
 				section{background:{{$channel['color']->channelTitle}}; }  

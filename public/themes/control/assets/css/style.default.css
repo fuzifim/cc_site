@@ -304,7 +304,7 @@ div.error label.error:before{font-family:'Glyphicons Halflings';content:'\e101';
 .widget-todo .todo-list li input:checked + label{text-decoration:line-through;}
 .widget-todo .todo-list .todo-form{padding-bottom:15px;}
 .widget-todo .todo-list li .btn{margin:0;padding:6px 10px;}
-.bannerSite{width:100%; height:350px;}
+.bannerSite{width:100%; max-height:350px;}
 .widget-slider .carousel-control.right,
 .widget-slider .carousel-control.left{background:none;}
 .widget-slider .carousel-control{width:auto;text-shadow:none;color:#000;bottom:0;top:auto;padding:0;line-height:normal;z-index:1;}
