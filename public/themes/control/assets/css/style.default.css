@@ -658,7 +658,7 @@ div.error label.error:before{font-family:'Glyphicons Halflings';content:'\e101';
 .headerbar .topnav > ul > li .dropdown-menu > li > a:hover{background:#1CAF9A;color:#fff;}
 .headerbar .topnav > ul > li .dropdown-menu i{display:none;}
 .fixed{background:#c9cccf;}
-section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;background:#1D2939;}
+section{margin:auto;max-width:1170px;position:relative;background:#1D2939;}
 .fixed .rightpanel{background:#1D2939;}
 .fixed-noleft .leftpanel{display:none;}
 .fixed-noleft .mainpanel{margin-left:0;}
