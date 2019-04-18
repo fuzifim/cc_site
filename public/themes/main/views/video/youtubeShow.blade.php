@@ -81,7 +81,7 @@ $ads='true';
                                         @foreach($chunk as $item)
                                             <div class="col-md-3">
                                                 <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                                <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Cung cấp video {!! $item['title'] !!}</a> </strong>
+                                                <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
                                             </div>
                                         @endforeach
                                     </div>
@@ -108,7 +108,7 @@ $ads='true';
                             @foreach(array_slice($videoParent, 12, 8) as $item)
                                 <li class="list-group-item">
                                     <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                    <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Cung cấp video {!! $item['title'] !!}</a> </strong>
+                                    <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
                                 </li>
                             @endforeach
                         </div>
