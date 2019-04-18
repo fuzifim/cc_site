@@ -10,7 +10,7 @@
                     ->where('_id', (string)$videoRelate)->first();
                 ?>
                 @if(!empty($video['title']))
-                    <div class="col-md-3 col-xs-3">
+                    <div class="col-md-3">
                         <a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
                         <?php
                         if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
