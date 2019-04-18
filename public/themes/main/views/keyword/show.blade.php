@@ -115,7 +115,6 @@
 						@endif
 						<div class="row row-pad-5">
 							<div class="col-md-9">
-								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
 								@if($ads=='true' && config('app.env')!='local')
 									<div class="form-group">
@@ -130,6 +129,7 @@
 									</div>
 								@endif
 								{!!Theme::partial('keyword.listVideo_2', array('keyword' => $keyword,'from'=>4,'to'=>4))!!}
+								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 							</div>
 							<div class="col-md-3">
 								{!!Theme::partial('keyword.listVideo_3', array('keyword' => $keyword,'from'=>8,'to'=>12))!!}
