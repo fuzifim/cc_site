@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\Paginator;
-use Request;
 use Illuminate\Support\Str;
 use Auth;
 use App\User; 
@@ -93,20 +92,26 @@ class PostsController extends ConstructController
 		parent::__construct(); 
 	}
 	/*-- new --*/
-	public function postList(){
-		$posts=Posts::where('posts.posts_status','=','active')
-			//->where('posts.posts_type','=',0)
-			->join('posts_join_channel','posts_join_channel.posts_id','=','posts.id')
-			//->where('posts_join_channel.channel_id','=',$this->_channel->id)
-			->join('channel','channel.id','=','posts_join_channel.channel_id')
-			->where('channel.channel_status','!=','delete')
-			//->where('channel.channel_date_end','>=',Carbon::now()->format('Y-m-d H:i:s')) 
-			//->where('channel.service_attribute_id','!=',1) 
-			//->groupBy('posts.id')
-			->orderBy('posts.posts_updated_at','desc')
-			->select('posts.*')
-            ->simplepaginate(18);
-			$posts->setPath(route('post.list',$this->_domainPrimary));
+	public function postList(Request $request){
+        $page = $request->has('page') ? $request->query('page') : 1;
+        $posts=Cache::store('memcached')->remember('post_list_'.$page, 1, function()
+        {
+            $posts=Posts::where('posts.posts_status','=','active')
+                //->where('posts.posts_type','=',0)
+                ->join('posts_join_channel','posts_join_channel.posts_id','=','posts.id')
+                //->where('posts_join_channel.channel_id','=',$this->_channel->id)
+                ->join('channel','channel.id','=','posts_join_channel.channel_id')
+                ->where('channel.channel_status','!=','delete')
+                //->where('channel.channel_date_end','>=',Carbon::now()->format('Y-m-d H:i:s'))
+                //->where('channel.service_attribute_id','!=',1)
+                //->groupBy('posts.id')
+                ->orderBy('posts.posts_updated_at','desc')
+                ->select('posts.*')
+                ->simplepaginate(18);
+            $posts->setPath(route('post.list',$this->_domainPrimary));
+            return $posts;
+        });
+
 		$return=array(
 			'posts'=>$posts
 		); 
