@@ -92,29 +92,32 @@
 							</script>
 						</div>
 					@endif
-					@if($showListImage==1)
-						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
-					@endif
 					@if($showListVideo==0)
+						@if($showListImage==1)
+							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
+						@endif
 						@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
 							{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 						@endif
 					@endif
 					@if($showListVideo==1)
-						@if($ads=='true' && config('app.env')!='local')
-							<div class="form-group">
-								<ins class="adsbygoogle"
-									 style="display:block"
-									 data-ad-client="ca-pub-6739685874678212"
-									 data-ad-slot="7536384219"
-									 data-ad-format="auto"></ins>
-								<script>
-									(adsbygoogle = window.adsbygoogle || []).push({});
-								</script>
-							</div>
-						@endif
 						<div class="row row-pad-5">
 							<div class="col-md-9">
+								@if($ads=='true' && config('app.env')!='local')
+									<div class="form-group">
+										<ins class="adsbygoogle"
+											 style="display:block"
+											 data-ad-client="ca-pub-6739685874678212"
+											 data-ad-slot="7536384219"
+											 data-ad-format="auto"></ins>
+										<script>
+											(adsbygoogle = window.adsbygoogle || []).push({});
+										</script>
+									</div>
+								@endif
+								@if($showListImage==1)
+									{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
+								@endif
 								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
 								@if($ads=='true' && config('app.env')!='local')
 									<div class="form-group">
@@ -136,7 +139,9 @@
 							</div>
 						</div>
 					@elseif($showListVideo==2)
-						{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
+						@if($showListImage==1)
+							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
+						@endif
 						@if($ads=='true' && config('app.env')!='local')
 							<div class="form-group">
 								<ins class="adsbygoogle"
@@ -149,9 +154,22 @@
 								</script>
 							</div>
 						@endif
+						{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
 					@endif
 					@if($showListImage==2)
 						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
+						@if($ads=='true' && config('app.env')!='local')
+							<div class="form-group">
+								<ins class="adsbygoogle"
+									 style="display:block"
+									 data-ad-client="ca-pub-6739685874678212"
+									 data-ad-slot="7536384219"
+									 data-ad-format="auto"></ins>
+								<script>
+									(adsbygoogle = window.adsbygoogle || []).push({});
+								</script>
+							</div>
+						@endif
 					@endif
 					@if(!empty($keyword['keyword_relate']) && count($keyword['keyword_relate'])>0)
 						<div class="form-group">
