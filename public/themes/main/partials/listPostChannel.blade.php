@@ -3,7 +3,8 @@
 	@if(!empty($post->id))
 	<?
 		$postLink='';
-		if(!empty($postJoinChannel=$post->postsJoinChannel->channel->id)){
+		if(!empty($post->postsJoinChannel->channel->id)){
+			$postJoinChannel=$post->postsJoinChannel->channel;
 			$domainPrimary = Cache::store('file')->rememberForever('domainPrimary_post'.$post->id, function() use($postJoinChannel)
 			{
 				if(!empty($postJoinChannel->domainJoinPrimary->domainPrimary->domain)){
