@@ -26,7 +26,6 @@
 				?>
 				@endforeach
 			</div>
-			{{ $posts->links() }}
 		</div>
 		@endif
 	</div>
