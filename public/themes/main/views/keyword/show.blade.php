@@ -80,18 +80,6 @@
 					@if($showEmpty==true)
 						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào!
 					@endif
-					@if($ads=='true' && config('app.env')!='local')
-						<div class="form-group">
-							<ins class="adsbygoogle"
-								 style="display:block"
-								 data-ad-client="ca-pub-6739685874678212"
-								 data-ad-slot="7536384219"
-								 data-ad-format="auto"></ins>
-							<script>
-								(adsbygoogle = window.adsbygoogle || []).push({});
-							</script>
-						</div>
-					@endif
 					@if($showListVideo==0)
 						@if($showListImage==1)
 							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
