@@ -31,14 +31,13 @@
 						@foreach($getChannel as $subChannel)
 							<?
 								if(!empty($subChannel->domainJoinPrimary->domainPrimary->domain)){
-
 									$domainPrimary=$subChannel->domainJoinPrimary->domainPrimary->domain;
 								}else if(!empty($subChannel->domainJoinPrimary->domain->domain)){
 
 									$domainPrimary=$subChannel->domainJoinPrimary->domain->domain;
 								}else{
 									$domainPrimary=config('app.url');
-									}
+								}
 							?>
 							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 content-list-post">
 							<div class="thmb">

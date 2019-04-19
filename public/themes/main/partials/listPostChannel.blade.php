@@ -2,23 +2,17 @@
 @foreach($chunk as $post)
 	@if(!empty($post->id))
 	<?
-		$postLink=''; 
-		if(!empty($post->postsJoinChannel->channel->id)){
-			$postJoinChannel=$post->postsJoinChannel->channel; 
+		$postLink='';
+		if(!empty($postJoinChannel=$post->postsJoinChannel->channel->id)){
 			$domainPrimary = Cache::store('file')->rememberForever('domainPrimary_post'.$post->id, function() use($postJoinChannel)
 			{
-				if($postJoinChannel->domainJoinPrimary->domain->domain_primary!='default'){
-					if(count($postJoinChannel->domainAll)>0){
-						foreach($postJoinChannel->domainAll as $domain){
-							if($domain->domain->domain_primary=='default'){
-								return $domain->domain->domain; 
-							}
-						}
-					}else{
-						return $postJoinChannel->domainJoinPrimary->domain->domain; 
-					}
+				if(!empty($postJoinChannel->domainJoinPrimary->domainPrimary->domain)){
+					return $postJoinChannel->domainJoinPrimary->domainPrimary->domain;
+				}else if(!empty($postJoinChannel->domainJoinPrimary->domain->domain)){
+
+					return $postJoinChannel->domainJoinPrimary->domain->domain;
 				}else{
-					return $postJoinChannel->domainJoinPrimary->domain->domain; 
+					return config('app.url');
 				}
 			});
 			if($postJoinChannel->channel_parent_id==0){
