@@ -26,7 +26,7 @@
 				?>
 				@endforeach
 			</div>
-			{!!Theme::partial('pagination', array('paginator' => $posts))!!}
+			{{ $posts->links() }}
 		</div>
 		@endif
 	</div>

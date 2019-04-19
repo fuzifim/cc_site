@@ -105,7 +105,7 @@ class PostsController extends ConstructController
 			//->groupBy('posts.id')
 			->orderBy('posts.posts_updated_at','desc')
 			->select('posts.*')
-			->paginate(18); 
+            ->simplepaginate(18);
 			$posts->setPath(route('post.list',$this->_domainPrimary));
 		$return=array(
 			'posts'=>$posts
