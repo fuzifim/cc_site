@@ -87,6 +87,7 @@ use Pdp\PublicSuffixListManager;
 use Pdp\Parser; 
 use App\Http\Controllers\MediaController; 
 use App\Http\Controllers\CategoryController;
+use Cache; 
 class PostsController extends ConstructController
 {
 	public function __construct(){
