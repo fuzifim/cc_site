@@ -15,7 +15,25 @@ class Posts extends Model
 	{
 		return 'post_index';
 	}
-	
+    protected $mappingProperties = array(
+        'posts_title' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'posts_title_convert' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'posts_description'=>array(
+            'type'=>'string',
+            'analyzer'=>'standard'
+        ),
+        'posts_view'=>array(
+            'type'=>'integer',
+            'analyzer'=>'standard'
+        )
+    );
+
 	public function postsTranslate(){
       return $this->hasMany('App\Model\Posts_translate', 'posts_id', 'id'); 
     }

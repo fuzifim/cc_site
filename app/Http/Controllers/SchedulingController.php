@@ -11,6 +11,8 @@ use GuzzleHttp\Client;
 use Cache;
 use Storage;
 use File;
+use App\Model\Posts;
+use App\Model\Channel;
 
 class SchedulingController extends Controller
 {
@@ -26,6 +28,28 @@ class SchedulingController extends Controller
             $rules = \Pdp\Rules::createFromPath($pdp_url);
             return $rules;
         });
+    }
+    public function indexPostElasticsearch(){
+        if(config('app.env')!='local'){
+            $getPost=Posts::where('posts_status','active')
+                ->where('posts_title','!=',null)
+                ->whereNotExists(function ($query){
+                    $query->select(DB::raw(1))
+                        ->from('index_post_elasticsearch')
+                        ->whereRaw('index_post_elasticsearch.posts_id', 'posts.id');
+                })->limit(50)->get();
+            foreach($getPost as $post){
+                $post->addToIndex();
+                DB::table('index_post_elasticsearch')->insertGetId(
+                    [
+                        'posts_id'=>$post->id,
+                        'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
+                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                    ]
+                );
+                echo 'index post '.$post->posts_title.'<p>';
+            }
+        }
     }
     public function UpdateImage(){
         $updateImage=\App\Model\Mongo_Image::where('update_index','exists',false)->limit(500)->get();

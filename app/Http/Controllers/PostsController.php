@@ -87,7 +87,7 @@ use Pdp\PublicSuffixListManager;
 use Pdp\Parser; 
 use App\Http\Controllers\MediaController; 
 use App\Http\Controllers\CategoryController;
-use Cache; 
+use Cache;
 class PostsController extends ConstructController
 {
 	public function __construct(){
@@ -174,9 +174,9 @@ class PostsController extends ConstructController
 		}
 	}
 	public function postAddRequest(){
-		/*return response()->json(['success'=>false,
-			'message'=>'Tính năng này đang bảo trì, vui lòng quay lại sau! ', 
-		]);*/
+//		return response()->json(['success'=>false,
+//			'message'=>'Tính năng này đang bảo trì, vui lòng quay lại sau! ',
+//		]);
 			if(Auth::check()){
 				/*$posts=Posts::where('user_id',Auth::user()->id)
 					->where('posts.posts_status','=','billing')
@@ -407,34 +407,40 @@ class PostsController extends ConstructController
 						));
 					} 
 					if(count($mediaJsonDecode)>0){
-						foreach($mediaJsonDecode as $media){
-							if($media->type=="image"){
-								$mediaControl= new MediaController(); 
-								$getMediaUpload= $mediaControl->uploadFileFromTmp($media->type,$media->fileTmp,$media->mediaIdRandom,$media->destinationPath,$postTitle,$content="",$post->id,$this->_channel->id); 
-								if($getMediaUpload!==false){
-									Posts_attribute::insertGetId(array(
-										'posts_parent_id'=>$post->id, 
-										'posts_attribute_type'=>'gallery', 
-										'posts_attribute_value'=>$getMediaUpload->id, 
-										'posts_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-									));
-								} 
-							}
-							else if($media->type=="video"){
-								$mediaControl= new MediaController(); 
-								$getMediaUpload= $mediaControl->uploadFileFromTmp($media->type,$media->fileTmp,$media->mediaIdRandom,$media->destinationPath,$postTitle,$content="",$post->id,$this->_channel->id); 
-								if($getMediaUpload!==false){
-									Posts_attribute::insertGetId(array(
-										'posts_parent_id'=>$post->id, 
-										'posts_attribute_type'=>'gallery', 
-										'posts_attribute_value'=>$getMediaUpload->id, 
-										'posts_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
-									));
-								}
-							}else if($media->type=="files"){
-								
-							}
-						}
+					    try{
+                            foreach($mediaJsonDecode as $media){
+                                if($media->type=="image"){
+                                    $mediaControl= new MediaController();
+                                    $getMediaUpload= $mediaControl->uploadFileFromTmp($media->type,$media->fileTmp,$media->mediaIdRandom,$media->destinationPath,$postTitle,$content="",$post->id,$this->_channel->id);
+                                    if($getMediaUpload!==false){
+                                        Posts_attribute::insertGetId(array(
+                                            'posts_parent_id'=>$post->id,
+                                            'posts_attribute_type'=>'gallery',
+                                            'posts_attribute_value'=>$getMediaUpload->id,
+                                            'posts_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                                        ));
+                                    }
+                                }
+                                else if($media->type=="video"){
+                                    $mediaControl= new MediaController();
+                                    $getMediaUpload= $mediaControl->uploadFileFromTmp($media->type,$media->fileTmp,$media->mediaIdRandom,$media->destinationPath,$postTitle,$content="",$post->id,$this->_channel->id);
+                                    if($getMediaUpload!==false){
+                                        Posts_attribute::insertGetId(array(
+                                            'posts_parent_id'=>$post->id,
+                                            'posts_attribute_type'=>'gallery',
+                                            'posts_attribute_value'=>$getMediaUpload->id,
+                                            'posts_attribute_created_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                                        ));
+                                    }
+                                }else if($media->type=="files"){
+
+                                }
+                            }
+                        }catch (\Exception $e) {
+                            return response()->json(['success'=>false,
+                                'message'=>'Không thể đăng media! ',
+                            ]);
+                        }
 					}
 					if($this->_channel->channel_parent_id==0){
 						if(count($categoryArray)>0){
@@ -557,11 +563,32 @@ class PostsController extends ConstructController
 					]);
 				}else{ 
 					$post->posts_status='active'; 
-					$post->save(); 
+					$post->save();
+					$checkIndex=DB::table('index_post_elasticsearch')
+                        ->where('posts_id',$post->id)
+                        ->first();
+					if(empty($checkIndex->id)){
+                        $post->addToIndex();
+                        DB::table('index_post_elasticsearch')->insertGetId(
+                            [
+                                'posts_id'=>$post->id,
+                                'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
+                                'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                            ]
+                        );
+                    }else{
+                        $post->reindex();
+                        DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
+                            ->update(
+                                [
+                                    'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                                ]
+                            );
+                    }
 					return response()->json(['success'=>true,
 						'message'=>'Đăng bài thành công!', 
 						'postId'=>$post->id, 
-						'link'=>route('channel.slug',array($this->_domain->domain,$post->getSlug->slug_value)), 
+						'link'=>route('channel.slug',array($this->_domainPrimary,$post->getSlug->slug_value)),
 					]);
 				}
 			}else{

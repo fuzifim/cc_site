@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Model\Regions;
-use Request;
+use Illuminate\Http\Request;
 use Input;
 use App\User;
 use App\Model\Media;
@@ -98,26 +98,42 @@ class TestController extends ConstructController
 	public function postApi(){
 		return response()->json();
 	}
-	public function test(){
-//        $getSite=DB::connection('mongodb')->collection('mongo_keyword')
-//            ->where('craw_next','step_5')
-//            //->where('image_size','exists',true)
-//            //->orderBy('updated_at','desc')
-//            ->limit(5)->get();
-//        dd($getSite);
-        $getSite= DB::connection('mongodb')->collection('mongo_keyword')
-            ->whereNotExists(function($query)
-            {
-                $query->select(DB::raw(1))
-                    ->from('post_to_social')
-                    ->whereRaw('post_to_social.post_id = mongo_keyword._id');
-                    //->where('post_id')
-                    //->whereRaw("id = '100'");
-            })
-            ->limit(5)
-            ->get();
-        dd($getSite);
-	}
+	public function test(Request $request){
+//        $checkIndex=DB::table('index_post_elasticsearch')
+//            ->where('posts_id',4)
+//            ->first();
+//        dd($checkIndex->id);
+        $index=Posts::find(4);
+        $index->deleteIndex();
+        dd($index);
+        $paginate=10;
+        $page = $request->has('page') ? $request->query('page') : 1;
+        $offSet = ($page * $paginate) - $paginate;
+        try{
+            $noteSearch=Posts::searchByQuery([
+                'bool'=>[
+                    'must'=>[
+                        'multi_match' => [
+                            'query' => 'dang bai',
+                            'fields' => ['posts_title','posts_description']
+                        ]
+                    ]
+//                ,
+//                'filter'=>[
+//                    'terms'=>[
+//                        'type'=>['post','video','channel','affiliate','company','news','site']
+//                    ]
+//                ]
+                ]
+            ], null, null, $paginate, $offSet);
+            dd($noteSearch);
+        }catch (\Exception $e) {
+            return response()->json(['success'=>false,
+                'message'=>'Không tìm thấy bài viết nào! ',
+            ]);
+        }
+
+    }
 	public function test2222222222222222222222(){
 		//dd(dns_get_record('cungcap.net',DNS_ALL)); 
 		$getChannel=Channel::where('insert_by','!=','company')->where('move_result','<',2)->limit(100)->get(); 

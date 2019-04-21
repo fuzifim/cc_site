@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->call('\App\Http\Controllers\SchedulingController@getRankDomain')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@getIpRecord')->everyMinute();
         $schedule->call('\App\Http\Controllers\SchedulingController@updateCountry')->everyMinute();
+        $schedule->call('\App\Http\Controllers\SchedulingController@indexPostElasticsearch')->everyMinute();
         if(config('app.env')!='local'){
             $schedule->call('\App\Http\Controllers\SchedulingController@keywordCraw')->cron('*/2 * * * *');
             $schedule->call('\App\Http\Controllers\SchedulingController@keywordSuggest')->cron('*/2 * * * *');
