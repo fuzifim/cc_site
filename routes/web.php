@@ -36,7 +36,7 @@ Route::group(['domain' => '{domain}'], function()
     });
     Route::get('/test', array(
         'as' => 'test',
-        'uses' => 'TestController@test'));
+        'uses' => 'SchedulingController@indexPostElasticsearch'));
     Route::get('/importdata', array(
         'as' => 'test',
         'uses' => 'TestController@importData'));
