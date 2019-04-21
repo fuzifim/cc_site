@@ -9,7 +9,7 @@
 			{
 				$domainPri='';
 				foreach($postJoinChannel->domainAll as $domainChannel){
-					if($domainChannel->domain->domain_location=='local'){
+					if(!empty($domainChannel->domainPrimary->domain)){
 						$domainPri=$domainChannel->domainPrimary->domain;
 					}
 				}
