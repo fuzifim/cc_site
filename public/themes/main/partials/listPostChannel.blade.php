@@ -55,7 +55,7 @@
 			@else
 				@if(empty(Theme::get('image')) && $i==1)
 					<?php
-						Theme::setImage('https:'.{{config('app.link_media').$post->gallery[0]->media->media_path.'xs/'.$post->gallery[0]->media->media_name}});
+						Theme::setImage('https:'.{{config('app.link_media').$post->gallery[0]->media->media_path.'xs/'.$post->gallery[0]->media->media_name);
 					?>
 				@endif
 				<img src="{{config('app.link_media').$post->gallery[0]->media->media_path.'xs/'.$post->gallery[0]->media->media_name}}" data-src="" class="img-responsive imgThumb lazy" alt="" title="" >
