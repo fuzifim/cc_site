@@ -11,7 +11,6 @@
 				foreach($postJoinChannel->domainAll as $domainChannel){
 					if($domainChannel->domain->domain_location=='local'){
 						$domainPri=$domainChannel->domainPrimary->domain;
-						break;
 					}
 				}
 				if(!empty($domainPri)){
