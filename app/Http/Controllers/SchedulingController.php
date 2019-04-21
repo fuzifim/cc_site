@@ -33,7 +33,8 @@ class SchedulingController extends Controller
         if(config('app.env')!='local'){
             $getPost=Posts::where('posts_status','active')
                 ->where('posts_title','!=',null)
-                ->join('index_post_elasticsearch', 'index_post_elasticsearch.posts_id', '!=', 'posts.id')
+                ->leftJoin('index_post_elasticsearch', 'index_post_elasticsearch.posts_id', '=', 'posts.id')
+                ->whereNull('index_post_elasticsearch.posts_id')
 //                ->whereNotExists(function ($query){
 //                    $query->select(DB::raw(1))
 //                        ->from('index_post_elasticsearch')
