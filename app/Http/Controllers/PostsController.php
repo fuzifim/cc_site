@@ -713,7 +713,8 @@ class PostsController extends ConstructController
 					}
 				}
 				Slug::where('slug_channel','=',$this->_channel->id)->where('slug_table','=','posts')->where('slug_table_id','=',$post->id)->delete(); 
-				$post->delete(); 
+				$post->delete();
+				$post->deleteIndex();
 				return response()->json(['success'=>true,
 					'message'=>'Đã xóa bài viết! ',
 				]); 
@@ -735,8 +736,9 @@ class PostsController extends ConstructController
 			$getPost->posts_status='delete'; 
 			//$getPost->posts_updated_at=Carbon::now()->format('Y-m-d H:i:s'); 
 			$getPost->save(); 
-			//Slug::where('slug_channel','=',$this->_channel->id)->where('slug_table','=','posts')->where('slug_table_id','=',$getPost->id)->delete(); 
-			return response()->json(['success'=>true,
+			//Slug::where('slug_channel','=',$this->_channel->id)->where('slug_table','=','posts')->where('slug_table_id','=',$getPost->id)->delete();
+            $getPost->deleteIndex();
+            return response()->json(['success'=>true,
 				'message'=>'Đã xóa bài viết vào thùng rác! ',
 			]); 
 		}else{
