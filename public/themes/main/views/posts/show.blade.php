@@ -84,7 +84,12 @@
 							<?php
 								$i=0;
 								foreach ($post->gallery as $image) {
-								list($width, $height, $type, $attr) = getimagesize('http:'.config('app.link_media').$image->media->media_path.$image->media->media_name); 
+								  try{
+									  list($width, $height, $type, $attr) = getimagesize('http:'.config('app.link_media').$image->media->media_path.$image->media->media_name);
+								  }catch (\Exception $e) {
+									  $width=720;
+									  $height=480;
+								  }
 								
 							?>
 							@if($image->media->media_type == "image/jpeg" || $image->media->media_type == "image/jpg" || $image->media->media_type == "image/png" || $image->media->media_type == "image/gif") 
