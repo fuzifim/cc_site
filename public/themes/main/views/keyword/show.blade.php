@@ -80,6 +80,19 @@
 					@if($showEmpty==true)
 						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào!
 					@endif
+					@if(count($postSearch))
+						<div class="PostlistItem">
+							<?
+							$i=0;
+							?>
+							@foreach($postSearch->chunk(3) as $chunk)
+								{!!Theme::partial('listPostChannel', array('chunk' => $chunk))!!}
+								<?
+								$i++;
+								?>
+							@endforeach
+						</div>
+					@endif
 					@if($showListVideo==0)
 						@if($showListImage==1)
 							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}

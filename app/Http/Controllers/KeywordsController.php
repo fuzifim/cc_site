@@ -113,7 +113,7 @@ class KeywordsController extends ConstructController
             }
         }
 	}
-	public function showById(){
+	public function showById(Request $request){
 	    if(!empty($this->_parame['id'])){
             $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
                 ->where('_id', $this->_parame['id'])->first();
@@ -121,9 +121,33 @@ class KeywordsController extends ConstructController
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('_id',$this->_parame['id'])
                     ->increment('view', 1);
+                $paginate=9;
+                $page = $request->has('page') ? $request->query('page') : 1;
+                $offSet = ($page * $paginate) - $paginate;
+                $postSearch=Posts::searchByQuery([
+                    'bool'=>[
+                        'must'=>[
+                            'multi_match' => [
+                                'query' => $getKeyword['keyword'],
+                                'fields' => ['posts_title','posts_title_convert']
+                            ]
+                        ]
+                    ]
+                ], null, null, $paginate, $offSet);
+                if(count($postSearch)){
+                    $listId=[];
+                    foreach($postSearch as $post){
+                        array_push($listId,$post->id);
+                    }
+                    $postList=Posts::whereIn('id',$listId)->get();
+                }else{
+                    $postList=[];
+                }
                 $return=array(
-                    'keyword'=>$getKeyword
+                    'keyword'=>$getKeyword,
+                    'postSearch'=>$postList
                 );
+                //return Theme::view('keyword.show', $return);
                 return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
                 {
                     return Theme::view('keyword.show', $return);
