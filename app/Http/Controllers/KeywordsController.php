@@ -83,8 +83,30 @@ class KeywordsController extends ConstructController
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('base_64',base64_encode($this->_keyword))
                     ->increment('view', 1);
+                $postList=[];
+                $paginate=6;
+                $page = $request->has('page') ? $request->query('page') : 1;
+                $offSet = ($page * $paginate) - $paginate;
+                $postSearch=Posts::searchByQuery([
+                    'bool'=>[
+                        'must'=>[
+                            'multi_match' => [
+                                'query' => $getKeyword['keyword'],
+                                'fields' => ['posts_title','posts_title_convert']
+                            ]
+                        ]
+                    ]
+                ], null, null, $paginate, $offSet);
+                if(count($postSearch)){
+                    $listId=[];
+                    foreach($postSearch as $post){
+                        array_push($listId,$post->id);
+                    }
+                    $postList=Posts::whereIn('id',$listId)->get();
+                }
                 $return=array(
-                    'keyword'=>$getKeyword
+                    'keyword'=>$getKeyword,
+                    'postSearch'=>$postList
                 );
                 return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
                 {
