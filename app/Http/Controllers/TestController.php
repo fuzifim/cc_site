@@ -115,7 +115,7 @@ class TestController extends ConstructController
                     'must'=>[
                         'multi_match' => [
                             'query' => $request->query('key'),
-                            'fields' => ['posts_title','posts_title_convert','posts_description']
+                            'fields' => ['posts_title','posts_title_convert']
                         ]
                     ]
 //                ,

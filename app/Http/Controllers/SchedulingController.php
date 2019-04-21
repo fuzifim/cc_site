@@ -37,7 +37,7 @@ class SchedulingController extends Controller
                     $query->select(DB::raw(1))
                         ->from('index_post_elasticsearch')
                         ->whereRaw('index_post_elasticsearch.posts_id', 'posts.id');
-                })->limit(50)->get();
+                })->limit(200)->get();
             foreach($getPost as $post){
                 $post->addToIndex();
                 DB::table('index_post_elasticsearch')->insertGetId(
