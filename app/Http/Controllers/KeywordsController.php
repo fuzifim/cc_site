@@ -73,7 +73,7 @@ class KeywordsController extends ConstructController
 		); 
 		return $this->_theme->scope('keyword.list', $return)->render();
 	}
-	public function show(){
+	public function show(Request $request){
         $this->_keyword=str_replace('+', ' ', $this->_parame['slug']);
         $this->_keyword=WebService::keywordDecodeBase64($this->_keyword);
 		if(WebService::is_valid_url($this->_keyword)!=true) {
