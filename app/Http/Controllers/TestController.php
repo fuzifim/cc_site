@@ -103,9 +103,9 @@ class TestController extends ConstructController
 //            ->where('posts_id',4)
 //            ->first();
 //        dd($checkIndex->id);
-        $index=Posts::find(4);
-        $index->deleteIndex();
-        dd($index);
+//        $index=Posts::find(4);
+//        $index->deleteIndex();
+//        dd($index);
         $paginate=10;
         $page = $request->has('page') ? $request->query('page') : 1;
         $offSet = ($page * $paginate) - $paginate;
@@ -114,7 +114,7 @@ class TestController extends ConstructController
                 'bool'=>[
                     'must'=>[
                         'multi_match' => [
-                            'query' => 'dang bai',
+                            'query' => $request->query('key'),
                             'fields' => ['posts_title','posts_description']
                         ]
                     ]
