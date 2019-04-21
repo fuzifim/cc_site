@@ -7,24 +7,20 @@
 			$postJoinChannel=$post->postsJoinChannel->channel;
 			$domainPrimary = Cache::store('file')->rememberForever('domainPrimary_post'.$post->id, function() use($postJoinChannel)
 			{
-//				if(!empty($postJoinChannel->domainJoinPrimary->domainPrimary->domain)){
-//					return $postJoinChannel->domainJoinPrimary->domainPrimary->domain;
-//				}else if(!empty($postJoinChannel->domainJoinPrimary->domain->domain)){
-//
-//					return $postJoinChannel->domainJoinPrimary->domain->domain;
-//				}else{
-//					return config('app.url');
-//				}
+				$domainPri='';
 				foreach($postJoinChannel->domainAll as $domainChannel){
 					if(!empty($domainChannel->domainPrimary->domain)){
+						$domainPri=$domainChannel->domainPrimary->domain;
 						break;
-						return $domainChannel->domainPrimary->domain;
-					}else if(!empty($domainChannel->domain->domain)){
-						break;
-						return $domainChannel->domain->domain;
-					}else{
-						return config('app.url');
 					}
+				}
+				if(!empty($domainPri)){
+					return $domainPri;
+				}else if(!empty($postJoinChannel->domainJoinPrimary->domain->domain)){
+
+					return $postJoinChannel->domainJoinPrimary->domain->domain;
+				}else{
+					return config('app.url');
 				}
 			});
 			if($postJoinChannel->channel_parent_id==0){
