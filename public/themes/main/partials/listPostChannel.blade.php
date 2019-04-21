@@ -5,7 +5,7 @@
 		$postLink='';
 		if(!empty($post->postsJoinChannel->channel->id)){
 			$postJoinChannel=$post->postsJoinChannel->channel;
-			$domainPrimary = Cache::store('file')->remember('domainPrimary_post'.$post->id,5, function() use($postJoinChannel)
+			$domainPrimary = Cache::store('memcached')->remember('domainPrimary_post'.$post->id,5, function() use($postJoinChannel)
 			{
 				$domainPri='';
 				foreach($postJoinChannel->domainAll as $domainChannel){
