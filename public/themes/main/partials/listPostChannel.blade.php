@@ -17,8 +17,10 @@
 				}
 			});
 			if($postJoinChannel->channel_parent_id==0){
-				$target=''; 
-				$postLink='https://post-'.$post->id.'.'.config('app.url');
+				$target='';
+				if(!empty($post->getSlug->slug_value)){
+					$postLink=route('channel.slug',array($domainPrimary,$post->getSlug->slug_value));
+				}
 			}else{
 				$target='target="_blank"';
 				if(!empty($post->getSlug->slug_value)){
