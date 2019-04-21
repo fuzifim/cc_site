@@ -121,7 +121,7 @@ class KeywordsController extends ConstructController
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('_id',$this->_parame['id'])
                     ->increment('view', 1);
-                $paginate=9;
+                $paginate=10;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
                 $postSearch=Posts::searchByQuery([
