@@ -109,23 +109,29 @@ class TestController extends ConstructController
         $paginate=10;
         $page = $request->has('page') ? $request->query('page') : 1;
         $offSet = ($page * $paginate) - $paginate;
-        $noteSearch=Posts::searchByQuery([
-            'bool'=>[
-                'must'=>[
-                    'multi_match' => [
-                        'query' => $request->query('key'),
-                        'fields' => ['posts_title','posts_description']
+        try{
+            $noteSearch=Posts::searchByQuery([
+                'bool'=>[
+                    'must'=>[
+                        'multi_match' => [
+                            'query' => $request->query('key'),
+                            'fields' => ['posts_title','posts_description']
+                        ]
                     ]
-                ]
 //                ,
 //                'filter'=>[
 //                    'terms'=>[
 //                        'type'=>['post','video','channel','affiliate','company','news','site']
 //                    ]
 //                ]
-            ]
-        ], null, null, $paginate, $offSet);
-        dd($noteSearch);
+                ]
+            ], null, null, $paginate, $offSet);
+            dd($noteSearch);
+        }catch (\Exception $e) {
+            return response()->json(['success'=>false,
+                'message'=>$e->getMessage(),
+            ]);
+        }
 
     }
 	public function test2222222222222222222222(){
