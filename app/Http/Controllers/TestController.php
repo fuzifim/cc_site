@@ -129,7 +129,7 @@ class TestController extends ConstructController
             dd($noteSearch);
         }catch (\Exception $e) {
             return response()->json(['success'=>false,
-                'message'=>'Không tìm thấy bài viết nào! ',
+                'message'=>$e->getMessage(),
             ]);
         }
 
