@@ -568,22 +568,26 @@ class PostsController extends ConstructController
                         ->where('posts_id',$post->id)
                         ->first();
 					if(empty($checkIndex->id)){
-                        $post->addToIndex();
-                        DB::table('index_post_elasticsearch')->insertGetId(
-                            [
-                                'posts_id'=>$post->id,
-                                'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
-                                'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-                            ]
-                        );
-                    }else{
-                        $post->reindex();
-                        DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
-                            ->update(
+                        if(config('app.env')!='local'){
+                            $post->addToIndex();
+                            DB::table('index_post_elasticsearch')->insertGetId(
                                 [
+                                    'posts_id'=>$post->id,
+                                    'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
                                     'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
                                 ]
                             );
+                        }
+                    }else{
+                        if(config('app.env')!='local'){
+                            $post->reindex();
+                            DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
+                                ->update(
+                                    [
+                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                                    ]
+                                );
+                        }
                     }
 					return response()->json(['success'=>true,
 						'message'=>'Đăng bài thành công!', 
@@ -714,7 +718,9 @@ class PostsController extends ConstructController
 				}
 				Slug::where('slug_channel','=',$this->_channel->id)->where('slug_table','=','posts')->where('slug_table_id','=',$post->id)->delete(); 
 				$post->delete();
-				$post->deleteIndex();
+				if(config('app.env')!='local'){
+                    $post->deleteIndex();
+                }
 				return response()->json(['success'=>true,
 					'message'=>'Đã xóa bài viết! ',
 				]); 
@@ -737,7 +743,9 @@ class PostsController extends ConstructController
 			//$getPost->posts_updated_at=Carbon::now()->format('Y-m-d H:i:s'); 
 			$getPost->save(); 
 			//Slug::where('slug_channel','=',$this->_channel->id)->where('slug_table','=','posts')->where('slug_table_id','=',$getPost->id)->delete();
-            $getPost->deleteIndex();
+            if(config('app.env')!='local'){
+                $getPost->deleteIndex();
+            }
             return response()->json(['success'=>true,
 				'message'=>'Đã xóa bài viết vào thùng rác! ',
 			]); 
