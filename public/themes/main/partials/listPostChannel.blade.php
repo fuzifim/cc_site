@@ -44,7 +44,7 @@
 		<div class="thmb">
 			<a class="thmb-prev" href="{{$postLink}}" {{$target}}>
 			@if($post->gallery[0]->media->media_storage=='youtube')
-				<img src="//img.youtube.com/vi/{{$post->gallery[0]->media->media_name}}/hqdefault.jpg" data-src="" class="img-responsive imgThumb lazy" alt="" title="" >
+				<img src="//img.youtube.com/vi/{{$post->gallery[0]->media->media_name}}/hqdefault.jpg" data-src="" class="img-responsive imgThumb lazy" alt="{!!$post->posts_title!!}" title="{!!$post->posts_title!!}" >
 			@elseif($post->gallery[0]->media->media_storage=='video')
 			<div class="groupThumb" style="position:relative;">
 				<span class="btnPlayVideoClick"><i class="glyphicon glyphicon-play"></i></span>
@@ -58,7 +58,7 @@
 						Theme::setImage('https:'.config('app.link_media').$post->gallery[0]->media->media_path.'thumb/'.$post->gallery[0]->media->media_name);
 					?>
 				@endif
-				<img src="{{config('app.link_media').$post->gallery[0]->media->media_path.'xs/'.$post->gallery[0]->media->media_name}}" data-src="" class="img-responsive imgThumb lazy" alt="" title="" >
+				<img src="{{config('app.link_media').$post->gallery[0]->media->media_path.'xs/'.$post->gallery[0]->media->media_name}}" data-src="" class="img-responsive imgThumb lazy" alt="{!!$post->posts_title!!}" title="{!!$post->posts_title!!}" >
 			@endif
 			</a>
 			<h5 class="fm-title"><a class="title" href="{{$postLink}}"  {{$target}}>{!!$post->posts_title!!}</a></h5>
