@@ -1,7 +1,7 @@
 <div class="row row-pad-5 filemanager">
 @foreach($chunk as $post)
 	@if(!empty($post->id))
-	<?
+	<?php
 		$postLink='';
 		if(!empty($post->postsJoinChannel->channel->id)){
 			$postJoinChannel=$post->postsJoinChannel->channel;
@@ -9,7 +9,7 @@
 			{
 				$domainPri='';
 				foreach($postJoinChannel->domainAll as $domainChannel){
-					if(!empty($domainChannel->domainPrimary->domain)){
+					if($domainChannel->domain->domain_location=='local'){
 						$domainPri=$domainChannel->domainPrimary->domain;
 						break;
 					}
