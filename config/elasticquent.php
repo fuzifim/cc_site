@@ -14,7 +14,7 @@ return array(
     */
 
     'config' => [
-        'hosts'     => [env(ELASTICSEARCH_HOST, 'localhost:9200')],
+        'hosts'     => [env('ELASTICSEARCH_HOST', 'localhost:9200')],
         'retries'   => 1,
     ],
 
@@ -27,6 +27,6 @@ return array(
     | Elasticquent models.
     */
 
-    'default_index' => env(ELASTICSEARCH_INDEX, 'cung_cap'),
+    'default_index' => env('ELASTICSEARCH_INDEX', 'cung_cap'),
 
 );
