@@ -122,7 +122,7 @@ class KeywordsController extends ConstructController
                     ->where('_id',$this->_parame['id'])
                     ->increment('view', 1);
                 $postList=[];
-                $paginate=10;
+                $paginate=6;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
                 $postSearch=Posts::searchByQuery([
