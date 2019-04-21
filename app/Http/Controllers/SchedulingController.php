@@ -33,12 +33,14 @@ class SchedulingController extends Controller
         if(config('app.env')!='local'){
             $getPost=Posts::where('posts_status','active')
                 ->where('posts_title','!=',null)
-                ->whereNotExists(function ($query){
-                    $query->select(DB::raw(1))
-                        ->from('index_post_elasticsearch')
-                        ->whereRaw('index_post_elasticsearch.posts_id', 'posts.id');
-                })->get();
-            //dd($getPost);
+                ->join('index_post_elasticsearch', 'index_post_elasticsearch.posts_id', '!=', 'posts.id')
+//                ->whereNotExists(function ($query){
+//                    $query->select(DB::raw(1))
+//                        ->from('index_post_elasticsearch')
+//                        ->whereRaw('index_post_elasticsearch.posts_id', 'posts.id');
+//                })
+                ->limit(10)->get();
+            dd($getPost);
             foreach($getPost as $post){
                 $post->addToIndex();
                 DB::table('index_post_elasticsearch')->insertGetId(
