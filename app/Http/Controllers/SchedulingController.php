@@ -40,6 +40,7 @@ class SchedulingController extends Controller
 //                        ->from('index_post_elasticsearch')
 //                        ->whereRaw('index_post_elasticsearch.posts_id', 'posts.id');
 //                })
+                ->select('posts.*')
                 ->orderBy('posts.id','asc')
                 ->limit(10)->get();
             dd($getPost);
