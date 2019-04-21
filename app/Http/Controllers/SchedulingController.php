@@ -42,8 +42,8 @@ class SchedulingController extends Controller
 //                })
                 ->select('posts.*')
                 ->orderBy('posts.id','asc')
-                ->limit(10)->get();
-            dd($getPost);
+                ->limit(50)->get();
+            //dd($getPost);
             foreach($getPost as $post){
                 $post->addToIndex();
                 DB::table('index_post_elasticsearch')->insertGetId(
