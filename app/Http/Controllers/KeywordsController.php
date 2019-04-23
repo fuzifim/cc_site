@@ -168,11 +168,16 @@ class KeywordsController extends ConstructController
                     'keyword'=>$getKeyword,
                     'postSearch'=>$postList
                 );
-                //return Theme::view('keyword.show', $return);
-                return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
-                {
+                $amp=addslashes($request->query('amp'));
+                if($amp=='true'){
+                    $this->_theme=Theme::uses('main_amp')->layout('default');
                     return Theme::view('keyword.show', $return);
-                });
+                }else{
+                    return Cache::store('memcached')->remember('show_keyword_'.$getKeyword['_id'], 5, function() use($return)
+                    {
+                        return Theme::view('keyword.show', $return);
+                    });
+                }
             }else{
                 $return=array(
                     'keyword'=>'Keyword notfound'
