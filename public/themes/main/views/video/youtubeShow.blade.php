@@ -1,5 +1,5 @@
 <?php
-Theme::setTitle('Cung cấp video '.$video['title']);
+Theme::setTitle('Video '.$video['title']);
 Theme::setDescription($video['description']);
 Theme::setImage('https:'.$video['image']);
 Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))));
@@ -18,7 +18,7 @@ $ads='true';
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
         <div class="pageheader form-group">
-            <h1><strong>Cung cấp video {!! $video['title'] !!}</strong></h1>
+            <h1><strong>Video {!! $video['title'] !!}</strong></h1>
             <?php
             if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
