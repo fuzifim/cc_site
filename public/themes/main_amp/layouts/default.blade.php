@@ -379,9 +379,8 @@ amp-carousel > amp-img > img {
     padding: 0px;
 }
 .amp-video-item{
-    margin: 0 3% 3% 0;
     padding: 5px 5px;
-    width: 40%;
+    width: 45%;
     text-align: center;
     position: relative;
     color: #555;
@@ -390,8 +389,6 @@ amp-carousel > amp-img > img {
     display: block;
     margin-bottom: 0;
     font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
 }
 .amp-title{
