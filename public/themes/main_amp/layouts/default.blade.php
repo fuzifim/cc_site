@@ -380,8 +380,8 @@ amp-carousel > amp-img > img {
 }
 .amp-video-item{
     margin: 0 3% 3% 0;
-    padding: 5px 25px;
-    width: 20%;
+    padding: 5px 5px;
+    width: 40%;
     text-align: center;
     position: relative;
     color: #555;
