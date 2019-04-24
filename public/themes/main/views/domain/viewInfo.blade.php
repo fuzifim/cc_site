@@ -68,6 +68,15 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                     }
                     ?>
                     <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
+                    <p>
+                    <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+                        <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                            <span itemprop="name">{!! $domain['domain'] !!}</span>
+                            <meta itemprop="url" content="{!! route('domain.info',array(config('app.url'),$domain['domain'])) !!}" />
+                        </li>
+                    </ol>
+                    </p>
                     @if(!empty($domain['title']))<strong>Title: {!! mb_substr(WebService::renameBlacklistWord($domain['title']),0,150) !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! mb_substr(WebService::renameBlacklistWord($domain['description']),0,320); !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
