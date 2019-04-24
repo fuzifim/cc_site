@@ -49,9 +49,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/', array(
         'as' => 'channel.home',
         'uses' => 'SitePublicController@index'));
-    Route::get('d/{domain}', function ($domain) {
-        return redirect()->to('http://'.$domain.'.d.'.config('app.url'));
-    });
+    Route::get('d/{domain}', array(
+        'as' => 'domain.info',
+        'uses' => 'DomainController@DomainInfo'));
     //--Pages
     Route::get('/rss', array(
         'as' => 'pages.rss',

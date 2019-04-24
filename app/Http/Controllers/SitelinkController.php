@@ -57,6 +57,7 @@ class SitelinkController extends ConstructController
 	}
 	public function show(){
 		$siteId=$this->_parame['slug']; 
-		return Redirect::to('http://'.$siteId.'.'.config('app.url'), 301);
+		//return Redirect::to('http://'.$siteId.'.'.config('app.url'), 301);
+        return redirect()->route('domain.info', array(config('app.url'),$siteId),301);
 	}
 }

@@ -33,6 +33,7 @@ if(!empty($domain['attribute']['content'])){
 $channel['theme']->setTitle($domain['domain'].' '.mb_substr(WebService::renameBlacklistWord($domain['title']),0,150));
 $channel['theme']->setKeywords(mb_substr(WebService::renameBlacklistWord($domain['keywords']),0,320));
 $channel['theme']->setDescription(mb_substr(WebService::renameBlacklistWord($domain['description']),0,320).' - '.$description);
+Theme::setCanonical(route('domain.info',array(config('app.url'),$domain['domain'])));
 $ads='true';
 if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
     $ads='false';
@@ -347,7 +348,7 @@ $channel['theme']->asset()->writeScript('customDomain','
             var formData = new FormData();
             formData.append("domain", "'.$domain['domain'].'");
             $.ajax({
-                url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-update-info",
+                url: "'.route('domain.update.info',array(config('app.url'),$domain['domain'])).'",
                 headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                 type: "POST",
                 cache: false,
@@ -370,7 +371,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 var formData = new FormData();
                 formData.append("domain", "'.$domain['domain'].'");
                 $.ajax({
-                    url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-disable-ads",
+                    url: "'.route('domain.disable.ads',array(config('app.url'),$domain['domain'])).'",
                     headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                     type: "POST",
                     cache: false,
@@ -395,7 +396,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 var formData = new FormData();
                 formData.append("domain", "'.$domain['domain'].'");
                 $.ajax({
-                    url: "http://'.$domain['domain'].'.d.'.config("app.url").'/domain-active-ads",
+                    url: "'.route('domain.active.ads',array(config('app.url'),$domain['domain'])).'",
                     headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                     type: "POST",
                     cache: false,

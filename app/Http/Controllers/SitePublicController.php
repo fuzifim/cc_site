@@ -202,8 +202,9 @@ class SitePublicController extends ConstructController
 			}elseif(!empty($this->_pieces[0]) && $this->_pieces[0]=='www'){
 				return Redirect::to('https://cungcap.net/',301);
 			}else{
-			    $this->_domainInfo=$checkDomain;
-			    return $this->DomainInfo();
+//			    $this->_domainInfo=$checkDomain;
+//			    return $this->DomainInfo();
+                return redirect()->route('domain.info', array(config('app.url'),$checkDomain),301);
 			}
 		}
 	}

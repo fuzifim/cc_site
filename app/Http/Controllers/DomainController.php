@@ -47,11 +47,40 @@ class DomainController extends ConstructController
 	public $_domainRegisterCreatedAt; 
 	public $_domainRegisterUpdateAt; 
 	public $_domainRegisterDateBegin; 
-	public $_domainRegisterDateEnd; 
+	public $_domainRegisterDateEnd;
+	public $_domainInfo;
 	public function __construct(){
 		parent::__construct();
 	}
 	/*-- new --*/
+    public function DomainInfo(Request $request){
+        $this->_domainInfo=$this->_parame['domain'];
+        if(!empty($this->_domainInfo)){
+            $domain = Cache::store('memcached')->remember('infoDomain_'.base64_encode($this->_domainInfo), 1, function()
+            {
+                return DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($this->_domainInfo))->first();
+            });
+            if(!empty($domain['domain'])){
+                DB::connection('mongodb')->collection('mongo_domain')
+                    ->where('base_64',base64_encode($this->_domainInfo))
+                    ->increment('view', 1);
+                $siteRelate=Cache::store('memcached')->remember('site_relate_'.base64_encode($this->_domainInfo), 1, function() use($domain)
+                {
+                    return DB::connection('mongodb')->collection('mongo_site')
+                        ->where('domain',$domain['domain'])
+                        ->limit(10)->get();
+                });
+                $return=array(
+                    'domain'=>$domain,
+                    'siteRelate'=>$siteRelate
+                );
+                return $this->_theme->scope('domain.viewInfo', $return)->render();
+            }else{
+                echo 'domain not found';
+            }
+        }
+    }
     public function getDomainTopView(Request $request){
         $page = $request->has('page') ? $request->query('page') : 1;
         $getDomain=Cache::store('memcached')->remember('domain_top_view_'.$page, 1, function()
