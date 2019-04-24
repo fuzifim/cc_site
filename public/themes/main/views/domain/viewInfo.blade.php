@@ -56,28 +56,28 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
 <section>
     <div class="mainpanel">
     {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+        <div class="pageheader">
+            <h1><strong>{!! $domain['domain'] !!}</strong></h1>
+            <?php
+            if ($domain['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                $updated_at= $domain['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+            }else{
+                $updated_at= $domain['updated_at'];
+            }
+            ?>
+            <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
+            <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+                <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <span itemprop="name">{!! $domain['domain'] !!}</span>
+                    <meta itemprop="url" content="{!! route('domain.info',array(config('app.url'),$domain['domain'])) !!}" />
+                </li>
+            </ol>
+        </div>
         <div class="container">
             <div class="row row-pad-5">
                 <div class="col-md-12">
-                    <h1><strong>{!! $domain['domain'] !!}</strong></h1>
-                    <?php
-                    if ($domain['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
-                        $updated_at= $domain['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
-                    }else{
-                        $updated_at= $domain['updated_at'];
-                    }
-                    ?>
-                    <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
-                    <p>
-                    <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                        <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                            <span itemprop="name">{!! $domain['domain'] !!}</span>
-                            <meta itemprop="url" content="{!! route('domain.info',array(config('app.url'),$domain['domain'])) !!}" />
-                        </li>
-                    </ol>
-                    </p>
-                    @if(!empty($domain['title']))<strong>Title: {!! mb_substr(WebService::renameBlacklistWord($domain['title']),0,150) !!}</strong>@endif
+                    @if(!empty($domain['title']))<strong>{!! mb_substr(WebService::renameBlacklistWord($domain['title']),0,150) !!}</strong>@endif
                     @if(!empty($domain['description']))<p>{!! mb_substr(WebService::renameBlacklistWord($domain['description']),0,320); !!}</p>@endif
                     @if(empty($domain['title']) && empty($domain['description']))
                     <div class="alert alert-info">
