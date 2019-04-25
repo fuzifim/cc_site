@@ -38,10 +38,10 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		.active > div:first-child + div + div + div { display:block; }
 	}
 	.blockPost {
-		width: 220px;
+		width: 280px;
 		height:305px;
 		overflow: hidden;
-		border: 1px #dadada solid; padding: 5px; 
+		border: 1px #dadada solid; padding: 5px;
 	}
 </style>
 <div class="panel panel-primary panel-responsive">
