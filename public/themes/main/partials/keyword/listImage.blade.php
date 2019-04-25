@@ -72,7 +72,7 @@ Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/
                             <div class="carousel-col">
                                 <div class="block img-responsive">
                                     <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-size="720x480">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480">
                                             <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
                                         </a>
                                     </figure>
@@ -89,7 +89,7 @@ Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/
                             <div class="carousel-col">
                                 <div class="block img-responsive">
                                     <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-size="720x480">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480">
                                             <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
                                         </a>
                                     </figure>
