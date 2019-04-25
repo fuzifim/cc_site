@@ -50,7 +50,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 	<div class="">
 		<div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="false">
 			<div class="carousel-inner">
-				<div class="filemanager">
+				<div class="">
 					<?php
 					$i=0;
 					?>
@@ -132,7 +132,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 </div>
 <?php
 $dependencies = array();
-Theme::asset()->writeScript('ImageSlider','
+Theme::asset()->writeScript('PostSlider','
 		$(".carousel[data-type=multi] .item").each(function() {
             var next = $(this).next();
             if (!next.length) {
