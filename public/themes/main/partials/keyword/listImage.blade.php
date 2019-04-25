@@ -1,5 +1,9 @@
 <?php
 Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.touchSwipe.min.js', array('core-script'));
+Theme::asset()->add('photoswipe', 'assets/library/PhotoSwipe/dist/photoswipe.css', array('core-style'));
+Theme::asset()->add('photoswipeSkin', 'assets/library/PhotoSwipe/dist/default-skin/default-skin.css', array('core-style'));
+Theme::asset()->container('footer')->add('photoswipeJs', 'assets/library/PhotoSwipe/dist/photoswipe.min.js', array('core-script'));
+Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/PhotoSwipe/dist/photoswipe-ui-default.min.js', array('core-script'));
 ?>
 <style>
     .carousel-control > a > span {
@@ -52,7 +56,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
     </div>
     <div class="">
         <div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="false">
-            <div class="carousel-inner">
+            <div class="carousel-inner my-gallery" itemscope itemtype="http://schema.org/ImageGallery">
                 <?php $a=0; ?>
                 @foreach($keyword['image_relate'] as $imageRelate)
                     <?php
@@ -67,8 +71,11 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
                         <div class="item active">
                             <div class="carousel-col">
                                 <div class="block img-responsive">
-                                    <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                                    {{--                            <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>--}}
+                                    <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-size="720x480">
+                                            <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
+                                        </a>
+                                    </figure>
                                 </div>
                             </div>
                         </div>
@@ -81,8 +88,11 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
                         <div class="item">
                             <div class="carousel-col">
                                 <div class="block img-responsive">
-                                    <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                                    {{--                            <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>--}}
+                                    <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-size="720x480">
+                                            <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
+                                        </a>
+                                    </figure>
                                 </div>
                             </div>
                         </div>
@@ -92,35 +102,3 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
         </div>
     </div>
 </div>
-<?php
-$dependencies = array();
-Theme::asset()->writeScript('ImageSlider','
-		$(".carousel[data-type=multi] .item").each(function() {
-            var next = $(this).next();
-            if (!next.length) {
-                next = $(this).siblings(":first");
-            }
-            next.children(":first-child").clone().appendTo($(this));
-
-            for (var i = 0; i < 2; i++) {
-                next = next.next();
-                if (!next.length) {
-                    next = $(this).siblings(":first");
-                }
-
-                next.children(":first-child").clone().appendTo($(this));
-            }
-        });
-        $(".carousel").swipe({
-
-          swipe: function(event, direction, distance, duration, fingerCount, fingerData) {
-
-            if (direction == "left") $(this).carousel("next");
-            if (direction == "right") $(this).carousel("prev");
-
-          },
-          allowPageScroll:"vertical"
-
-        });
-	', $dependencies);
-?>
