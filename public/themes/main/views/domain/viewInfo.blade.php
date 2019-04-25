@@ -56,6 +56,13 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
 <section>
     <div class="mainpanel">
     {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+        <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+            <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                <span itemprop="name">{!! $domain['domain'] !!}</span>
+                <meta itemprop="url" content="{!! route('domain.info',array(config('app.url'),$domain['domain'])) !!}" />
+            </li>
+        </ol>
         <div class="pageheader">
             <h1><strong>{!! $domain['domain'] !!}</strong></h1>
             <?php
@@ -66,13 +73,6 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
             }
             ?>
             <small>Updated at {!! $updated_at !!}</small> @if(!empty($domain['view']))<small><strong>Views: {!! $domain['view'] !!}</strong></small>@endif<br>
-            <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                    <span itemprop="name">{!! $domain['domain'] !!}</span>
-                    <meta itemprop="url" content="{!! route('domain.info',array(config('app.url'),$domain['domain'])) !!}" />
-                </li>
-            </ol>
         </div>
         <div class="container">
             <div class="row row-pad-5">

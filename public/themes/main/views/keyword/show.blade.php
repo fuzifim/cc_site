@@ -45,6 +45,31 @@
 <section>
 	<div class="mainpanel">
 		{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+		@if(!empty($keyword['parent']))
+			@if(empty($keyword['parent_id']))
+				<?php
+				$parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+						->where('base_64', base64_encode($keyword['parent']))->first();
+				DB::connection('mongodb')->collection('mongo_keyword')
+						->where('_id',(string)$keyword['_id'])
+						->update(
+								[
+										'parent_id'=>(string)$parentKey['_id']
+								]
+						);
+
+				?>
+				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
+				</ol>
+			@else
+				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
+				</ol>
+			@endif
+		@endif
 		<div class="pageheader form-group">
 			<h1><strong>{!! $keyword['keyword'] !!}</strong></h1>
 			<?php
@@ -55,31 +80,6 @@
 			}
 			?>
 			<small>Updated at {!! $updated_at !!}</small> @if(!empty($keyword['view']))<small><strong>Views: {!! $keyword['view'] !!}</strong></small>@endif
-			@if(!empty($keyword['parent']))
-				@if(empty($keyword['parent_id']))
-					<?php
-					$parentKey = DB::connection('mongodb')->collection('mongo_keyword')
-							->where('base_64', base64_encode($keyword['parent']))->first();
-					DB::connection('mongodb')->collection('mongo_keyword')
-						->where('_id',(string)$keyword['_id'])
-						->update(
-							[
-								'parent_id'=>(string)$parentKey['_id']
-							]
-						);
-
-					?>
-					<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-						<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-						<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
-					</ol>
-				@else
-					<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-						<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-						<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
-					</ol>
-				@endif
-			@endif
 		</div>
 		<div class="container">
 			<div class="row row-pad-5">

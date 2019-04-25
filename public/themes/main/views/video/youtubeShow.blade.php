@@ -17,6 +17,31 @@ $ads='true';
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+        @if(!empty($video['parent']))
+            @if(empty($video['parent_id']))
+                <?php
+                $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('base_64', base64_encode($video['parent']))->first();
+                DB::connection('mongodb')->collection('mongo_video')
+                    ->where('_id',(string)$video['_id'])
+                    ->update(
+                        [
+                            'parent_id'=>(string)$parentKey['_id']
+                        ]
+                    );
+
+                ?>
+                <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $video['parent'] !!}</span></a></li>
+                </ol>
+            @else
+                <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$video['parent_id'],str_slug(mb_substr($video['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $video['parent'] !!}</span></a></li>
+                </ol>
+            @endif
+        @endif
         <div class="pageheader form-group">
             <h1><strong>Video {!! $video['title'] !!}</strong></h1>
             <?php
@@ -27,31 +52,6 @@ $ads='true';
             }
             ?>
             <small>Updated at {!! $updated_at !!}</small> @if(!empty($video['view']))<small><strong>Views: {!! $video['view'] !!}</strong></small>@endif
-            @if(!empty($video['parent']))
-                @if(empty($video['parent_id']))
-                    <?php
-                    $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
-                        ->where('base_64', base64_encode($video['parent']))->first();
-                    DB::connection('mongodb')->collection('mongo_video')
-                        ->where('_id',(string)$video['_id'])
-                        ->update(
-                            [
-                                'parent_id'=>(string)$parentKey['_id']
-                            ]
-                        );
-
-                    ?>
-                    <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $video['parent'] !!}</span></a></li>
-                    </ol>
-                @else
-                    <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$video['parent_id'],str_slug(mb_substr($video['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $video['parent'] !!}</span></a></li>
-                    </ol>
-                @endif
-            @endif
         </div>
         <div class="container">
             <div class="row row-pad-5">

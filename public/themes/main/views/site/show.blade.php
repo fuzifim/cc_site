@@ -22,16 +22,16 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+        <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><span itemprop="name">{!! WebService::renameBlacklistWord($site['domain']) !!}</span></a></li>
+        </ol>
         <div class="pageheader form-group">
             @if(!empty($site['title_full']))
                 <h1><strong>{!! $site['title_full'] !!}</strong></h1>
             @else
                 <h1><strong>{!! $site['title'] !!}</strong></h1>
             @endif
-            <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><span itemprop="name">{!! WebService::renameBlacklistWord($site['domain']) !!}</span></a></li>
-            </ol>
             <?php
             if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s');
