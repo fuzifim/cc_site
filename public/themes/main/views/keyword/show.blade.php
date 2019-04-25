@@ -256,7 +256,8 @@ Theme::asset()->writeScript('ScriptKeywordShow','
             if (direction == "right") $(this).carousel("prev");
 
           },
-          allowPageScroll:"vertical"
+          allowPageScroll:"vertical",
+          excludedElements: "label, button, input, select, textarea, .noSwipe"
 
         });
         var initPhotoSwipeFromDOM = function(gallerySelector) {
