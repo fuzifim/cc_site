@@ -109,16 +109,14 @@
 							{!!Theme::partial('listPostChannelSlider', array('postSearch' => $postSearch,'keyword'=>$keyword))!!}
 						</div>
 						@if($ads=='true' && config('app.env')!='local')
-							<div class="form-group">
-								<ins class="adsbygoogle"
-									 style="display:block"
-									 data-ad-client="ca-pub-6739685874678212"
-									 data-ad-slot="7536384219"
-									 data-ad-format="auto"></ins>
-								<script>
-									(adsbygoogle = window.adsbygoogle || []).push({});
-								</script>
-							</div>
+							<ins class="adsbygoogle"
+								 style="display:block"
+								 data-ad-client="ca-pub-6739685874678212"
+								 data-ad-slot="7536384219"
+								 data-ad-format="auto"></ins>
+							<script>
+								(adsbygoogle = window.adsbygoogle || []).push({});
+							</script>
 						@endif
 					@endif
 					@if($siteShow==true)
