@@ -89,15 +89,7 @@
 					@endif
 					@if(count($postSearch))
 						<div class="PostlistItem">
-							<?
-							$i=0;
-							?>
-							@foreach($postSearch->chunk(3) as $chunk)
-								{!!Theme::partial('listPostChannel', array('chunk' => $chunk))!!}
-								<?
-								$i++;
-								?>
-							@endforeach
+							{!!Theme::partial('listPostChannelSlider', array('chunk' => $postSearch))!!}
 						</div>
 					@endif
 					@if($showListVideo==0)
