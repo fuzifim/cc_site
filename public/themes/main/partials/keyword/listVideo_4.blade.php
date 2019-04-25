@@ -1,5 +1,5 @@
 <div class="panel panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading heading-responsive">
         <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
     </div>
     <div class="panel-body">

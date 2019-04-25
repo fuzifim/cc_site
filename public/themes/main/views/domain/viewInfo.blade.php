@@ -332,8 +332,8 @@ Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.m
                         </div>
                     @endif
                     @if(count($siteRelate))
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
+                        <div class="panel panel-default panel-responsive">
+                            <div class="panel-heading heading-responsive">
                                 Site relate for {!! $domain['domain'] !!}
                             </div>
                             <ul class="list-group">

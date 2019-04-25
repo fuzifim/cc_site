@@ -741,6 +741,8 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .width20{width:20px;}
 .width30{width:30px;}
 .inblock{display:inline-block;}
+.panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; }
+.panel-responsive .linkTitleH4{margin: 0px; }
 @media screen and (max-width:1024px){body{position:relative;}
 .leftpanel{display:none;}
 .mainpanel{margin-left:0;width:100%;}
@@ -782,6 +784,11 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .rightpanel .nav-tabs.nav-justified > li > a,
 .rightpanel .nav-justified > li > a{margin-bottom:0;}
 .panel-email .col-sm-3{display:none;}
+    .heading-responsive{padding:5px !important; }
+    .heading-responsive .panel-title{font-size:12px !important;}
+    .panel-responsive .linkTitle{font-size:12px; line-height: 12px;}
+    .panel-responsive h4{font-size:14px; line-height: 14px; margin: 0px; font-weight: bold;}
+    .panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px;}
 }
 @media screen and (max-width:640px){.addressInfo{font-size:14px;}
 .channelNameTitle{font-size:18px;}
@@ -815,6 +822,11 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .table.dataTable td{font-size:13px;min-width:150px;}
 .paging_full_numbers{min-width:500px;margin:0 0 10px 10px;}
 .paging_full_numbers:after{clear:both;display:block;content:'';}
+    .heading-responsive{padding:5px !important; }
+    .heading-responsive .panel-title{font-size:12px !important;}
+    .panel-responsive .linkTitle{font-size:12px; line-height: 12px;}
+    .panel-responsive h4{font-size:14px; line-height: 14px; margin: 0px; font-weight: bold;}
+    .panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px;}
 }
 @media screen and (max-width:480px){.signinpanel,
 .signuppanel{width:360px;}
@@ -842,6 +854,11 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .btn-invoice .btn{display:block;width:100%;margin-top:10px;}
 .nav-tabs.nav-justified.nav-profile > li a{font-size:13px;padding:14px 10px;}
 #bloglist > div{padding:0;margin:0;float:none;width:auto;}
+    .heading-responsive{padding:5px !important; }
+    .heading-responsive .panel-title{font-size:12px !important;}
+    .panel-responsive .linkTitle{font-size:12px; line-height: 12px;}
+    .panel-responsive h4{font-size:14px; line-height: 14px; margin: 0px; font-weight: bold;}
+    .panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px;}
 }
 @media screen and (max-width:360px){.blog-title{font-size:14px;line-height:18px;}
 .addressInfo{font-size:12px;}
@@ -859,9 +876,19 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .authorpanel .media-object{width:80px;margin-right:10px;}
 .people-item .media-object{width:80px !important;height:80px !important;}
 .pagination{margin-bottom:20px;}
+    .heading-responsive{padding:5px !important; }
+    .heading-responsive .panel-title{font-size:12px !important;}
+    .panel-responsive .linkTitle{font-size:12px; line-height: 12px;}
+    .panel-responsive h4{font-size:14px; line-height: 14px; margin: 0px; font-weight: bold;}
+    .panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px;}
 }
 @media screen and (max-width:320px){.signinpanel,
 .signuppanel{width:310px;}
+    .heading-responsive{padding:5px !important; }
+    .heading-responsive .panel-title{font-size:12px !important;}
+    .panel-responsive .linkTitle{font-size:12px; line-height: 12px;}
+    .panel-responsive h4{font-size:14px; line-height: 14px; margin: 0px; font-weight: bold; }
+    .panel-responsive .urlFull{white-space: nowrap;overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px;}
 }
 .carousel_control_left,.carousel_control_right{top:40% !important;bottom:inherit !important;width:initial !important;color:#fff;background:#000 !important;border:none;padding:10px;opacity:0.2;z-index:1;}
 .attribute-3,.attribute-1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -966,3 +993,4 @@ section{margin:auto;margin-bottom:5px;max-width:1170px;position:relative;backgro
 .btn-top-nav{color:#fff;padding:5px;border:none;}
 .navbar-form{border:none;box-shadow:none; padding:0px; }
 .navbar-form .input-group .input-group-btn{width: 1%;}
+.container{padding-right:5px !important; padding-left:5px !important;}

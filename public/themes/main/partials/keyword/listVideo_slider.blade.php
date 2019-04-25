@@ -37,58 +37,57 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
         .active > div:first-child + div + div { display:block; }
         .active > div:first-child + div + div + div { display:block; }
     }
-    .block {
+    .blockVideo {
         width: 220px;
-        max-height:160px;
+        height:200px;
         overflow: hidden;
     }
 </style>
-<div class="panel panel-primary">
+<div class="panel panel-default panel-responsive">
     <div class="panel-heading heading-responsive">
-        <h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
+        <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
     </div>
     <div class="">
-        <div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="false">
+        <div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="2500">
             <div class="carousel-inner">
                 <?php $a=0; ?>
-                @foreach($keyword['image_relate'] as $imageRelate)
+                @foreach(array_slice($keyword['video_relate'], $from, $to) as $videoRelate)
                     <?php
-                    $a++;
-                    $image=DB::connection('mongodb')->collection('mongo_image')
-                        ->where('_id', (string)$imageRelate)->first();
+                        $a++;
+                    $video=DB::connection('mongodb')->collection('mongo_video')
+                        ->where('_id', (string)$videoRelate)->first();
                     ?>
-                    @if($a==5)
-                        <?php break; ?>
-                    @endif
-                    @if($a==1)
-                        <div class="item active">
-                            <div class="carousel-col">
-                                <div class="block img-responsive">
-                                    <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                                    {{--                            <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>--}}
-                                </div>
-                            </div>
-                        </div>
-                        @if(empty($keyword['image']))
+                        @if($a==1)
                             <?php
-                            Theme::setImage('https:'.$image['attribute']['image']);
+                                $itemActive='active';
+                            ?>
+                        @else
+                            <?php
+                                $itemActive='';
                             ?>
                         @endif
-                    @else
-                        <div class="item">
+                        <div class="item {!! $itemActive !!}">
                             <div class="carousel-col">
-                                <div class="block img-responsive">
-                                    <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
-                                    {{--                            <h3 class="subtitle text-center"><span class="text-light" id="showImageLargeLink"><span class="text-light">{{$image['title']}}</span></span></h3>--}}
+                                <div class="blockVideo img-responsive">
+                                    <a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
+                                    <?php
+                                    if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+                                        $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+                                    }else{
+                                        $updated_at= $video['updated_at'];
+                                    }
+                                    ?>
+                                    <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
+                                    <strong><a class="linkTitle" href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong>
                                 </div>
                             </div>
                         </div>
-                    @endif
                 @endforeach
             </div>
         </div>
     </div>
 </div>
+
 <?php
 $dependencies = array();
 Theme::asset()->writeScript('ImageSlider','

@@ -138,7 +138,7 @@
 										</script>
 									</div>
 								@endif
-								{!!Theme::partial('keyword.listVideo_1', array('keyword' => $keyword,'from'=>0,'to'=>4))!!}
+								{!!Theme::partial('keyword.listVideo_slider', array('keyword' => $keyword,'from'=>0,'to'=>8))!!}
 								@if($ads=='true' && config('app.env')!='local')
 									<div class="form-group">
 										<ins class="adsbygoogle"
@@ -151,7 +151,6 @@
 										</script>
 									</div>
 								@endif
-								{!!Theme::partial('keyword.listVideo_2', array('keyword' => $keyword,'from'=>4,'to'=>4))!!}
 								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
 							</div>
 							<div class="col-md-3">

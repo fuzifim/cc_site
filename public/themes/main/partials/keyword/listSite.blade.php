@@ -1,5 +1,5 @@
-<div class="panel panel-primary">
-    <div class="panel-heading">
+<div class="panel panel-primary panel-responsive">
+    <div class="panel-heading heading-responsive">
         <h2 class="panel-title">Site relate for {!! $keyword['keyword'] !!}</h2>
     </div>
     <ul class="list-group">
@@ -34,8 +34,8 @@
                     @endif
                 @endif
                 <li class="list-group-item">
-                    <h4><a class="siteLink" id="linkContinue" href="{!! route('site.show.id',array($channel['domainPrimary'],$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $site['title'] !!}</a></h4>
-                    <?php
+                    <h4 class="linkTitleH4"><a id="linkContinue" href="{!! route('site.show.id',array($channel['domainPrimary'],$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $site['title'] !!}</a></h4>
+                    <span class="urlFull text-success"><i>{!! $site['link'] !!}</i></span><?php
                     if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
                     }else{
@@ -44,8 +44,7 @@
                     ?>
                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                     <span>{!! $site['description'] !!}</span><br>
-                    <span>{!! $site['link'] !!}</span><br>
-                    <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                    <a class="linkTitle" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                 </li>
             @endif
         @endforeach

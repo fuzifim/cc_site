@@ -29,7 +29,7 @@
 		@if(Theme::get('video'))<meta property="og:video" content="{!! Theme::get('video') !!}" />@endif 
 		<link rel="alternate" type="application/rss+xml" title="Cung Cấp RSS" href="https://{{config('app.url')}}/rss/" />
         {!! Theme::asset()->styles() !!}
-		<link media="all" type="text/css" rel="stylesheet" href="{!!Theme::asset()->url('css/style.default.css')!!}?v=89">
+		<link media="all" type="text/css" rel="stylesheet" href="{!!Theme::asset()->url('css/style.default.css')!!}?v=90">
     </head>
     <body class="">
 	<!-- Preloader -->
