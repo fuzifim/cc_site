@@ -33,7 +33,7 @@ $i=0;
             <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
             <span>{!! $item['description'] !!}</span><br>
             @if($showDomain==true)
-                <a class="linkTitle" href="{!! route('domain.info',array(config('app.url'),$item['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($item['domain']) !!}</a>
+                <a class="linkTitle text-muted" href="{!! route('domain.info',array(config('app.url'),$item['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($item['domain']) !!}</a>
             @endif
         </li>
     @endif

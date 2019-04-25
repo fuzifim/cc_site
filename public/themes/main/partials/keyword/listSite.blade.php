@@ -44,7 +44,7 @@
                     ?>
                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                     <span>{!! $site['description'] !!}</span><br>
-                    <a class="linkTitle" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                    <a class="linkTitle text-muted" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                 </li>
             @endif
         @endforeach
