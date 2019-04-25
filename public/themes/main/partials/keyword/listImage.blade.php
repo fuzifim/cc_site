@@ -56,7 +56,7 @@ Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/
     </div>
     <div class="">
         <div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="false">
-            <div class="carousel-inner my-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+            <div class="carousel-inner my-gallery" id="" itemscope itemtype="http://schema.org/ImageGallery">
                 <?php $a=0; ?>
                 @foreach($keyword['image_relate'] as $imageRelate)
                     <?php
@@ -72,7 +72,7 @@ Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/
                             <div class="carousel-col">
                                 <div class="block img-responsive">
                                     <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480" data-size="720x480">
                                             <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
                                         </a>
                                     </figure>
@@ -89,7 +89,7 @@ Theme::asset()->container('footer')->add('photoswipeJsdefault', 'assets/library/
                             <div class="carousel-col">
                                 <div class="block img-responsive">
                                     <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480">
+                                        <a href="https:{{$image['attribute']['image']}}" itemprop="contentUrl" data-width="720" data-height="480" data-size="720x480">
                                             <img class="img-responsive" id="showImageLarge" src="https:{{$image['attribute']['thumb']}}" alt="{{$image['title']}}" title="{{$image['title']}}">
                                         </a>
                                     </figure>
