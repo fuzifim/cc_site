@@ -54,7 +54,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 					<?php
 					$i=0;
 					?>
-					@foreach($chunk as $post)
+					@foreach($postSearch as $post)
 						@if(!empty($post->id))
 							<?php
 							$i++;
