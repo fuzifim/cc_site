@@ -19,7 +19,10 @@
                         $description=$description.' '.$site['title'];
                     ?>
                 @endif
-                @if($i==3 || $i==8)
+                @if($i==$skipImage && $imageShow==true)
+                    {!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
+                @endif
+                @if($i==$skipImage)
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
                             <ins class="adsbygoogle"
@@ -46,6 +49,9 @@
                     <span>{!! $site['description'] !!}</span><br>
                     <a class="linkTitle text-muted" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                 </li>
+                @if($i==$skipVideo && $videoShow==true)
+                     {!!Theme::partial('keyword.listVideo_slider', array('keyword' => $keyword,'from'=>0,'to'=>8))!!}
+                @endif
             @endif
         @endforeach
         @if(empty($keyword['description']) && !empty($description))

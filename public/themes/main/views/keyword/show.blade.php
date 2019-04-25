@@ -15,19 +15,36 @@
 	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 	Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
 	Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
-	$showListImage=0;
-	if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0 && !empty($keyword['image_relate']) && count($keyword['image_relate'])>0){
-		$showListImage=1;
-	}else if(!empty($keyword['image_relate']) && count($keyword['image_relate'])>0){
-		$showListImage=2;
-	}
-	$showListVideo=0;
-	if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0 && !empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
-		$showListVideo=1;
-	}else if(!empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
-		$showListVideo=2;
-	}
+	$imageShow=false;
+	$siteShow=false;
+	$videoShow=false;
 	$showEmpty=false;
+	if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0){
+		$siteShow=true;
+		$count=count($keyword['site_relate']);
+		if($count>=5){
+			$skipImage=3;
+			$skipVideo=5;
+		}else if($count==4){
+			$skipImage=2;
+			$skipVideo=4;
+		}else if($count==3){
+			$skipImage=1;
+			$skipVideo=2;
+		}else if($count==2){
+			$skipImage=1;
+			$skipVideo=2;
+		}else if($count==1){
+			$skipImage=1;
+			$skipVideo=2;
+		}
+	}
+	if(!empty($keyword['image_relate']) && count($keyword['image_relate'])>0){
+		$imageShow=true;
+	}
+	if(!empty($keyword['video_relate']) && count($keyword['video_relate'])>0){
+		$videoShow=true;
+	}
 	if(empty($keyword['site_relate']) && empty($keyword['image_relate']) && empty($keyword['video_relate'])){
 		$showEmpty=true;
 	}
@@ -92,82 +109,14 @@
 							{!!Theme::partial('listPostChannelSlider', array('postSearch' => $postSearch,'keyword'=>$keyword))!!}
 						</div>
 					@endif
-					@if($showListVideo==0)
-						@if($showListImage==1)
+					@if($siteShow==true)
+						{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads,'skipImage'=>$skipImage,'skipVideo'=>$skipVideo,'imageShow'=>$imageShow,'videoShow'=>$videoShow))!!}
+					@else
+						@if($imageShow==true)
 							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
 						@endif
-						@if(!empty($keyword['site_relate']) && count($keyword['site_relate'])>0)
-							{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
-						@endif
-					@endif
-					@if($showListVideo==1)
-						<div class="row row-pad-5">
-							<div class="col-md-9">
-								@if($ads=='true' && config('app.env')!='local')
-									<div class="form-group">
-										<ins class="adsbygoogle"
-											 style="display:block"
-											 data-ad-client="ca-pub-6739685874678212"
-											 data-ad-slot="7536384219"
-											 data-ad-format="auto"></ins>
-										<script>
-											(adsbygoogle = window.adsbygoogle || []).push({});
-										</script>
-									</div>
-								@endif
-								@if($showListImage==1)
-									{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
-								@endif
-								{!!Theme::partial('keyword.listVideo_slider', array('keyword' => $keyword,'from'=>0,'to'=>8))!!}
-								@if($ads=='true' && config('app.env')!='local')
-									<div class="form-group">
-										<ins class="adsbygoogle"
-											 style="display:block"
-											 data-ad-client="ca-pub-6739685874678212"
-											 data-ad-slot="7536384219"
-											 data-ad-format="auto"></ins>
-										<script>
-											(adsbygoogle = window.adsbygoogle || []).push({});
-										</script>
-									</div>
-								@endif
-								{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads))!!}
-							</div>
-							<div class="col-md-3">
-								{!!Theme::partial('keyword.listVideo_3', array('keyword' => $keyword,'from'=>8,'to'=>12))!!}
-							</div>
-						</div>
-					@elseif($showListVideo==2)
-						@if($showListImage==1)
-							{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
-						@endif
-						@if($ads=='true' && config('app.env')!='local')
-							<div class="form-group">
-								<ins class="adsbygoogle"
-									 style="display:block"
-									 data-ad-client="ca-pub-6739685874678212"
-									 data-ad-slot="7536384219"
-									 data-ad-format="auto"></ins>
-								<script>
-									(adsbygoogle = window.adsbygoogle || []).push({});
-								</script>
-							</div>
-						@endif
-						{!!Theme::partial('keyword.listVideo_4', array('keyword' => $keyword))!!}
-					@endif
-					@if($showListImage==2)
-						{!!Theme::partial('keyword.listImage', array('keyword' => $keyword))!!}
-						@if($ads=='true' && config('app.env')!='local')
-							<div class="form-group">
-								<ins class="adsbygoogle"
-									 style="display:block"
-									 data-ad-client="ca-pub-6739685874678212"
-									 data-ad-slot="7536384219"
-									 data-ad-format="auto"></ins>
-								<script>
-									(adsbygoogle = window.adsbygoogle || []).push({});
-								</script>
-							</div>
+						@if($videoShow==true)
+							{!!Theme::partial('keyword.listVideo_slider', array('keyword' => $keyword,'from'=>0,'to'=>8))!!}
 						@endif
 					@endif
 					@if(!empty($keyword['keyword_relate']) && count($keyword['keyword_relate'])>0)

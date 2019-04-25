@@ -41,9 +41,12 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
         width: 220px;
         max-height:160px;
         overflow: hidden;
+        border: 1px solid #dadada;
+        padding: 5px;
+        background: #fff;
     }
 </style>
-<div class="panel panel-primary">
+<div class="panel panel-primary nomargin">
     <div class="panel-heading heading-responsive">
         <h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
     </div>

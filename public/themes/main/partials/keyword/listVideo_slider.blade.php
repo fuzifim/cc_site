@@ -38,12 +38,15 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
         .active > div:first-child + div + div + div { display:block; }
     }
     .blockVideo {
-        width: 220px;
+        width: 280px;
         height:200px;
         overflow: hidden;
+        border: 1px solid #dadada;
+        padding: 5px;
+        background: #fff;
     }
 </style>
-<div class="panel panel-default panel-responsive">
+<div class="panel panel-primary panel-responsive nomargin">
     <div class="panel-heading heading-responsive">
         <h2 class="panel-title">Video relate for {!! $keyword['keyword'] !!}</h2>
     </div>
