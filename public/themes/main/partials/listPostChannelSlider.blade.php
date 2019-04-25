@@ -41,6 +41,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		width: 220px;
 		height:305px;
 		overflow: hidden;
+		border: 1px #dadada solid; padding: 5px; 
 	}
 </style>
 <div class="panel panel-primary panel-responsive">
@@ -48,7 +49,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		<h2 class="panel-title">Post relate for {!! $keyword['keyword'] !!}</h2>
 	</div>
 	<div class="">
-		<div id="carousel" class="carousel slide filemanager" data-ride="carousel" data-type="multi" data-interval="false">
+		<div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="5000">
 			<div class="carousel-inner">
 					<?php
 					$i=0;
