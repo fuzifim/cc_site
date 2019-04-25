@@ -94,7 +94,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
     <div class="panel-heading">
         <h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
     </div>
-    <div class="panel-body">
+    <div class="">
 
         <div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="2500">
             <div class="carousel-inner">
