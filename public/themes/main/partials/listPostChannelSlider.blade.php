@@ -43,14 +43,13 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		overflow: hidden;
 	}
 </style>
-<div class="panel panel-primary">
+<div class="panel panel-primary panel-responsive">
 	<div class="panel-heading heading-responsive">
-		<h2 class="panel-title">Image relate for {!! $keyword['keyword'] !!}</h2>
+		<h2 class="panel-title">Post relate for {!! $keyword['keyword'] !!}</h2>
 	</div>
 	<div class="">
 		<div id="carousel" class="carousel slide" data-ride="carousel" data-type="multi" data-interval="false">
 			<div class="carousel-inner">
-
 				<div class="filemanager">
 					<?php
 					$i=0;

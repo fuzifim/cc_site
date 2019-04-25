@@ -89,6 +89,7 @@
 					@endif
 					@if(count($postSearch))
 						<div class="PostlistItem">
+							{!!Theme::partial('listPostChannelSlider', array('chunk' => $postSearch,'keyword'=>$keyword))!!}
 						</div>
 					@endif
 					@if($showListVideo==0)
