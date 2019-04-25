@@ -69,7 +69,10 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
                         <div class="item {!! $itemActive !!}">
                             <div class="carousel-col">
                                 <div class="blockVideo img-responsive">
+                                    <div class="groupThumb" style="position:relative;">
+                                        <span class="btnPlayVideoClickSmall"><i class="glyphicon glyphicon-play"></i></span>
                                     <a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
+                                    </div>
                                     <?php
                                     if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                         $updated_at= $video['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
