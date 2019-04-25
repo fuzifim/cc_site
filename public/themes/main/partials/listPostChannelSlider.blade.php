@@ -14,21 +14,47 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 	}
 	.active > div { display:none; }
 	.active > div:first-child { display:block; }
+
+	.blockPost {
+		width: 280px;
+		height:305px;
+		overflow: hidden;
+		border: 1px #dadada solid; padding: 5px;
+	}
 	/*xs*/
 	@media (max-width: 767px) {
 		.carousel-col                { width: 50%; }
 		.active > div:first-child + div { display:block; }
+
+		.blockPost {
+			width: 280px;
+			height:250px;
+			overflow: hidden;
+			border: 1px #dadada solid; padding: 5px;
+		}
 	}
 	/*sm*/
 	@media (min-width: 768px) and (max-width: 991px) {
 		.carousel-col                { width: 50%; }
 		.active > div:first-child + div { display:block; }
+		.blockPost {
+			width: 280px;
+			height:250px;
+			overflow: hidden;
+			border: 1px #dadada solid; padding: 5px;
+		}
 	}
 	/*md*/
 	@media (min-width: 992px) and (max-width: 1199px) {
 		.carousel-col                { width: 33%; }
 		.active > div:first-child + div { display:block; }
 		.active > div:first-child + div + div { display:block; }
+		.blockPost {
+			width: 280px;
+			height:250px;
+			overflow: hidden;
+			border: 1px #dadada solid; padding: 5px;
+		}
 	}
 	/*lg*/
 	@media (min-width: 1200px) {
@@ -36,12 +62,12 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		.active > div:first-child + div { display:block; }
 		.active > div:first-child + div + div { display:block; }
 		.active > div:first-child + div + div + div { display:block; }
-	}
-	.blockPost {
-		width: 280px;
-		height:305px;
-		overflow: hidden;
-		border: 1px #dadada solid; padding: 5px;
+		.blockPost {
+			width: 280px;
+			height:250px;
+			overflow: hidden;
+			border: 1px #dadada solid; padding: 5px;
+		}
 	}
 </style>
 <div class="panel panel-primary panel-responsive">
