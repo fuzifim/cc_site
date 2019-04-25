@@ -22,7 +22,7 @@ $i=0;
         @endif
         <li class="list-group-item">
             <h4 class="linkTitleH4"><a class="" id="" href="{!! route('site.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a></h4>
-            <span class="urlFull text-success">{!! $item['link'] !!}</span>
+            <small class="urlFull text-success">{!! $item['link'] !!}</small>
             <?php
             if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                 $updated_at= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
