@@ -16,6 +16,7 @@ sudo yum install -y mongodb-org
 sudo service mongod start
 sudo csf -a 206.189.147.163
 sudo csf -a 206.189.159.38
+sudo csf -a 178.128.126.253
 DATABASE="cungcap"
 USERDATA="cungcap_user"
 PASSUSER="cungcap_pass"
