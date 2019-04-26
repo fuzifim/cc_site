@@ -146,9 +146,9 @@ class ConstructController extends Controller
         }
         $this->_domainParentPrimary = config('app.url');
 		if($this->_channel->channel_parent_id==0){
-		    if($this->_domainPrimary!=config('app.url')){
-                return redirect()->to('https://'.config('app.url').Request::getRequestUri())->send();
-            }
+//		    if($this->_domainPrimary!=config('app.url')){
+//                return redirect()->to('https://'.config('app.url').Request::getRequestUri())->send();
+//            }
             $this->_newKeyword=Cache::store('memcached')->remember('newKeyword', 1, function()
             {
                 return DB::connection('mongodb')->collection('mongo_keyword')

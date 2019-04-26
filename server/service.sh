@@ -15,7 +15,7 @@ sudo cp -fr files/etc/yum.repos.d/mongodb-org.repo /etc/yum.repos.d/
 sudo yum install -y mongodb-org
 sudo service mongod start
 sudo csf -a 206.189.147.163
-sudo csf -a 206.189.159.38
+sudo csf -a 134.209.110.79
 DATABASE="cungcap"
 USERDATA="cungcap_user"
 PASSUSER="cungcap_pass"
