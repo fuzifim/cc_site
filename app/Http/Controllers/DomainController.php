@@ -77,7 +77,10 @@ class DomainController extends ConstructController
                 );
                 return $this->_theme->scope('domain.viewInfo', $return)->render();
             }else{
-                echo 'domain not found';
+                $return=array(
+                    'domainName'=>$this->_domainInfo
+                );
+                return $this->_theme->scope('404notfoundDomain', $return)->render();
             }
         }
     }
