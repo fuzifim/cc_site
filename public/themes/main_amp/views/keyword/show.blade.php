@@ -133,7 +133,7 @@ $ads='true';
                             <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                             <span>{!! $site['description'] !!}</span><br>
                             <span>{!! $site['link'] !!}</span><br>
-                            <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.info',array(config('app.url',$site['domain']))) !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                            <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                         </li>
                     @endif
                 @endforeach
