@@ -43,16 +43,10 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
 Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
+if($ads=='true' && config('app.env')!='local'){
+    Theme::setAds('true');
+}
 ?>
-@if($ads=='true' && config('app.env')!='local')
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-6739685874678212",
-            enable_page_level_ads: true
-        });
-    </script>
-@endif
 <section>
     <div class="mainpanel">
     {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
