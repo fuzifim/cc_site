@@ -49,16 +49,11 @@
 		$showEmpty=true;
 	}
 	$ads='true';
+    if($ads=='true' && config('app.env')!='local'){
+
+        Theme::setAds('true');
+    }
 ?>
-@if($ads=='true' && config('app.env')!='local')
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<script>
-		(adsbygoogle = window.adsbygoogle || []).push({
-			google_ad_client: "ca-pub-6739685874678212",
-			enable_page_level_ads: true
-		});
-	</script>
-@endif
 <section>
 	<div class="mainpanel">
 		{!!Theme::partial('headerbar', array('title' => 'Header'))!!}
