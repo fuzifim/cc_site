@@ -1,5 +1,5 @@
 <?
-	Theme::setTitle($domainName);
+	Theme::setTitle('404 '.$domainName);
 	Theme::setKeywords($domainName.' not found');
 	Theme::setDescription($domainName.' Not found, please try again');
 	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
