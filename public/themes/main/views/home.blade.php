@@ -2,6 +2,7 @@
 	$channel['theme']->setTitle('Cung Cấp');
 	$channel['theme']->setKeywords('Cung cấp, cung cap, provide, provision, supply. ');
 	$channel['theme']->setDescription('Cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người ');
+	$channel['theme']->setAds('true');
 	$channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap-website.jpg'));
 	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
