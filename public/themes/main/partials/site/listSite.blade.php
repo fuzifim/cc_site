@@ -21,7 +21,7 @@ $i=0;
             @endif
         @endif
         <li class="list-group-item">
-            <h4 class="linkTitleH4"><a class="" id="" href="{!! route('site.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $item['title'] !!}</a></h4>
+            <h4 class="linkTitleH4"><a class="" id="" href="{!! route('site.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">@if(!empty($item['title_full'])){!! $item['title_full'] !!}@else{!! $item['title_'] !!}@endif</a></h4>
             <small class="urlFull text-success">{!! $item['link'] !!}</small>
             <?php
             if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
