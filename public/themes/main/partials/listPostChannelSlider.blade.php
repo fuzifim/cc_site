@@ -20,6 +20,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
 		height:305px;
 		overflow: hidden;
 		border: 1px #dadada solid; padding: 5px;
+		background: #fff;
 	}
 	/*xs*/
 	@media (max-width: 767px) {
