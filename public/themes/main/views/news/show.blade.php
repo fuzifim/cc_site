@@ -1,12 +1,11 @@
 <?
-	Theme::setTitle(html_entity_decode($news->title));
-	//Theme::setKeywords($key);
-	Theme::setDescription(WebService::limit_string(strip_tags(html_entity_decode($news->description),""), $limit = 200)); 
-	Theme::setCanonical('https://news-'.$news->id.'.'.config('app.url'));
-	if(!empty($news->image)){
-		Theme::setImage('https:'.$news->image);
+	Theme::setTitle(html_entity_decode($news['title']));
+	$newsLink=route('news.detail',array($channel['domainPrimary'],(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-')));
+	Theme::setDescription(WebService::limit_string(strip_tags(html_entity_decode($news['description']),""), $limit = 200));
+	Theme::setCanonical($newsLink);
+	if(count($news['image'])){
+		Theme::setImage($news['image'][0]['image']);
 	}
-	//Theme::setAmp('https://news-'.$news->id.'.'.config('app.url').'?amp=true');
 	Theme::asset()->add('photoswipe', 'assets/library/PhotoSwipe/dist/photoswipe.css', array('core-style'));
 	Theme::asset()->add('photoswipeSkin', 'assets/library/PhotoSwipe/dist/default-skin/default-skin.css', array('core-style'));
 	Theme::asset()->container('footer')->add('photoswipeJs', 'assets/library/PhotoSwipe/dist/photoswipe.min.js', array('core-script'));
@@ -25,58 +24,52 @@
 <section>
 <div class="mainpanel">
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
-{!!Theme::partial('formSearch', array('region' => $channel['region']))!!}
 	<div class="contentpanel">
 		<div class="row-pad-5 section-content postView">
 			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" itemscope itemtype="http://schema.org/Article">
-				@if(!empty($news->image))
+				@if(count($news['image']))
 					<div class="swiper-container postGallery mb5 " id="postGallery" style="max-height:520px; overflow:hidden;padding:5px;background:#fff; ">
 						<!-- Wrapper for slides -->
 						  <div class="swiper-wrapper my-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-							<?php
-								$width='';
-								$height='';
-								list($width, $height, $type, $attr) = getimagesize('http:'.$news->image); 
-							?>
 							<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" class="swiper-slide">
-									<a href="{{$news->image}}" itemprop="contentUrl" data-size="{{$width}}x{{$height}}">
-									<img itemprop="thumbnail" class="img-responsive lazy" alt="{{$news->title}}" src="{{$news->image}}" url-lg="{{$news->image}}"/>
+									<a href="{!! $news['image'][0]['image'] !!}" itemprop="contentUrl" data-size="720x480">
+									<img itemprop="thumbnail" class="img-responsive lazy" alt="{!! $news['title'] !!}" src="{!! $news['image'][0]['image'] !!}" url-lg="{!! $news['image'][0]['image'] !!}"/>
 									</a>
 								</figure>
 						  </div>
 					</div>
 				@endif
 				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
-					@if(count($news->joinField->parent)>0)
-						@foreach($news->joinField->parent as $parent) 
-							@if(count($parent->parent)>0)
-								@foreach($parent->parent as $subParent) 
-									<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($subParent->SolrID)))}}"><span itemprop="name">{!!$subParent->name!!}</span></a></li>
-								@endforeach
-							@endif
-							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($parent->SolrID)))}}"><span itemprop="name">{!!$parent->name!!}</span></a></li>
-						@endforeach
+					@if(!empty($news['parent']))
+							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
+							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$news['parent_id'],str_slug(mb_substr($news['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $news['parent'] !!}</span></a></li>
 					@endif
-					<li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($news->joinField->SolrID)))}}"><span itemprop="name">{!!$news->joinField->name!!}</span></a></li> 
 				</ol> 
 				<div class="panel panel-default">
 					<div class="panel-body content-show">
 						<div class="mb5">
-							<h1 class="panel-title"><strong itemprop="name">{!!$news->title!!}</strong></h1>
+							<h1 class="panel-title"><strong itemprop="name">{!! $news['title'] !!}</strong></h1>
 						</div>
 						<div class="attribute-2">
-							<small><span class="post-view text-danger">{{$news->view}} lượt xem</span></small> 
-							<span class="time-update"><i class="glyphicon glyphicon-time"></i> <small datetime="{!!Site::Date($news->updated_at)!!}" itemprop="datePublished">{!!WebService::time_request($news->updated_at)!!}</small></span> 
+							@if(!empty($news['views']))<small><span class="post-view text-danger">{!! $news['views'] !!} lượt xem</span></small>@endif
+							<?php
+							if ($news['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+								$updated_at= $news['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+							}else{
+								$updated_at= $news['updated_at'];
+							}
+							?>
+							<span class="time-update"><i class="glyphicon glyphicon-time"></i> <small datetime="{!!Site::Date($updated_at)!!}" itemprop="datePublished">{!!WebService::time_request($updated_at)!!}</small></span>
 						</div>
 						<div class="timeline-btns attribute-2">
-							<a href="" class="tooltips btnShare text-muted"  data-title="{!!$news->title!!}" data-image="" data-url="https://news-{{$news->id}}.{{config('app.url')}}" data-toggle="tooltip" title="" data-original-title="Share"><i class="glyphicon glyphicon-share"></i> Chia sẻ</a>
+							<a href="" class="tooltips btnShare text-muted"  data-title="{!! $news['title'] !!}" data-image="" data-url="{!! $newsLink !!}" data-toggle="tooltip" title="" data-original-title="Share"><i class="glyphicon glyphicon-share"></i> Chia sẻ</a>
 						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="btn-group btn-group-justified">
-					<a class="btn btn-primary siteLink" href="javascript:void(0);" data-url='{{json_encode("https://www.facebook.com/sharer/sharer.php?u=https://news-".$news->id.".".config("app.url"))}}'><span class="fa fa-facebook"></span> Share on Facebook</a> 
-					<a class="btn btn-info siteLink" href="javascript:void(0);" data-url='{{json_encode("https://twitter.com/share?url=https://news-".$news->id.".".config("app.url"))}}'><span class="fa fa-twitter"></span> Share on Twitter</a>
+					<a class="btn btn-primary siteLink" href="javascript:void(0);" data-url='{{json_encode("https://www.facebook.com/sharer/sharer.php?u=".$newsLink)}}'><span class="fa fa-facebook"></span> Share on Facebook</a>
+					<a class="btn btn-info siteLink" href="javascript:void(0);" data-url='{{json_encode("https://twitter.com/share?url=".$newsLink)}}'><span class="fa fa-twitter"></span> Share on Twitter</a>
 					</div>
 				</div>
 				<div class="form-group">
@@ -91,44 +84,23 @@
 					(adsbygoogle = window.adsbygoogle || []).push({});
 					</script>
 				</div>
-				@if(!empty($news->content))
+				@if(!empty($news['body']))
 				<div class="panel panel-default">
 					<div id="postDescription" class="panel-body postDescription postGallery" itemprop="description">
-						{!!WebService::addNofollow(html_entity_decode($news->content),$channel['domainPrimary'],true)!!} 
-						@if(!empty($news->attribute['source_url']))
+						<blockquote>
+							{!!WebService::addNofollow(html_entity_decode($news['description']),$channel['domainPrimary'],true)!!}
+						</blockquote>
+						{!!WebService::addNofollow(html_entity_decode($news['body']),$channel['domainPrimary'],true)!!}
+						@if(!empty($news['link_root']))
 							<?
-								$parsedUrl=parse_url($news->attribute['source_url']); 
+								$parsedUrl=parse_url($news['link_root']);
 							?>
 							@if(!empty($parsedUrl['host']))
-								Nguồn: <a href="http://{{$parsedUrl['host']}}.{{config('app.url')}}" class="btn btn-xs btn-primary siteLink" target="_blank" data-url='{{json_encode(route("go.to.url",array(config("app.url"),urlencode($news->attribute['source_url']))))}}' ><i class="glyphicon glyphicon-globe"></i> {{$parsedUrl['host']}}</a> 
+								Nguồn: <a href="{!! route('go.to.url',array(config('app.url'),urlencode($news['link_root']))) !!}" class="btn btn-xs btn-primary" target="_blank" rel="nofollow"><i class="glyphicon glyphicon-globe"></i> {{$parsedUrl['host']}}</a>
 							@endif
 						@endif
 					</div>
 				</div>
-				@endif
-				@if(count($postSearch)>0)
-					<div class="mt5">
-						<?
-							$idPost=array(); 
-							$i=0; 
-						?>
-						@foreach($postSearch as $item)
-							<?
-								array_push($idPost,$item->id); 
-							?>
-						@endforeach 
-						<?
-							$getPost = Cache::store('file')->remember('news_getPost_search_'.$news->id, 5, function() use($idPost)
-							{
-								return \App\Model\Posts::where('posts_status','=','active')->whereIn('id',$idPost)->limit(6)->get(); 
-							});
-						?> 
-						@if(count($getPost)>0) 
-							@foreach($getPost->chunk(3) as $chunk)
-							{!!Theme::partial('listPostChannel', array('chunk' => $chunk))!!}
-							@endforeach
-						@endif
-					</div>
 				@endif
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -144,71 +116,51 @@
 					(adsbygoogle = window.adsbygoogle || []).push({});
 					</script>
 				</div>
-				@if(count($newsSearch)>0)
-				<div class="panel panel-default form-group">
-					<div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i> Tin liên quan</div>
-					<div class="list-group">
-						@foreach($newsSearch as $postRelate)
-							@if($postRelate->id!=$news->id)
-							@if(!empty($postRelate->image))
-								<div class="list-group-item form-group">
-									<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-										<a class="image" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">
-											<img src="{{$postRelate->image}}" class="img-responsive img-thumbnail lazy" alt="{!!$postRelate->title!!}" title="" >
-										</a>
-									</div>
-									<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-										<h5 class="postTitle nomargin"><a class="title" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">{!!$postRelate->title!!}</a></h5>
-										<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($postRelate->updated_at)!!}</span></small> <small><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($postRelate->joinField->SolrID)))}}"><span itemprop="name">{!!$postRelate->joinField->name!!}</span></a></small>
-									</div>
-								</div>
-							@else 
-								<div class="list-group-item form-group">
-									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-										<h5 class="postTitle"><a class="title" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">{!!$postRelate->title!!}</a></h5>
-										<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($postRelate->updated_at)!!}</span></small> <small><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($postRelate->joinField->SolrID)))}}"><span itemprop="name">{!!$postRelate->joinField->name!!}</span></a></small>
-									</div>
-								</div>
-							@endif
-							@endif
-						@endforeach
-					</div>
-					<div class="panel-footer text-center">
-						<a href="#" class="view-more-ads"><i class="glyphicon glyphicon-chevron-down"></i> Hiển thị thêm</a>
-					</div>
-				</div>
-				@endif
 				@if(count($newsRelate)>0)
-				<div class="panel panel-default form-group">
-					<div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i> Tin mới nhất</div>
-					<div class="list-group">
-						@foreach($newsRelate as $postRelate)
-							@if(!empty($postRelate->image))
-								<div class="list-group-item form-group">
-									<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-										<a class="image" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">
-											<img src="{{$postRelate->image}}" class="img-responsive img-thumbnail lazy" alt="{!!$postRelate->title!!}" title="" >
-										</a>
+					<div class="panel panel-default form-group">
+						<div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i> Tin mới nhất</div>
+						<div class="list-group">
+							@foreach($newsRelate as $relate)
+								@if(count($relate['image']))
+									<div class="list-group-item form-group">
+										<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+											<a class="image" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">
+												<img src="{!! $relate['image'][0]['thumb'] !!}" class="img-responsive img-thumbnail lazy" alt="{!! $relate['title'] !!}" title="" >
+											</a>
+										</div>
+										<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+											<h5 class="postTitle nomargin"><a class="title" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
+											<?php
+											if ($relate['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+												$updated_at= $relate['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+											}else{
+												$updated_at= $relate['updated_at'];
+											}
+											?>
+											<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($updated_at)!!}</span></small> @if(!empty($relate['views']))<small><span class="text-danger">{!! $relate['views'] !!} lượt xem</span></small>@endif
+										</div>
 									</div>
-									<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-										<h5 class="postTitle nomargin"><a class="title" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">{!!$postRelate->title!!}</a></h5>
-										<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($postRelate->updated_at)!!}</span></small> <small><span class="text-danger">{{$postRelate->view}} lượt xem</span></small>  <small><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($postRelate->joinField->SolrID)))}}"><span itemprop="name">{!!$postRelate->joinField->name!!}</span></a></small>
+								@else
+									<div class="list-group-item form-group">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<h5 class="postTitle"><a class="title" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
+											<?php
+											if ($relate['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
+												$updated_at= $relate['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
+											}else{
+												$updated_at= $relate['updated_at'];
+											}
+											?>
+											<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($updated_at)!!}</span></small> <small><span class="text-danger">{{$postRelate->view}} lượt xem</span></small>
+										</div>
 									</div>
-								</div>
-							@else 
-								<div class="list-group-item form-group">
-									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-										<h5 class="postTitle"><a class="title" href="https://news-{{$postRelate->id}}.{{config('app.url')}}">{!!$postRelate->title!!}</a></h5>
-										<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($postRelate->updated_at)!!}</span></small> <small><span class="text-danger">{{$postRelate->view}} lượt xem</span></small>  <small><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{{route('channel.slug',array($channel['domainPrimary'],Str::slug($postRelate->joinField->SolrID)))}}"><span itemprop="name">{!!$postRelate->joinField->name!!}</span></a></small>
-									</div>
-								</div>
-							@endif
-						@endforeach
+								@endif
+							@endforeach
+						</div>
+						<div class="panel-footer text-center">
+							<a href="#" class="view-more-ads"><i class="glyphicon glyphicon-chevron-down"></i> Hiển thị thêm</a>
+						</div>
 					</div>
-					<div class="panel-footer text-center">
-						<a href="#" class="view-more-ads"><i class="glyphicon glyphicon-chevron-down"></i> Hiển thị thêm</a>
-					</div>
-				</div>
 				@endif
 			</div>
 		</div>
@@ -302,7 +254,7 @@
 		});
 		$(".siteLink").click(function(){
 			window.open(jQuery.parseJSON($(this).attr("data-url")),"_blank")
-			return false; 
+			return false;
 		});
 		$(".btnPlayVideo").click(function(){
 			$(".carousel").carousel("pause"); 

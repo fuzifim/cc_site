@@ -52,6 +52,9 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('d/{domain}', array(
         'as' => 'domain.info',
         'uses' => 'DomainController@DomainInfo'));
+    Route::get('n/{id}/{slug}', array(
+        'as' => 'news.detail',
+        'uses' => 'NewsController@NewsDetail'));
     //--Pages
     Route::get('/rss', array(
         'as' => 'pages.rss',
@@ -164,6 +167,9 @@ Route::group(['domain' => '{domain}'], function()
             'uses' => 'MediaController@delTmp'));
     });
     Route::group(['prefix' => 'settings'], function () {
+        Route::get('/list_cate_news', array(
+            'as' => 'list.cate.news',
+            'uses' => 'NewsController@listCateNews'));
         Route::group(['prefix' => 'ssl'], function () {
             Route::post('/active', array(
                 'as' => 'channel.ssl.active',

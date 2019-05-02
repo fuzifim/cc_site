@@ -161,17 +161,12 @@ class SitePublicController extends ConstructController
 				]); 
 			}
 			if($this->_channel->channel_parent_id==0){
-				$getChannelAll = Cache::store('memcached')->remember('getChannelAll', 5, function()
-				{
-					return Channel::where('channel_status','!=','delete')->get(); 
-				});
-				$getUserAll = Cache::store('memcached')->remember('getUserAll', 5, function()
-				{
-					return User::all(); 
-				});
+				$getCateNews=DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('type','cate_news')
+                    ->limit(10)
+                    ->get();
 				$return = array(
-					'getChannelAll'=>$getChannelAll, 
-					'getUserAll'=>$getUserAll
+					'getCateNews'=>$getCateNews
 				);
 				return $this->_theme->scope('home', $return)->render();
 			}else{

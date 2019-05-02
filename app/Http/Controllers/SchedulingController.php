@@ -29,6 +29,338 @@ class SchedulingController extends Controller
             return $rules;
         });
     }
+    public function crawNews(){
+        $client = new Client([
+            'headers' => [
+                'Content-Type' => 'text/html',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+            ],
+            'connect_timeout' => '5',
+            'timeout' => '5'
+        ]);
+        $now = Carbon::now()->format('Y-m-d H:i:s');
+        $getCateNews=DB::table('list_cate_news')
+            ->leftJoin('cron_type_multi', 'cron_type_multi.value', '=', 'list_cate_news.id')
+            ->where('cron_type_multi.type','news')
+            ->where('cron_type_multi.from',config('app.url'))
+            ->where('cron_type_multi.craw_at','<=',$now)
+            ->orderBy('cron_type_multi.craw_at','asc')
+            ->select('list_cate_news.*','cron_type_multi.craw_at','cron_type_multi.id as cron_id')
+            ->limit(1)
+            ->get();
+        $i=0;
+        $listArticle=[];
+        $itemArticle=[];
+        foreach ($getCateNews as $item){
+            DB::table('cron_type_multi')
+                ->where('id',$item->cron_id)
+                ->update(
+                    [
+                        'craw_at'=>Carbon::now()->addMinutes(5)->format('Y-m-d H:i:s')
+                    ]
+                );
+            if($item->add_keyword!='true'){
+                $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                    ->where('base_64',base64_encode($item->keyword))
+                    ->first();
+                if(empty($checkKeyword['keyword'])){
+                    $idKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                        ->insertGetId(
+                            [
+                                'keyword' => $item->keyword,
+                                'base_64' => base64_encode($item->keyword),
+                                'type'=>'cate_news',
+                                'description'=>'',
+                                'image'=>'',
+                                'status'=>'pending',
+                                'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                            ]
+                        );
+                    DB::table('list_cate_news')
+                        ->where('id',$item->id)
+                        ->update(
+                            [
+                                'add_keyword'=>'true',
+                                'id_keyword'=>(string)$idKeyword
+                            ]
+                        );
+                }else{
+                    if(empty($checkKeyword['type'])){
+                        DB::connection('mongodb')->collection('mongo_keyword')
+                            ->where('_id',(string)$checkKeyword['_id'])
+                            ->update(
+                                [
+                                    'type'=>'cate_news'
+                                ]
+                            );
+                    }
+                    $idKeyword=$checkKeyword['_id'];
+                    DB::table('list_cate_news')
+                        ->where('id',$item->id)
+                        ->update(
+                            [
+                                'add_keyword'=>'true',
+                                'id_keyword'=>(string)$idKeyword
+                            ]
+                        );
+                }
+            }else{
+                $idKeyword=$item->id_keyword;
+            }
+            $response = $client->request('GET', $item->url);
+            $getResponse=$response->getBody()->getContents();
+            $dataConvertUtf8 = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponse;
+            $doc = new \DOMDocument;
+            @$doc->loadHTML($dataConvertUtf8);
+            $xpath = new \DOMXpath($doc);
+            foreach ($xpath->evaluate('//div[@class="timeline loadmore"]') as $node) {
+                $doc->saveHtml($node);
+                $metas = $node->getElementsByTagName('h4');
+                foreach($metas as $meta){
+                    if($meta->getAttribute('class')=='story__heading'){
+                        if($i<=1){
+                            $title=$meta->nodeValue;
+                            $itemArticle['title']=$title;
+                            $getLink=$meta->getElementsByTagName('a');
+                            $link=$getLink->item(0)->getAttribute('href');
+                            $responseRoot = $client->request('GET', 'https://baomoi.com'.$getLink->item(0)->getAttribute('href'));
+                            $getResponseRoot=$responseRoot->getBody()->getContents();
+                            $pattern = '/window.location(\.assign|\.replace)\("(.+)"/i';
+                            $matches = array();
+                            if (preg_match($pattern, $getResponseRoot, $matches)) {
+                                $itemArticle['link_root']= $matches[2];
+                            }
+                            $link='https://baomoi.com'.str_replace('/r/','/c/',$link);
+                            $linkId=str_replace('.epi','',$link);
+                            $itemArticle['id'] = substr($linkId, strrpos($linkId, '/') + 1);
+                            $checkNews=DB::connection('mongodb')->collection('mongo_news')
+                                ->where('news_id',$itemArticle['id'])
+                                ->first();
+                            if(empty($checkNews['title'])){
+                                $itemArticle['link']=$link;
+                                $responseDetail = $client->request('GET', $link);
+                                $getResponseDetail=$responseDetail->getBody()->getContents();
+                                $dataConvertUtf8Detail = '<?xml version="1.0" encoding="UTF-8"?>'.$getResponseDetail;
+                                $docDetail = new \DOMDocument;
+                                @$docDetail->loadHTML($dataConvertUtf8Detail);
+                                $xpathDetail = new \DOMXpath($docDetail);
+                                foreach ($xpathDetail->evaluate('//div[@class="article"]') as $nodeDetail) {
+                                    $docDetail->saveHtml($nodeDetail);
+                                    $metasDetail = $docDetail->getElementsByTagName('div');
+                                    foreach ($metasDetail as $metaD){
+                                        if($metaD->getAttribute('class')=='article__sapo'){
+                                            $description=$metaD->nodeValue;
+                                            $itemArticle['description']=$description;
+                                        }
+                                        if($metaD->getAttribute('class')=='article__body'){
+                                            $listImage=[];
+                                            $itemImage=[];
+                                            $images = $metaD->getElementsByTagName('img');
+                                            if($images->length>0){
+                                                foreach($images as $i => $image){
+                                                    try {
+                                                        $dir=WebService::makeDir('media/news');
+                                                        $name = str_random(5).'-'.time();
+                                                        $imageUrl=$image->getAttribute('src');
+                                                        $extension = substr($imageUrl, strrpos($imageUrl, '.') + 1);
+                                                        $contents = file_get_contents($imageUrl);
+                                                        $filename=$name.'.'.$extension;
+                                                        Storage::put('tmp/'.$filename, $contents);
+                                                        $file_path = public_path().'/'.'tmp/'.$filename;
+                                                        $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
+                                                        $img=new Imagick($file_path);
+                                                        $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
+                                                        $identifyImage=$img->identifyImage();
+                                                        $demention = getimagesize($file_path);
+                                                        $imgThumbnail = new Imagick($file_path);
+                                                        $widthMd=720; $heightMd=480;
+                                                        $widthXs=320; $heightXs=213;
+                                                        if($identifyImage['mimetype'] == "image/gif"){
+                                                            $imgThumbnail = $imgThumbnail->coalesceImages();
+                                                            foreach ($imgThumbnail as $frame) {
+                                                                $frame->scaleImage($widthMd,$heightMd,true);
+                                                                $frame->setImageBackgroundColor('white');
+                                                                $w = $frame->getImageWidth();
+                                                                $h = $frame->getImageHeight();
+                                                                $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                                            }
+                                                            $imgThumbnail = $imgThumbnail->deconstructImages();
+                                                        }else{
+                                                            $imgThumbnail->scaleImage($widthMd,$heightMd,true);
+                                                            $imgThumbnail->setImageBackgroundColor('white');
+                                                            $w = $imgThumbnail->getImageWidth();
+                                                            $h = $imgThumbnail->getImageHeight();
+                                                            $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                                        }
+                                                        $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                        $imgThumbnail->setImageCompressionQuality(95);
+                                                        $imgThumbnail->writeImage();
+                                                        $imgThumbnail->writeImages($file_path,true);
+                                                        $imgXS=new Imagick($file_path);
+                                                        if($identifyImage['mimetype'] == "image/gif"){
+                                                            $imgXS = $imgXS->coalesceImages();
+                                                            foreach ($imgXS as $frame) {
+                                                                $frame->scaleImage($widthXs,$heightXs,true);
+                                                                $frame->setImageBackgroundColor('white');
+                                                                $w = $frame->getImageWidth();
+                                                                $h = $frame->getImageHeight();
+                                                                $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                            }
+                                                            $imgXS = $imgXS->deconstructImages();
+                                                        }else{
+                                                            $imgXS->scaleImage($widthXs,$heightXs,true);
+                                                            $imgXS->setImageBackgroundColor('white');
+                                                            $w = $imgXS->getImageWidth();
+                                                            $h = $imgXS->getImageHeight();
+                                                            $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                        }
+                                                        $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                        $imgXS->setImageCompressionQuality(95);
+                                                        $imgXS->writeImages($file_path_thumb,true);
+                                                        Storage::disk('s3')->put($dir.'/thumb-'.$filename, file_get_contents($file_path_thumb));
+                                                        Storage::disk('s3')->put($dir.'/'.$filename, file_get_contents($file_path));
+                                                        $imageUrl='https://cdn.cungcap.net/'.$dir.'/'.$filename;
+                                                        $imageUrl_thumb='https://cdn.cungcap.net/'.$dir.'/thumb-'.$filename;
+                                                        File::delete($file_path);
+                                                        File::delete($file_path_thumb);
+                                                        $image->setAttribute('src', $imageUrl);
+                                                        $image->setAttribute('data-width', 720);
+                                                        $image->setAttribute('data-height', 480);
+                                                        $itemImage['image']=$imageUrl;
+                                                        $itemImage['thumb']=$imageUrl_thumb;
+                                                        array_push($listImage,$itemImage);
+                                                    } catch (\Exception $e) {
+                                                        continue;
+                                                    }
+                                                }
+                                            }
+                                            $pArticle=$metaD->getElementsByTagName('p');
+                                            foreach ($pArticle as $p){
+                                                if($p->getAttribute('class')=='body-video'){
+                                                    $videos=$p->getElementsByTagName('video');
+                                                    if($videos->length>0){
+                                                        foreach($videos as $video){
+                                                            $source=$video->getElementsByTagName('source');
+                                                            $dirVideo=WebService::makeDir('media/news/video');
+                                                            $linkVideo=$source->item(0)->getAttribute('data-src');
+
+                                                            //$extensionVideo = substr($linkVideo, strrpos($linkVideo, '.') + 1);
+                                                            //$ext = pathinfo($linkVideo, PATHINFO_EXTENSION);
+                                                            $name = 'v-'.str_random(5).'-'.time();
+                                                            $contents = file_get_contents($linkVideo);
+                                                            $filename=$name.'.mp4';
+                                                            Storage::put('tmp/'.$filename, $contents);
+                                                            $file_path = public_path().'/'.'tmp/'.$filename;
+                                                            Storage::disk('s3')->put($dirVideo.'/'.$filename, file_get_contents($file_path));
+                                                            File::delete($file_path);
+                                                            $videoCdn='https://cdn.cungcap.net/'.$dirVideo.'/'.$filename;
+                                                            $source->item(0)->setAttribute('data-src', $videoCdn);
+
+                                                            $image_url = $video->getAttribute('poster');
+                                                            $dir=WebService::makeDir('media/news');
+                                                            $name = str_random(5).'-'.time();
+                                                            $extension = substr($image_url, strrpos($image_url, '.') + 1);
+                                                            $contents = file_get_contents($image_url);
+                                                            $filename=$name.'.'.$extension;
+                                                            Storage::put('tmp/'.$filename, $contents);
+                                                            $file_path = public_path().'/'.'tmp/'.$filename;
+                                                            $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
+                                                            $img=new Imagick($file_path);
+                                                            $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
+                                                            $identifyImage=$img->identifyImage();
+                                                            $demention = getimagesize($file_path);
+                                                            $imgThumbnail = new Imagick($file_path);
+                                                            $widthMd=720; $heightMd=480;
+                                                            $widthXs=320; $heightXs=213;
+                                                            if($identifyImage['mimetype'] == "image/gif"){
+                                                                $imgThumbnail = $imgThumbnail->coalesceImages();
+                                                                foreach ($imgThumbnail as $frame) {
+                                                                    $frame->scaleImage($widthMd,$heightMd,true);
+                                                                    $frame->setImageBackgroundColor('white');
+                                                                    $w = $frame->getImageWidth();
+                                                                    $h = $frame->getImageHeight();
+                                                                    $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                                                }
+                                                                $imgThumbnail = $imgThumbnail->deconstructImages();
+                                                            }else{
+                                                                $imgThumbnail->scaleImage($widthMd,$heightMd,true);
+                                                                $imgThumbnail->setImageBackgroundColor('white');
+                                                                $w = $imgThumbnail->getImageWidth();
+                                                                $h = $imgThumbnail->getImageHeight();
+                                                                $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                                            }
+                                                            $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                            $imgThumbnail->setImageCompressionQuality(95);
+                                                            $imgThumbnail->writeImage();
+                                                            $imgThumbnail->writeImages($file_path,true);
+                                                            $imgXS=new Imagick($file_path);
+                                                            if($identifyImage['mimetype'] == "image/gif"){
+                                                                $imgXS = $imgXS->coalesceImages();
+                                                                foreach ($imgXS as $frame) {
+                                                                    $frame->scaleImage($widthXs,$heightXs,true);
+                                                                    $frame->setImageBackgroundColor('white');
+                                                                    $w = $frame->getImageWidth();
+                                                                    $h = $frame->getImageHeight();
+                                                                    $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                                }
+                                                                $imgXS = $imgXS->deconstructImages();
+                                                            }else{
+                                                                $imgXS->scaleImage($widthXs,$heightXs,true);
+                                                                $imgXS->setImageBackgroundColor('white');
+                                                                $w = $imgXS->getImageWidth();
+                                                                $h = $imgXS->getImageHeight();
+                                                                $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                            }
+                                                            $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                            $imgXS->setImageCompressionQuality(95);
+                                                            $imgXS->writeImages($file_path_thumb,true);
+                                                            Storage::disk('s3')->put($dir.'/thumb-'.$filename, file_get_contents($file_path_thumb));
+                                                            Storage::disk('s3')->put($dir.'/'.$filename, file_get_contents($file_path));
+                                                            $imageUrlVideo='https://cdn.cungcap.net/'.$dir.'/'.$filename;
+                                                            $imageUrlVideo_thumb='https://cdn.cungcap.net/'.$dir.'/thumb-'.$filename;
+                                                            File::delete($file_path);
+                                                            File::delete($file_path_thumb);
+                                                            $video->setAttribute('poster',$imageUrlVideo);
+                                                            $itemImage['image']=$imageUrlVideo;
+                                                            $itemImage['thumb']=$imageUrlVideo_thumb;
+                                                            array_push($listImage,$itemImage);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            $articleBody=$docDetail->savehtml($metaD);
+                                            $itemArticle['body']=$articleBody;
+                                        }
+                                    }
+                                }
+                                DB::connection('mongodb')->collection('mongo_news')
+                                    ->insertGetId(
+                                        [
+                                            'parent' => $item->keyword,
+                                            'parent_id'=>(string)$idKeyword,
+                                            'news_id'=>$itemArticle['id'],
+                                            'link'=>$itemArticle['link'],
+                                            'link_root'=>$itemArticle['link_root'],
+                                            'title' => $itemArticle['title'],
+                                            'description'=>$itemArticle['description'],
+                                            'body'=>$itemArticle['body'],
+                                            'image'=>$listImage,
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                array_push($listArticle,$itemArticle);
+                            }
+                        }
+                        $i++;
+                    }
+                }
+            }
+        }
+        return $listArticle;
+    }
     public function indexPostElasticsearch(){
         if(config('app.env')!='local'){
             $getPost=Posts::where('posts_status','active')

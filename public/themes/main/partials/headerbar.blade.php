@@ -19,6 +19,9 @@
 				<!--<li><a href="{{route('post.me',$channel['domainPrimary'])}}" class=""><i class="fa fa-bars"></i><span class=""> Tin đã đăng</span></a></li>-->
 				<li class="dropdown-header">Quản lý dịch vụ của tôi</li>
 				<li><a href="{{route('channel.me',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-cloud-upload"></i> Website của tôi</a></li>
+					@if(Auth::user()->hasRole(['admin', 'manage']))
+						<li><a href="#"><i class="glyphicon glyphicon-globe"></i> Mục tin</a></li>
+					@endif
 				{{--<li><a href="{{route('channel.domain.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-globe"></i> Tên miền</a></li>--}}
 				{{--<li><a href="{{route('channel.hosting.list',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-hdd"></i> Web Hosting</a></li>--}}
 				{{--<li><a href="{{route('channel.mailserver.list',$channel['domainPrimary'])}}"><i class="fa fa-envelope-o"></i> Email Server</a></li>--}}
