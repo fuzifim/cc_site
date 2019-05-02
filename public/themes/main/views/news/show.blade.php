@@ -151,7 +151,7 @@
 												$updated_at= $relate['updated_at'];
 											}
 											?>
-											<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($updated_at)!!}</span></small> <small><span class="text-danger">{{$postRelate->view}} lượt xem</span></small>
+											<small><span><i class="glyphicon glyphicon-time"></i> {!!WebService::time_request($updated_at)!!}</span></small> @if(!empty($relate['views']))<small><span class="text-danger">{!! $relate['views'] !!} lượt xem</span></small>@endif
 										</div>
 									</div>
 								@endif
