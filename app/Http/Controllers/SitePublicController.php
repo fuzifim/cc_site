@@ -163,7 +163,7 @@ class SitePublicController extends ConstructController
 			if($this->_channel->channel_parent_id==0){
 				$getCateNews=DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('type','cate_news')
-                    ->limit(10)
+                    ->limit(13)
                     ->get();
 				$return = array(
 					'getCateNews'=>$getCateNews
