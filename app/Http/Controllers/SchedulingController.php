@@ -726,59 +726,62 @@ class SchedulingController extends Controller
             ->where('craw_next','step_2')
             ->limit(1)->get();
         foreach($getKeywords as $item){
-            $this->_keyword=$item['keyword'];
-            $result=$this->getSuggestqueries();
-            if(!empty($result['result']) && $result['result']=='success'){
-                $keywordIdArray=[];
-                foreach($result['data'][1] as $value){
-                    if(!empty($value)){
-                        $keyword=WebService::convertToUTF8(mb_substr($value, 0, $this->_max_length_title));
-                        $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
-                            ->where('base_64',base64_encode($keyword))
-                            ->first();
-                        if(empty($checkKeyword['keyword'])){
-                            $keywordId=DB::connection('mongodb')->collection('mongo_keyword')
-                                ->insertGetId(
-                                    [
-                                        'parent'=>$item['keyword'],
-                                        'parent_id'=>(string)$item['_id'],
-                                        'keyword' => $keyword,
-                                        'base_64' => base64_encode($keyword),
-                                        'description'=>'',
-                                        'image'=>'',
-                                        'status'=>'pending',
-                                        'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                                    ]
-                                );
-                            array_push($keywordIdArray,(string)$keywordId);
-                        }else{
-                            array_push($keywordIdArray,(string)$checkKeyword['_id']);
+            if(!empty($item['keyword'])){
+
+                $this->_keyword=$item['keyword'];
+                $result=$this->getSuggestqueries();
+                if(!empty($result['result']) && $result['result']=='success'){
+                    $keywordIdArray=[];
+                    foreach($result['data'][1] as $value){
+                        if(!empty($value)){
+                            $keyword=WebService::convertToUTF8(mb_substr($value, 0, $this->_max_length_title));
+                            $checkKeyword=DB::connection('mongodb')->collection('mongo_keyword')
+                                ->where('base_64',base64_encode($keyword))
+                                ->first();
+                            if(empty($checkKeyword['keyword'])){
+                                $keywordId=DB::connection('mongodb')->collection('mongo_keyword')
+                                    ->insertGetId(
+                                        [
+                                            'parent'=>$item['keyword'],
+                                            'parent_id'=>(string)$item['_id'],
+                                            'keyword' => $keyword,
+                                            'base_64' => base64_encode($keyword),
+                                            'description'=>'',
+                                            'image'=>'',
+                                            'status'=>'pending',
+                                            'created_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                                        ]
+                                    );
+                                array_push($keywordIdArray,(string)$keywordId);
+                            }else{
+                                array_push($keywordIdArray,(string)$checkKeyword['_id']);
+                            }
                         }
                     }
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'keyword_relate'=>$keywordIdArray,
+                            'status_craw_suggest'=>'success',
+                            'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_3',
+                            'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
+                        ]);
+                    echo 'craw suggest keyword success '.$item['keyword'].'<p>';
+                }else if(!empty($result['result']) && $result['result']=='error'){
+                    DB::connection('mongodb')->collection('mongo_keyword')
+                        ->where('_id',(string)$item['_id'])
+                        ->update([
+                            'status_craw_suggest'=>'error',
+                            'suggest_status_message'=>$result['message'],
+                            'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
+                            'craw_next'=>'step_3'
+                        ]);
+                    echo 'craw suggest keyword error '.$item['keyword'].'<p>';
                 }
-                DB::connection('mongodb')->collection('mongo_keyword')
-                    ->where('_id',(string)$item['_id'])
-                    ->update([
-                        'keyword_relate'=>$keywordIdArray,
-                        'status_craw_suggest'=>'success',
-                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                        'craw_next'=>'step_3',
-                        'updated_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now())
-                    ]);
-                echo 'craw suggest keyword success '.$item['keyword'].'<p>';
-            }else if(!empty($result['result']) && $result['result']=='error'){
-                DB::connection('mongodb')->collection('mongo_keyword')
-                    ->where('_id',(string)$item['_id'])
-                    ->update([
-                        'status_craw_suggest'=>'error',
-                        'suggest_status_message'=>$result['message'],
-                        'craw_suggest_update_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                        'craw_at'=>new \MongoDB\BSON\UTCDateTime(Carbon::now()),
-                        'craw_next'=>'step_3'
-                    ]);
-                echo 'craw suggest keyword error '.$item['keyword'].'<p>';
             }
         }
     }
