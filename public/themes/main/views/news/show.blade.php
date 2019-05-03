@@ -90,7 +90,7 @@
 						<blockquote>
 							{!!WebService::addNofollow(html_entity_decode($news['description']),$channel['domainPrimary'],true)!!}
 						</blockquote>
-						{!!WebService::addNofollow(html_entity_decode($news['body']),$channel['domainPrimary'],true)!!}
+						{!!WebService::addNofollow(html_entity_decode(str_replace("<source data-src=","<source src=",str_replace("<video",'<video controls class="embed-responsive-item"',str_replace("body-video","body-video embed-responsive embed-responsive-16by9",$news['body'])))),$channel['domainPrimary'],true)!!}
 						@if(!empty($news['link_root']))
 							<?
 								$parsedUrl=parse_url($news['link_root']);
