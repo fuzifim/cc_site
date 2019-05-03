@@ -159,80 +159,76 @@ class SchedulingController extends Controller
                                             $images = $metaD->getElementsByTagName('img');
                                             if($images->length>0){
                                                 foreach($images as $i => $image){
-                                                    try {
-                                                        $dir=WebService::makeDir('media/news');
-                                                        $name = str_random(5).'-'.time();
-                                                        $imageUrl=$image->getAttribute('src');
-                                                        $extension = substr($imageUrl, strrpos($imageUrl, '.') + 1);
-                                                        $contents = file_get_contents($imageUrl);
-                                                        $filename=$name.'.'.$extension;
-                                                        Storage::put('tmp/'.$filename, $contents);
-                                                        $file_path = public_path().'/'.'tmp/'.$filename;
-                                                        $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
-                                                        $img=new Imagick($file_path);
-                                                        $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
-                                                        $identifyImage=$img->identifyImage();
-                                                        $demention = getimagesize($file_path);
-                                                        $imgThumbnail = new Imagick($file_path);
-                                                        $widthMd=720; $heightMd=480;
-                                                        $widthXs=320; $heightXs=213;
-                                                        if($identifyImage['mimetype'] == "image/gif"){
-                                                            $imgThumbnail = $imgThumbnail->coalesceImages();
-                                                            foreach ($imgThumbnail as $frame) {
-                                                                $frame->scaleImage($widthMd,$heightMd,true);
-                                                                $frame->setImageBackgroundColor('white');
-                                                                $w = $frame->getImageWidth();
-                                                                $h = $frame->getImageHeight();
-                                                                $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
-                                                            }
-                                                            $imgThumbnail = $imgThumbnail->deconstructImages();
-                                                        }else{
-                                                            $imgThumbnail->scaleImage($widthMd,$heightMd,true);
-                                                            $imgThumbnail->setImageBackgroundColor('white');
-                                                            $w = $imgThumbnail->getImageWidth();
-                                                            $h = $imgThumbnail->getImageHeight();
-                                                            $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
+                                                    $dir=WebService::makeDir('media/news');
+                                                    $name = str_random(5).'-'.time();
+                                                    $imageUrl=$image->getAttribute('src');
+                                                    $extension = substr($imageUrl, strrpos($imageUrl, '.') + 1);
+                                                    $contents = file_get_contents($imageUrl);
+                                                    $filename=$name.'.'.$extension;
+                                                    Storage::put('tmp/'.$filename, $contents);
+                                                    $file_path = public_path().'/'.'tmp/'.$filename;
+                                                    $file_path_thumb = public_path().'/'.'tmp/thumb-'.$filename;
+                                                    $img=new Imagick($file_path);
+                                                    $filename_rename=$name.'.'.mb_strtolower($img->getImageFormat());
+                                                    $identifyImage=$img->identifyImage();
+                                                    $demention = getimagesize($file_path);
+                                                    $imgThumbnail = new Imagick($file_path);
+                                                    $widthMd=720; $heightMd=480;
+                                                    $widthXs=320; $heightXs=213;
+                                                    if($identifyImage['mimetype'] == "image/gif"){
+                                                        $imgThumbnail = $imgThumbnail->coalesceImages();
+                                                        foreach ($imgThumbnail as $frame) {
+                                                            $frame->scaleImage($widthMd,$heightMd,true);
+                                                            $frame->setImageBackgroundColor('white');
+                                                            $w = $frame->getImageWidth();
+                                                            $h = $frame->getImageHeight();
+                                                            $frame->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
                                                         }
-                                                        $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
-                                                        $imgThumbnail->setImageCompressionQuality(95);
-                                                        $imgThumbnail->writeImage();
-                                                        $imgThumbnail->writeImages($file_path,true);
-                                                        $imgXS=new Imagick($file_path);
-                                                        if($identifyImage['mimetype'] == "image/gif"){
-                                                            $imgXS = $imgXS->coalesceImages();
-                                                            foreach ($imgXS as $frame) {
-                                                                $frame->scaleImage($widthXs,$heightXs,true);
-                                                                $frame->setImageBackgroundColor('white');
-                                                                $w = $frame->getImageWidth();
-                                                                $h = $frame->getImageHeight();
-                                                                $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
-                                                            }
-                                                            $imgXS = $imgXS->deconstructImages();
-                                                        }else{
-                                                            $imgXS->scaleImage($widthXs,$heightXs,true);
-                                                            $imgXS->setImageBackgroundColor('white');
-                                                            $w = $imgXS->getImageWidth();
-                                                            $h = $imgXS->getImageHeight();
-                                                            $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
-                                                        }
-                                                        $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
-                                                        $imgXS->setImageCompressionQuality(95);
-                                                        $imgXS->writeImages($file_path_thumb,true);
-                                                        Storage::disk('s3')->put($dir.'/thumb-'.$filename, file_get_contents($file_path_thumb));
-                                                        Storage::disk('s3')->put($dir.'/'.$filename, file_get_contents($file_path));
-                                                        $imageUrl='https://cdn.cungcap.net/'.$dir.'/'.$filename;
-                                                        $imageUrl_thumb='https://cdn.cungcap.net/'.$dir.'/thumb-'.$filename;
-                                                        File::delete($file_path);
-                                                        File::delete($file_path_thumb);
-                                                        $image->setAttribute('src', $imageUrl);
-                                                        $image->setAttribute('data-width', 720);
-                                                        $image->setAttribute('data-height', 480);
-                                                        $itemImage['image']=$imageUrl;
-                                                        $itemImage['thumb']=$imageUrl_thumb;
-                                                        array_push($listImage,$itemImage);
-                                                    } catch (\Exception $e) {
-                                                        continue;
+                                                        $imgThumbnail = $imgThumbnail->deconstructImages();
+                                                    }else{
+                                                        $imgThumbnail->scaleImage($widthMd,$heightMd,true);
+                                                        $imgThumbnail->setImageBackgroundColor('white');
+                                                        $w = $imgThumbnail->getImageWidth();
+                                                        $h = $imgThumbnail->getImageHeight();
+                                                        $imgThumbnail->extentImage($widthMd,$heightMd,($w-$widthMd)/2,($h-$heightMd)/2);
                                                     }
+                                                    $imgThumbnail->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                    $imgThumbnail->setImageCompressionQuality(95);
+                                                    $imgThumbnail->writeImage();
+                                                    $imgThumbnail->writeImages($file_path,true);
+                                                    $imgXS=new Imagick($file_path);
+                                                    if($identifyImage['mimetype'] == "image/gif"){
+                                                        $imgXS = $imgXS->coalesceImages();
+                                                        foreach ($imgXS as $frame) {
+                                                            $frame->scaleImage($widthXs,$heightXs,true);
+                                                            $frame->setImageBackgroundColor('white');
+                                                            $w = $frame->getImageWidth();
+                                                            $h = $frame->getImageHeight();
+                                                            $frame->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                        }
+                                                        $imgXS = $imgXS->deconstructImages();
+                                                    }else{
+                                                        $imgXS->scaleImage($widthXs,$heightXs,true);
+                                                        $imgXS->setImageBackgroundColor('white');
+                                                        $w = $imgXS->getImageWidth();
+                                                        $h = $imgXS->getImageHeight();
+                                                        $imgXS->extentImage($widthXs,$heightXs,($w-$widthXs)/2,($h-$heightXs)/2);
+                                                    }
+                                                    $imgXS->setImageCompression(Imagick::COMPRESSION_JPEG);
+                                                    $imgXS->setImageCompressionQuality(95);
+                                                    $imgXS->writeImages($file_path_thumb,true);
+                                                    Storage::disk('s3')->put($dir.'/thumb-'.$filename, file_get_contents($file_path_thumb));
+                                                    Storage::disk('s3')->put($dir.'/'.$filename, file_get_contents($file_path));
+                                                    $imageUrl='https://cdn.cungcap.net/'.$dir.'/'.$filename;
+                                                    $imageUrl_thumb='https://cdn.cungcap.net/'.$dir.'/thumb-'.$filename;
+                                                    File::delete($file_path);
+                                                    File::delete($file_path_thumb);
+                                                    $image->setAttribute('src', $imageUrl);
+                                                    $image->setAttribute('data-width', 720);
+                                                    $image->setAttribute('data-height', 480);
+                                                    $itemImage['image']=$imageUrl;
+                                                    $itemImage['thumb']=$imageUrl_thumb;
+                                                    array_push($listImage,$itemImage);
                                                 }
                                             }
                                             $pArticle=$metaD->getElementsByTagName('p');
