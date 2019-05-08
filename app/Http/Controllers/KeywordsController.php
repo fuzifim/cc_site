@@ -87,16 +87,20 @@ class KeywordsController extends ConstructController
                 $paginate=6;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
-                $postSearch=Posts::searchByQuery([
-                    'bool'=>[
-                        'must'=>[
-                            'multi_match' => [
-                                'query' => $getKeyword['keyword'],
-                                'fields' => ['posts_title','posts_title_convert']
+                try{
+                    $postSearch=Posts::searchByQuery([
+                        'bool'=>[
+                            'must'=>[
+                                'multi_match' => [
+                                    'query' => $getKeyword['keyword'],
+                                    'fields' => ['posts_title','posts_title_convert']
+                                ]
                             ]
                         ]
-                    ]
-                ], null, null, $paginate, $offSet);
+                    ], null, null, $paginate, $offSet);
+                }catch (\Exception $e) {
+                    $postSearch=array();
+                }
                 if(count($postSearch)){
                     $listId=[];
                     foreach($postSearch as $post){
@@ -156,16 +160,20 @@ class KeywordsController extends ConstructController
                 $paginate=6;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
-                $postSearch=Posts::searchByQuery([
-                    'bool'=>[
-                        'must'=>[
-                            'multi_match' => [
-                                'query' => $getKeyword['keyword'],
-                                'fields' => ['posts_title','posts_title_convert']
+                try{
+                    $postSearch=Posts::searchByQuery([
+                        'bool'=>[
+                            'must'=>[
+                                'multi_match' => [
+                                    'query' => $getKeyword['keyword'],
+                                    'fields' => ['posts_title','posts_title_convert']
+                                ]
                             ]
                         ]
-                    ]
-                ], null, null, $paginate, $offSet);
+                    ], null, null, $paginate, $offSet);
+                }catch (\Exception $e) {
+                    $postSearch=array();
+                }
                 if(count($postSearch)){
                     $listId=[];
                     foreach($postSearch as $post){
