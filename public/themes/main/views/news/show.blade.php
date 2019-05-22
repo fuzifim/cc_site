@@ -1,6 +1,6 @@
 <?
 	Theme::setTitle(html_entity_decode($news['title']));
-	$newsLink=route('news.detail',array($channel['domainPrimary'],(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-')));
+	$newsLink=route('news.detail',array('n.cungcap.net',(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-')));
 	Theme::setDescription(WebService::limit_string(strip_tags(html_entity_decode($news['description']),""), $limit = 200));
 	Theme::setCanonical($newsLink);
 	if(count($news['image'])){
@@ -42,7 +42,7 @@
 				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
 					@if(!empty($news['parent']))
 							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$news['parent_id'],str_slug(mb_substr($news['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $news['parent'] !!}</span></a></li>
+							<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array('k.cungcap.net',$news['parent_id'],str_slug(mb_substr($news['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $news['parent'] !!}</span></a></li>
 					@endif
 				</ol> 
 				<div class="panel panel-default">
@@ -124,12 +124,12 @@
 								@if(count($relate['image']))
 									<div class="list-group-item form-group">
 										<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-											<a class="image" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">
+											<a class="image" href="{!! route('news.detail',array('n.cungcap.net',(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">
 												<img src="{!! $relate['image'][0]['thumb'] !!}" class="img-responsive img-thumbnail lazy" alt="{!! $relate['title'] !!}" title="" >
 											</a>
 										</div>
 										<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-											<h5 class="postTitle nomargin"><a class="title" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
+											<h5 class="postTitle nomargin"><a class="title" href="{!! route('news.detail',array('n.cungcap.net',(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
 											<?php
 											if ($relate['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
 												$updated_at= $relate['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -143,7 +143,7 @@
 								@else
 									<div class="list-group-item form-group">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<h5 class="postTitle"><a class="title" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
+											<h5 class="postTitle"><a class="title" href="{!! route('news.detail',array('n.cungcap.net',(string)$relate['_id'],str_slug(mb_substr($relate['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $relate['title'] !!}</a></h5>
 											<?php
 											if ($relate['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
 												$updated_at= $relate['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
