@@ -17,7 +17,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có lượt
                         <ul class="list-group">
                             @foreach($getDomain as $item)
                             <li class="list-group-item">
-                                <a href="{!! route('domain.info',array(config('app.url'),$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
+                                <a href="{!! route('domain.info',array('d.cungcap.net',$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
                                 @if(!empty($item['attribute']['rank']))
                                     <p>
                                         <span class="label label-primary">Global rank: {!! Site::price($item['attribute']['rank']) !!}</span>

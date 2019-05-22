@@ -1,7 +1,7 @@
 <?
 $setKeyword=[];
 if(!empty($keyword['keyword'])){
-    Theme::setCanonical(route('keyword.show.id',array($channel['domainPrimary'],$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))));
+    Theme::setCanonical(route('keyword.show.id',array('k.cungcap.net',$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))));
     Theme::setTitle($keyword['keyword']);
 }
 if(!empty($keyword['description'])){
@@ -78,8 +78,8 @@ $ads='true';
                     ?>
                     <div class="amp-video-item">
                         @if(!empty($video['title']))
-                        <a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><amp-anim width="210" height="118" src="https:{!! $video['thumb'] !!}" class="" alt="" layout="intrinsic"></amp-anim></a>
-                        <span class="amp-group-title"><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}" class="amp-title">{!! $video['title'] !!}</a></span>
+                        <a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><amp-anim width="210" height="118" src="https:{!! $video['thumb'] !!}" class="" alt="" layout="intrinsic"></amp-anim></a>
+                        <span class="amp-group-title"><a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}" class="amp-title">{!! $video['title'] !!}</a></span>
                         @endif
                     </div>
                 @endforeach
@@ -122,7 +122,7 @@ $ads='true';
                             </amp-ad>
                         @endif
                         <li class="list-group-item">
-                            <h4><a class="siteLink" id="linkContinue" href="{!! route('site.show.id',array($channel['domainPrimary'],$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $site['title'] !!}</a></h4>
+                            <h4><a class="siteLink" id="linkContinue" href="{!! route('site.show.id',array('s.cungcap.net',$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">{!! $site['title'] !!}</a></h4>
                             <?php
                             if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                 $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -133,7 +133,7 @@ $ads='true';
                             <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                             <span>{!! $site['description'] !!}</span><br>
                             <span>{!! $site['link'] !!}</span><br>
-                            <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                            <i class="glyphicon glyphicon-globe"></i> <a href="{!! route('domain.info',array('d.cungcap.net',$site['domain'])) !!}">{!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                         </li>
                     @endif
                 @endforeach
@@ -164,12 +164,12 @@ $ads='true';
                     ?>
                     <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
                         <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
+                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array('k.cungcap.net',$parentKey['_id'],str_slug(mb_substr($parentKey['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
                     </ol>
                 @else
                     <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
                         <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
-                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
+                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing"  itemprop="item" href="{!! route('keyword.show.id',array('k.cungcap.net',$keyword['parent_id'],str_slug(mb_substr($keyword['parent'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}"><span itemprop="name">{!! $keyword['parent'] !!}</span></a></li>
                     </ol>
                 @endif
             @endif
