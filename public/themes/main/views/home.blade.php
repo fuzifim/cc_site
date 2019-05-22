@@ -41,12 +41,12 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 								@foreach($getNews as $news)
 									<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 content-list-post">
 										<div class="thmb">
-											<a class="thmb-prev" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">
+											<a class="thmb-prev" href="{!! route('news.detail',array('n.cungcap.net',(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">
 												@if(count($news['image']))
 													<img src="{!! $news['image'][0]['thumb'] !!}" class="img-responsive" alt="{!! $news['title'] !!}" title="{!! $news['title'] !!}">
 												@endif
 											</a>
-											<h5 class="fm-title"><a class="title" href="{!! route('news.detail',array($channel['domainPrimary'],(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $news['title'] !!}</a></h5>
+											<h5 class="fm-title"><a class="title" href="{!! route('news.detail',array('n.cungcap.net',(string)$news['_id'],str_slug(mb_substr($news['title'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $news['title'] !!}</a></h5>
 											<div class="attribute-2">
 												<?php
 												if ($news['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
