@@ -74,7 +74,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
                                 <div class="blockVideo img-responsive">
                                     <div class="groupThumb" style="position:relative;">
                                         <span class="btnPlayVideoClickSmall"><i class="glyphicon glyphicon-play"></i></span>
-                                    <a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
+                                    <a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $video['thumb'] !!}" alt="{!! $video['title'] !!}" title="{!! $video['title'] !!}"></a>
                                     </div>
                                     <?php
                                     if ($video['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
@@ -84,7 +84,7 @@ Theme::asset()->container('footer')->usePath()->add('swiper.min', 'js/jquery.tou
                                     }
                                     ?>
                                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
-                                    <strong><a class="linkTitle" href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong>
+                                    <strong><a class="linkTitle" href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! mb_substr($video['title'], 0, \App\Model\Mongo_Image::MAX_LENGTH_TITLE) !!}</a></strong>
                                 </div>
                             </div>
                         </div>

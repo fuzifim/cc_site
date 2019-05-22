@@ -35,7 +35,7 @@
                     @endif
                 @endif
                 <li class="list-group-item">
-                    <h4 class="linkTitleH4"><a id="linkContinue" href="{!! route('site.show.id',array($channel['domainPrimary'],$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">@if(!empty($site['title_full'])){!! $site['title_full'] !!}@else{!! $site['title_'] !!}@endif</a></h4>
+                    <h4 class="linkTitleH4"><a id="linkContinue" href="{!! route('site.show.id',array('s.cungcap.net',$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">@if(!empty($site['title_full'])){!! $site['title_full'] !!}@else{!! $site['title_'] !!}@endif</a></h4>
                     <small class="urlFull text-success"><i>{!! $site['link'] !!}</i></small><?php
                     if ($site['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                         $updated_at= $site['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -45,7 +45,7 @@
                     ?>
                     <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
                     <span>{!! $site['description'] !!}</span><br>
-                    <a class="linkTitle text-muted" href="{!! route('domain.info',array(config('app.url'),$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
+                    <a class="linkTitle text-muted" href="{!! route('domain.info',array('d.cungcap.net',$site['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($site['domain']) !!}</a>
                 </li>
                 @if($i==$skipVideo && $videoShow==true)
                      {!!Theme::partial('keyword.listVideo_slider', array('keyword' => $keyword,'from'=>0,'to'=>8))!!}

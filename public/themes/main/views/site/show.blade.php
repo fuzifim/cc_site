@@ -1,7 +1,7 @@
 <?php
 Theme::setTitle($site['title']);
 Theme::setDescription($site['description']);
-Theme::setCanonical(route('site.show.id',array($channel['domainPrimary'],$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))));
+Theme::setCanonical(route('site.show.id',array('s.cungcap.net',$site['_id'],str_slug(mb_substr($site['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))));
 $ads='true';
 if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
     $ads='false';

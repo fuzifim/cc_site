@@ -99,8 +99,10 @@ class TestController extends ConstructController
 		return response()->json();
 	}
     public function test(){
-//	    $getNews=DB::connection('mongodb')->collection('mongo_news')->delete();
-//	    dd($getNews);
+	    $getNews=DB::connection('mongodb')->collection('mongo_domain')
+            ->where('base_64',base64_encode('toonkor.co'))
+            ->delete();
+	    dd($getNews);
         $client = new Client([
             'headers' => [
                 'Content-Type' => 'text/html',

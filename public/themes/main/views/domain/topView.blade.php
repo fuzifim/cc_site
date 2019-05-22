@@ -48,7 +48,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có lượt
                         <ul class="list-group">
                             @foreach($newDomain as $item)
                                 <li class="list-group-item">
-                                    <a href="{!! route('domain.info',array(config('app.url'),$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
+                                    <a href="{!! route('domain.info',array('d.cungcap.net',$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
                                     <?php
                                     if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                         $date= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
@@ -68,7 +68,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có lượt
                             </div>
                             @foreach($keywordNewUpdate as $keyword)
                                 <li class="list-group-item">
-                                    <a href="{!! route('keyword.show.id',array($channel['domainPrimary'],$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['keyword'] !!}</a><br>
+                                    <a href="{!! route('keyword.show.id',array('k.cungcap.net',$keyword['_id'],str_slug(mb_substr($keyword['keyword'], 0, \App\Model\Mongo_keyword::MAX_LENGTH_SLUG),'-'))) !!}">{!! $keyword['keyword'] !!}</a><br>
                                     <small class="text-muted">Updated at {!! $keyword['updated_at']->toDateTime()->setTimezone(new \DateTimeZone(config('app.timezone')))->format('Y-m-d H:i:s') !!}</small>
                                 </li>
                             @endforeach

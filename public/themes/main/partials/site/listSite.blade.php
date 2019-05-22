@@ -21,7 +21,7 @@ $i=0;
             @endif
         @endif
         <li class="list-group-item">
-            <h4 class="linkTitleH4"><a class="" id="" href="{!! route('site.show.id',array($channel['domainPrimary'],$item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">@if(!empty($item['title_full'])){!! $item['title_full'] !!}@else{!! $item['title_'] !!}@endif</a></h4>
+            <h4 class="linkTitleH4"><a class="" id="" href="{!! route('site.show.id',array('s.cungcap.net',$item['_id'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_site::MAX_LENGTH_SLUG),'-'))) !!}">@if(!empty($item['title_full'])){!! $item['title_full'] !!}@else{!! $item['title_'] !!}@endif</a></h4>
             <small class="urlFull text-success">{!! $item['link'] !!}</small>
             <?php
             if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
@@ -33,7 +33,7 @@ $i=0;
             <span class="text-muted"><small>{!! $updated_at !!}</small></span><br>
             <span>{!! $item['description'] !!}</span><br>
             @if($showDomain==true)
-                <a class="linkTitle text-muted" href="{!! route('domain.info',array(config('app.url'),$item['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($item['domain']) !!}</a>
+                <a class="linkTitle text-muted" href="{!! route('domain.info',array('d.cungcap.net',$item['domain'])) !!}"><i class="glyphicon glyphicon-globe"></i> {!! WebService::renameBlacklistWord($item['domain']) !!}</a>
             @endif
         </li>
     @endif

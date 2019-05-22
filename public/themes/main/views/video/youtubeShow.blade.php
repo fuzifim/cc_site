@@ -2,7 +2,7 @@
 Theme::setTitle('Video '.$video['title']);
 Theme::setDescription($video['description']);
 Theme::setImage('https:'.$video['image']);
-Theme::setCanonical(route('video.youtube.view.id.slug',array($channel['domainPrimary'],$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))));
+Theme::setCanonical(route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))));
 $ads='true';
 if($ads=='true' && config('app.env')!='local'){
     Theme::setAds('true');
@@ -80,8 +80,8 @@ if($ads=='true' && config('app.env')!='local'){
                                     <div class="row row-pad-5">
                                         @foreach($chunk as $item)
                                             <div class="col-md-3">
-                                                <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                                <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
+                                                <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img class="img-responsive" src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
+                                                <strong><a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
                                             </div>
                                         @endforeach
                                     </div>
@@ -107,8 +107,8 @@ if($ads=='true' && config('app.env')!='local'){
                         <div class="panel panel-primary">
                             @foreach(array_slice($videoParent, 12, 8) as $item)
                                 <li class="list-group-item">
-                                    <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
-                                    <strong><a href="{!! route('video.youtube.view.id.slug',array($channel['domainPrimary'],$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
+                                    <p class="text-center"><a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}"><img src="{!! $item['thumb'] !!}" title="{!! $item['title'] !!}" alt="{!! $item['title'] !!}"></a></p>
+                                    <strong><a href="{!! route('video.youtube.view.id.slug',array('v.cungcap.net',$item['yid'],str_slug(mb_substr($item['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))) !!}">Video {!! $item['title'] !!}</a> </strong>
                                 </li>
                             @endforeach
                         </div>
