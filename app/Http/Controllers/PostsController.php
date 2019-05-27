@@ -564,39 +564,39 @@ class PostsController extends ConstructController
 				}else{ 
 					$post->posts_status='active'; 
 					$post->save();
-					$checkIndex=DB::table('index_post_elasticsearch')
-                        ->where('posts_id',$post->id)
-                        ->first();
-					if(empty($checkIndex->id)){
-                        if(config('app.env')!='local'){
-                            try{
-                                $post->addToIndex();
-                                DB::table('index_post_elasticsearch')->insertGetId(
-                                    [
-                                        'posts_id'=>$post->id,
-                                        'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
-                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-                                    ]
-                                );
-                            }catch (\Exception $e){
-
-                            }
-                        }
-                    }else{
-                        if(config('app.env')!='local'){
-                            try{
-                                $post->reindex();
-                            }catch (\Exception $e){
-                                
-                            }
-                            DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
-                                ->update(
-                                    [
-                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-                                    ]
-                                );
-                        }
-                    }
+//					$checkIndex=DB::table('index_post_elasticsearch')
+//                        ->where('posts_id',$post->id)
+//                        ->first();
+//					if(empty($checkIndex->id)){
+//                        if(config('app.env')!='local'){
+//                            try{
+//                                $post->addToIndex();
+//                                DB::table('index_post_elasticsearch')->insertGetId(
+//                                    [
+//                                        'posts_id'=>$post->id,
+//                                        'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
+//                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+//                                    ]
+//                                );
+//                            }catch (\Exception $e){
+//
+//                            }
+//                        }
+//                    }else{
+//                        if(config('app.env')!='local'){
+//                            try{
+//                                $post->reindex();
+//                            }catch (\Exception $e){
+//
+//                            }
+//                            DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
+//                                ->update(
+//                                    [
+//                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+//                                    ]
+//                                );
+//                        }
+//                    }
 					return response()->json(['success'=>true,
 						'message'=>'Đăng bài thành công!', 
 						'postId'=>$post->id, 
