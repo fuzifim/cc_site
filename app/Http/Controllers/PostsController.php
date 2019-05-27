@@ -579,7 +579,7 @@ class PostsController extends ConstructController
                                     ]
                                 );
                             }catch (\Exception $e){
-                                continue;
+
                             }
                         }
                     }else{
@@ -587,7 +587,7 @@ class PostsController extends ConstructController
                             try{
                                 $post->reindex();
                             }catch (\Exception $e){
-                                continue;
+                                
                             }
                             DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
                                 ->update(
