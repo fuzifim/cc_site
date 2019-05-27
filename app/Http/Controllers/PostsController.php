@@ -569,18 +569,26 @@ class PostsController extends ConstructController
                         ->first();
 					if(empty($checkIndex->id)){
                         if(config('app.env')!='local'){
-                            $post->addToIndex();
-                            DB::table('index_post_elasticsearch')->insertGetId(
-                                [
-                                    'posts_id'=>$post->id,
-                                    'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
-                                    'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
-                                ]
-                            );
+                            try{
+                                $post->addToIndex();
+                                DB::table('index_post_elasticsearch')->insertGetId(
+                                    [
+                                        'posts_id'=>$post->id,
+                                        'created_at'=>Carbon::now()->format('Y-m-d H:i:s'),
+                                        'updated_at'=>Carbon::now()->format('Y-m-d H:i:s')
+                                    ]
+                                );
+                            }catch (\Exception $e){
+                                continue;
+                            }
                         }
                     }else{
                         if(config('app.env')!='local'){
-                            $post->reindex();
+                            try{
+                                $post->reindex();
+                            }catch (\Exception $e){
+                                continue;
+                            }
                             DB::table('index_post_elasticsearch')->where('posts_id',$post->id)
                                 ->update(
                                     [
