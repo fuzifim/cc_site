@@ -183,6 +183,7 @@ class SitePublicController extends ConstructController
             if($checkRecore=='.d'){
                 $checkDomain=substr($checkDomain, 0, -2);
             }else{
+                $checkDomain=str_replace('.cungcap.net','',$checkDomain);
                 return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
             }
 			$this->_pieces = explode("-", $checkDomain); 
