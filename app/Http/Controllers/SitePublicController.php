@@ -177,31 +177,30 @@ class SitePublicController extends ConstructController
 				return $this->_theme->scope('home', $return)->render();
 			}
 		}else if($this->_siteSuccess=='redirect'){ 
-			$parsedUrl=parse_url($request->url()); 
-			$checkDomain=str_replace('.'.config('app.url'),'',$parsedUrl['host']);
+			$parsedUrl=parse_url($request->url());
+			$checkDomain=str_replace('.cungcap.net','',$parsedUrl['host']);
             $checkRecore=substr($checkDomain, -2);
             if($checkRecore=='.d'){
-                $checkDomain=substr($checkDomain, 0, -2);
-            }else{
-                $checkDomain=str_replace('.cungcap.net','',$checkDomain);
-                return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
+                $checkDomain=str_replace('.d','',$checkDomain);
             }
-			$this->_pieces = explode("-", $checkDomain); 
-			if(!empty($this->_pieces[0]) && $this->_pieces[0]=='post'){
-				//$this->_siteSuccess='infoPost'; 
-			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='news'){
-				return Redirect::to('https://cungcap.net/news/'.$this->_pieces[1].'/old',301); 
-			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='feed'){ 
-				//$this->_siteSuccess='infoFeed'; 
-			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='com'){
-				return Redirect::to('https://cungcap.net/com/'.$this->_pieces[1].'/old',301); 
-			}elseif(!empty($this->_pieces[0]) && $this->_pieces[0]=='www'){
-				return Redirect::to('https://cungcap.net/',301);
-			}else{
-//			    $this->_domainInfo=$checkDomain;
-//			    return $this->DomainInfo();
-                return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
-			}
+            return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
+//          return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
+//			$this->_pieces = explode("-", $checkDomain);
+//			if(!empty($this->_pieces[0]) && $this->_pieces[0]=='post'){
+//				//$this->_siteSuccess='infoPost';
+//			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='news'){
+//				return Redirect::to('https://cungcap.net/news/'.$this->_pieces[1].'/old',301);
+//			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='feed'){
+//				//$this->_siteSuccess='infoFeed';
+//			}else if(!empty($this->_pieces[0]) && $this->_pieces[0]=='com'){
+//				return Redirect::to('https://cungcap.net/com/'.$this->_pieces[1].'/old',301);
+//			}elseif(!empty($this->_pieces[0]) && $this->_pieces[0]=='www'){
+//				return Redirect::to('https://cungcap.net/',301);
+//			}else{
+////			    $this->_domainInfo=$checkDomain;
+////			    return $this->DomainInfo();
+//                return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
+//			}
 		}
 	}
 	public function DomainInfo(){
