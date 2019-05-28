@@ -183,7 +183,7 @@ class SitePublicController extends ConstructController
             if($checkRecore=='.d'){
                 $checkDomain=substr($checkDomain, 0, -2);
             }else{
-                return Redirect::to('http://'.$checkDomain.'.d.'.config('app.url'),301);
+                return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
             }
 			$this->_pieces = explode("-", $checkDomain); 
 			if(!empty($this->_pieces[0]) && $this->_pieces[0]=='post'){
