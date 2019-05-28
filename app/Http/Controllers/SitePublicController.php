@@ -199,7 +199,7 @@ class SitePublicController extends ConstructController
 			}else{
 //			    $this->_domainInfo=$checkDomain;
 //			    return $this->DomainInfo();
-                return redirect()->route('domain.info', array(config('app.url'),$checkDomain),301);
+                return redirect()->route('domain.info', array('d.cungcap.net',$checkDomain),301);
 			}
 		}
 	}
