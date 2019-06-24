@@ -43,7 +43,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền tại '.$co
                         <ul class="list-group">
                             @foreach($newDomain as $item)
                                 <li class="list-group-item">
-                                    <a href="{!! route('domain.info',array('d.cungcapnet',$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
+                                    <a href="{!! route('domain.info',array('d.cungcap.net',$item['domain'])) !!}">{!! WebService::renameBlacklistWord($item['domain']) !!}</a><br>
                                     <?php
                                     if ($item['updated_at'] instanceof \MongoDB\BSON\UTCDateTime) {
                                         $date= $item['updated_at']->toDateTime()->setTimezone(new \DateTimeZone('Asia/Ho_Chi_Minh'))->format('Y-m-d H:i:s');
