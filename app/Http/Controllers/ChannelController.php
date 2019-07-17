@@ -134,10 +134,10 @@ class ChannelController extends ConstructController
             ]);
 		}
 		if(!empty($createDomain)){
-			$checkDomain=Domain::where('domain','=',$createDomain.'.'.$this->_domainPrimary)->first();
+			$checkDomain=Domain::where('domain','=',$createDomain.'.'.config('app.domain_register'))->first();
 			if(!empty($checkDomain->domain)){
 				return response()->json(['success'=>false,
-					'message'=>$createDomain.'.'.$this->_domainPrimary.' đã có người sử dụng! '
+					'message'=>$createDomain.'.'.config('app.domain_register').' đã có người sử dụng! '
 				]);
 			}
 		}
@@ -296,7 +296,7 @@ class ChannelController extends ConstructController
 					$channelRegion=Session::get('channelRegion'); 
 				}
                 $this->_addChannelDomain=$channelDomain;
-                $this->_addChannelDomainLtd=$this->_domainPrimary;
+                $this->_addChannelDomainLtd=config('app.domain_register');
                 $this->_addChannelName=$channelInfo['channelName'];
                 $this->_addChannelDescription=$channelInfo['channelDescription'];
                 $this->_addChannelEmail=$channelContact['channelEmail'];

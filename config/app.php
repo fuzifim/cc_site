@@ -116,6 +116,7 @@ return [
     */
 	'url' => env('APP_DOMAIN'), 
 	'ip_address' => env('APP_IP'),
+    'domain_register' => env('APP_DOMAIN_REGISTER'),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

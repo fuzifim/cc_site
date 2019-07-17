@@ -51,7 +51,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 												<input type="text" name="channelDomain" id="channelDomain" class="form-control" value="@if(!empty($channelDomain)){!!$channelDomain!!}@endif" maxlength="30" placeholder="Nhập địa chỉ tên miền" required >
 												<span class="input-group-addon">.{!! $channel['domainPrimary'] !!}</span>
 											</div>
-											<code id="changeDomain">@if(!empty($channelDomain))http://{!!$channelDomain!!}.{!! $channel['domainPrimary'] !!} @endif</code>
+											<code id="changeDomain">@if(!empty($channelDomain))http://{!!$channelDomain!!}.{!! config('app.domain_register') !!} @endif</code>
 											<label class="error" for="channelDomain"></label>
 										</div>
 										<?
