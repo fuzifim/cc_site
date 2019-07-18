@@ -47,6 +47,8 @@ class VideoController extends ConstructController
                 'videoParent'=>$videoParent
             );
             return Theme::view('video.youtubeShow',$return);
+        }else{
+            return Theme::view('404',[]);
         }
     }
     public function videoShowByIdSlug(){

@@ -179,7 +179,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 					<ul class="list-group">
 						<li class="list-group-item"><i class="glyphicon glyphicon-list-alt text-success"></i> 10 bài viết</li>
 						<li class="list-group-item"><i class="glyphicon glyphicon-cloud text-success"></i> 20MB dung lượng SSD</li>
-						<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .{!! $channel['domainPrimary'] !!}</li>
+						<li class="list-group-item"><i class="glyphicon glyphicon-globe text-success"></i> Miễn phí tên miền dạng .{!! config('app.domain_register') !!}</li>
 						<li class="list-group-item"><i class="glyphicon glyphicon-tint text-success"></i> Không tốn phí thiết kế</li>
 						<li class="list-group-item"><i class="glyphicon glyphicon-hdd text-success"></i> Không tốn phí hosting</li>
 						<li class="list-group-item"><i class="glyphicon glyphicon-search text-success"></i> Giao diện chuẩn SEO, Responsive</li>
