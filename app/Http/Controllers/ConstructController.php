@@ -149,13 +149,13 @@ class ConstructController extends Controller
 		    if($this->_domainPrimary!=config('app.url')){
                 return redirect()->to('https://'.config('app.url').Request::getRequestUri())->send();
             }
-            $this->_newKeyword=Cache::store('memcached')->remember('newKeyword', 1, function()
-            {
-                return DB::connection('mongodb')->collection('mongo_keyword')
-                    ->where('craw_next','exists',true)
-                    ->orderBy('updated_at','desc')
-                    ->limit(20)->get();
-            });
+//            $this->_newKeyword=Cache::store('memcached')->remember('newKeyword', 1, function()
+//            {
+//                return DB::connection('mongodb')->collection('mongo_keyword')
+//                    ->where('craw_next','exists',true)
+//                    ->orderBy('updated_at','desc')
+//                    ->limit(20)->get();
+//            });
         }
         if($this->_channel->channel_parent_id!=0){
             $getServiceValue=json_decode($this->_channel->channelService->attribute_value);
@@ -240,8 +240,7 @@ class ConstructController extends Controller
                 'nameFanpageFacebook'=>mb_strtolower($this->_sociallinkFanpageFacebook),
                 'zaloAccount'=>$this->_socialLinkZalo,
                 'color'=>$this->_channelColor,
-                '_parser'=>$this->_parser,
-                'newKeyword'=>$this->_newKeyword
+                '_parser'=>$this->_parser
             )
         );
     }
