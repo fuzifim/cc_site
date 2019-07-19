@@ -36,7 +36,7 @@
 			</ul>
 		  </li>
 		@else 
-			<li class="active"><a href="https://cungcap.net" class="" target="_blank"><i class="glyphicon glyphicon-user"></i><span class=""> Đăng nhập</span></a></li>
+			<li class="active"><a href="{{route('channel.login',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-user"></i><span class=""> Đăng nhập</span></a></li>
 		@endif
 		</ul>
 	  </div><!--/.nav-collapse -->
