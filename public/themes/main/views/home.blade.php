@@ -48,6 +48,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 										?>
 										<div class="form-group">
 											<div class="input-group">
+												<span class="input-group-addon">https://</span>
 												<input type="text" name="channelDomain" id="channelDomain" class="form-control" value="@if(!empty($channelDomain)){!!$channelDomain!!}@endif" maxlength="30" placeholder="Nhập địa chỉ tên miền" required >
 												<span class="input-group-addon">.{!! config('app.domain_register') !!}</span>
 											</div>
@@ -264,7 +265,7 @@ $channel['theme']->asset()->writeScript('custom','
 	$("#channelDomain").keyup(function () {
 		if($(this).val().length>=3){
 			var appendDomain="cungcap.net";
-			$("#changeDomain").html("http://"+convertToSlug($(this).val())+"."+appendDomain);
+			$("#changeDomain").html("https://"+convertToSlug($(this).val())+"."+appendDomain);
 		}else{
 			$("#changeDomain").empty();
 		}
