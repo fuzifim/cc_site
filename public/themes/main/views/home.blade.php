@@ -199,7 +199,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 </section>
 <div class="panelOptimation mb5">
 	<div class="container">
-		<div class="row">
+		<div class="row row-pad-5">
 			<div class="col-sm-6">
 				<h3>Quản lý dễ dàng</h3>
 
