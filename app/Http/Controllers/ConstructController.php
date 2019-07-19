@@ -173,18 +173,18 @@ class ConstructController extends Controller
             });
             $this->_percenSize=(Webservice::formatBytesToMb($this->_totalSize)/$this->_limitSize)*100;
             $this->_percenPosts=($this->_totalPosts/$this->_limitPosts)*100;
-            if(!empty($this->_channel->channelAttributeColor->channel_attribute_value)){
-                $contentAttributeDecode=json_decode($this->_channel->channelAttributeColor->channel_attribute_value);
-                if(!empty($contentAttributeDecode->fanpageFacebook)){
-                    $linkFanpageFacebook = parse_url($contentAttributeDecode->fanpageFacebook);
-                    $this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook['path']);
-                }
-                if(!empty($contentAttributeDecode->zaloAccount)){
-                    $this->_socialLinkZalo=$contentAttributeDecode->zaloAccount;
-                }
-            }
             $this->_channelColor=(!empty($this->_channel->channelAttributeColor->channel_attribute_value)) ? json_decode($this->_channel->channelAttributeColor->channel_attribute_value) : false;
             $this->_channelCategory=$this->_channel->getCategory;
+        }
+        if(!empty($this->_channel->channelAttributeColor->channel_attribute_value)){
+            $contentAttributeDecode=json_decode($this->_channel->channelAttributeColor->channel_attribute_value);
+            if(!empty($contentAttributeDecode->fanpageFacebook)){
+                $linkFanpageFacebook = parse_url($contentAttributeDecode->fanpageFacebook);
+                $this->_sociallinkFanpageFacebook=str_replace('/', "", $linkFanpageFacebook['path']);
+            }
+            if(!empty($contentAttributeDecode->zaloAccount)){
+                $this->_socialLinkZalo=$contentAttributeDecode->zaloAccount;
+            }
         }
         $this->viewShare();
     }
