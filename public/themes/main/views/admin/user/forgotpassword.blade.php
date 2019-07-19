@@ -18,7 +18,7 @@
 		<span><small>{!! Theme::get('description') !!}</small></span>
 	</div>
 	<div class="contentpanel">
-		<form class="formForgot" method="post" action="{{route('forgot.password.request',$channel['domainPrimary'])}}">
+		<form class="formForgot" method="post" action="{{route('forgot.password',$channel['domainPrimary'])}}">
 			<div class="form-group">
 				<a href="{{route('channel.login',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-chevron-left"></i> Trở về trang đăng nhập</a>
 			</div>
@@ -53,7 +53,7 @@
 			var formData = new FormData();
 			formData.append("email", $("input[name=email]").val()); 
 			$.ajax({
-				url: "'.route("forgot.password.request",$channel["domainPrimary"]).'",
+				url: "'.route("forgot.password",$channel["domainPrimary"]).'",
 				type: "POST",
 				cache: false,
 				contentType: false,
