@@ -1,7 +1,7 @@
 <?
 $channel['theme']->setTitle('Cung Cấp Website');
 $channel['theme']->setKeywords('Cung cấp, tạo website, dịch vụ web');
-$channel['theme']->setDescription('Cung cấp dịch vụ tạo website nhanh cho doanh nghiệp, tạo website bán hàng nhanh với giá rẻ và chất lượng cao. ');
+$channel['theme']->setDescription('Cung cấp dịch vụ tạo website bán hàng, tạo website giới thiệu công ty, tạo website giới thiệu sản phẩm, tạo website trên điện thoại di động. ');
 $channel['theme']->setImage('http://'.$channel["domainPrimary"].Theme::asset()->url('img/cungcap-website.jpg'));
 Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
