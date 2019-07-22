@@ -709,21 +709,14 @@ Route::group(['domain' => '{domain}'], function()
     Route::get('/user/active/{code}', array(
         'as' => 'channel.user.active.code',
         'uses' => 'UserController@userActiveCode'));
-    Route::get('/forgotpassword', array(
-        'as' => 'forgot.password',
-        'uses' => 'Auth\PasswordController@forgotPassword'));
-    Route::post('/forgotpassword', array(
-        'as' => 'forgot.password.request',
-        'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
-    Route::post('/forgotpassword-2', array(
-        'as' => 'password.reset',
-        'uses' => 'Auth\PasswordController@forgotPasswordRequest'));
-    Route::get('/password/reset/{token}', array(
-        'as' => 'forgot.password.reset',
-        'uses' => 'Auth\PasswordController@getReset'));
-    Route::post('/password/reset/{token}', array(
-        'as' => 'forgot.password.reset.request',
-        'uses' => 'Auth\PasswordController@postReset'));
+
+
+    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+
     Route::get('/register', array(
         'as' => 'channel.register',
         'uses' => 'UserController@register'));

@@ -1,5 +1,7 @@
 <?php
 namespace App;
+
+use App\Notifications\MailResetPasswordToken;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +12,11 @@ class User extends Authenticatable implements MustVerifyEmail
         use Notifiable;
 		protected $table = 'users';
 		protected $fillable = ['name', 'email', 'password'];
-		protected $hidden = ['password', 'remember_token']; 
+		protected $hidden = ['password', 'remember_token'];
+        public function sendPasswordResetNotification($token)
+        {
+            $this->notify(new MailResetPasswordToken($token));
+        }
 		public function joinOauthFacebook(){
 			return $this->hasOne('App\Model\User_oauth_identities', 'user_id', 'id')->where('provider','=','facebook');
 		}

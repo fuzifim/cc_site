@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers\Auth;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ConstructController;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-class ResetPasswordController extends Controller
+use Illuminate\Http\Request;
+use Theme;
+class ResetPasswordController extends ConstructController
 {
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +22,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
     /**
      * Create a new controller instance.
      *
@@ -29,5 +31,11 @@ class ResetPasswordController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+        parent::__construct();
+    }
+
+    public function showResetForm(Request $request, $token = null)
+    {
+        return Theme::view('admin.user.forgotPasswordReset',['token' => $request->token, 'email' => $request->email]);
     }
 }
