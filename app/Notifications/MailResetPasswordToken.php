@@ -42,9 +42,10 @@ class MailResetPasswordToken extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', route('password.reset',array(config('app.url'),$this->token)))
-                    ->line('Thank you for using our application!');
+                    ->subject('Quên mật khẩu')
+                    ->line('Bạn đã sử dụng tính năng quên mật khẩu để thay đổi mật khẩu của mình trên Cung Cấp')
+                    ->action('Xác nhận', route('password.reset',array(config('app.url'),$this->token)))
+                    ->line('Cám ơn bạn đã quan tâm sử dụng dịch vụ tại Cung Cấp!');
     }
 
     /**
