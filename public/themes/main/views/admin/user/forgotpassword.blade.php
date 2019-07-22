@@ -24,7 +24,7 @@
 					{{ session('status') }}
 				</div>
 			@endif
-			<form class="formForgot" method="post" action="{{ route('password.email',config('app.url')) }}">
+			<form class="formForgot" method="post" action="{{ route('password.email',$channel['domainPrimary']) }}">
 				@csrf
 				<div class="form-group">
 					<a href="{{route('channel.login',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-chevron-left"></i> Trở về trang đăng nhập</a>
