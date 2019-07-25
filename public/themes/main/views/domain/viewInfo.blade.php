@@ -134,6 +134,13 @@ if($ads=='true' && config('app.env')!='local'){
                             <p><strong>{!! $domain['domain'] !!}</strong></p>
                         </a>
                     </div>
+                    <div class="form-group mt-2">
+                        <div class="alert alert-info p-2">
+                            <strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
+                            <p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
+                        </div>
+                        <div class="btn-group d-flex" role="group"><a class="btn btn-successbtn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a></div>
+                    </div>
                     @if(!empty($domain['attribute']['whois']))
                         <div class="form-group mt-2">
                             <div class="panel panel-primary">
