@@ -99,6 +99,8 @@ class TestController extends ConstructController
 		return response()->json();
 	}
     public function test(){
+	    $ip=DB::connection('mongodb')->collection('mongo_ip')->where('description','exists',false)->first();
+	    dd($ip);
 	    $getNews=DB::connection('mongodb')->collection('mongo_domain')
             ->where('base_64',base64_encode('toonkor.co'))
             ->delete();
