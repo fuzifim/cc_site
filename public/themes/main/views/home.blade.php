@@ -209,7 +209,7 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 								<h3 class="">{{$attribute->name}}</h3>
 							</div>
 							<div class="text-center">
-								<h1><strong>{{Site::price($attribute->price_re_order+$attribute->price_order)}} <sup>đ</sup></strong></h1>
+								<h1><strong>{{Site::price(($attribute->price_re_order+$attribute->price_order)*12)}} <sup>đ</sup></strong></h1>
 								/ Năm
 							</div>
 							<div class="price-features">
