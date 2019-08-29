@@ -194,38 +194,6 @@ Theme::asset()->container('footer')->usePath()->add('jquery.gritter.min', 'js/jq
 					</ul>
 				</div>
 			</div>
-			<div class="row-pad-5 pricingGroup">
-				<?
-				$getService=\App\Model\Services::find(2);
-
-				?>
-				@foreach($getService->attributeAll as $attribute)
-					<?
-					$attributeJson=json_decode($attribute->attribute_value);
-					?>
-					<div class="col-xs-12 col-sm-6 col-md-3 appendpricing">
-						<div class="list-group-item btn pricingPackge @if($attribute->id==18) active @endif">
-							<div class="text-center">
-								<h3 class="">{{$attribute->name}}</h3>
-							</div>
-							<div class="text-center">
-								<h1><strong>{{Site::price(($attribute->price_re_order+$attribute->price_order)*12)}} <sup>đ</sup></strong></h1>
-								/ Năm
-							</div>
-							<div class="price-features">
-								<ul class="list-group">
-									<li class="list-group-item list-group-item-info"><i class="fa fa-check text-success"></i> <strong>Dung lượng: </strong> {{$attributeJson->limit_cloud}}MB</li>
-									<li class="list-group-item list-group-item-info"><i class="fa fa-check text-success"></i> <strong>{{Site::price($attributeJson->limit_post)}}</strong> Bài viết</li>
-								</ul>
-							</div>
-							<div class="rdio rdio-primary">
-								<input type="radio" name="channelPackge" value="{{$attribute->id}}" id="radioPrimary{{$attribute->id}}" @if($attribute->id==18)checked="checked"@endif>
-								<label for="radioPrimary{{$attribute->id}}">Chọn</label>
-							</div>
-						</div>
-					</div>
-				@endforeach
-			</div>
 		</div>
 
 	</div><!-- mainpanel -->
