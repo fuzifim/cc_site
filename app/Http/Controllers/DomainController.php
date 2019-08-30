@@ -56,9 +56,6 @@ class DomainController extends ConstructController
     public function DomainInfo(Request $request){
         $this->_domainInfo=$this->_parame['domain'];
         if(!empty($this->_domainInfo)){
-            if(($this->_domainPrimary != 'd.cungcap.net') && (config('app.env')!='local')){
-                return redirect()->to('https://d.cungcap.net/d/'.$this->_domainInfo,301);
-            }
             $domain = Cache::store('memcached')->remember('infoDomain_'.base64_encode($this->_domainInfo), 1, function()
             {
                 return DB::connection('mongodb')->collection('mongo_domain')

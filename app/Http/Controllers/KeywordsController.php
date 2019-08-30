@@ -80,9 +80,6 @@ class KeywordsController extends ConstructController
             $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
                 ->where('base_64', base64_encode($this->_keyword))->first();
             if(!empty($getKeyword['keyword'])){
-                if($this->_domainPrimary !='k.cungcap.net' && (config('app.env')!='local')){
-                    return redirect()->route('keyword.show.id',array('k.cungcap.net',$getKeyword['_id'],str_slug(mb_substr($getKeyword['keyword'], 0, Mongo_keyword::MAX_LENGTH_SLUG),'-')));
-                }
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('base_64',base64_encode($this->_keyword))
                     ->increment('view', 1);
