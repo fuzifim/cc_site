@@ -14,29 +14,22 @@
 	</div>
 	<div class="siteFooter">
 		<div class="container">
-			<div class="row">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="form-group">
-							<b><strong>CÔNG TY CỔ PHẦN CUNG CẤP</strong></b><br>
-							<small><i class="glyphicon glyphicon-map-marker"></i> 104 Hoàng Diệu 2, P. Linh Chiểu, Q. Thủ Đức, HCM</small><br>
-							<small>MST: 0314609089 - Email: <a href="mailto:contact@cungcap.net">contact@cungcap.net</a></small><br><small>Web: <a href='https://cungcap.net'>cungcap.net</a> - <a href='http://cungcap.com.vn'>cungcap.com.vn</a> - <a href='http://cungcap.vn'>cungcap.vn</a></small><br>
-							
-							<small>Cung Cấp không chịu bất kỳ trách nhiệm nào bởi người dùng đăng lên</small>
-						</div>
-					</div>
-					<div class="col-md-8">
-						<small>
-						<a href="//{!! $channel['domainPrimary'] !!}/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a> |
-						<a href="//{!! $channel['domainPrimary'] !!}/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a> |
-						<a href="//{!! $channel['domainPrimary'] !!}/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a> |
-						<a href="//{!! $channel['domainPrimary'] !!}/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a> |
-						<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
-						<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
-						</small>
-						</div>
-					</div>
-				</div>
+			<div class="form-group text-center">
+				<small>
+					<a href="//{!! $channel['domainPrimary'] !!}/gioi-thieu"><i class="glyphicon glyphicon-info-sign"></i> Giới thiệu</a> |
+					<a href="//{!! $channel['domainPrimary'] !!}/dieu-khoan-su-dung"><i class="glyphicon glyphicon-chevron-right"></i> Điều khoản sử dụng</a> |
+					<a href="//{!! $channel['domainPrimary'] !!}/chinh-sach-bao-mat"><i class="glyphicon glyphicon-chevron-right"></i> Chính sách bảo mật</a> |
+					<a href="//{!! $channel['domainPrimary'] !!}/quy-che-hoat-dong"><i class="glyphicon glyphicon-chevron-right"></i> Quy chế hoạt động</a> |
+					<a href="{{route('channel.contact',$channel['domainPrimary'])}}"><i class="glyphicon glyphicon-envelope"></i> Liên hệ</a> |
+					<a href="{{route('channel.list',$channel['domainPrimary'])}}" class=""><i class="glyphicon glyphicon-chevron-right"></i> Danh sách website</a>
+				</small>
+			</div>
+			<div class="form-group text-center">
+				<small><strong>CÔNG TY CỔ PHẦN CUNG CẤP</strong></small> -
+				<small><i class="glyphicon glyphicon-map-marker"></i> 104 Hoàng Diệu 2, P. Linh Chiểu, Q. Thủ Đức, HCM</small> -
+				<small>MST: 0314609089 - Email: <a href="mailto:contact@cungcap.net">contact@cungcap.net</a></small> - <small>Web: <a href='https://cungcap.net'>cungcap.net</a> - <a href='http://cungcap.com.vn'>cungcap.com.vn</a> - <a href='http://cungcap.vn'>cungcap.vn</a></small><br>
+
+				<small>Cung Cấp không chịu bất kỳ trách nhiệm nào bởi người dùng đăng lên</small>
 			</div>
 		</div>
 	</div>
