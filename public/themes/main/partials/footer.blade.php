@@ -35,7 +35,7 @@
 	</div>
 	<a href="#" id="back-to-top" title="Back to top"><i class="glyphicon glyphicon-chevron-up"></i></a>
 	<div class="footerFixel">
-		<div class="row footerFixelCopyright">
+		<div class="footerFixelCopyright">
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8">
