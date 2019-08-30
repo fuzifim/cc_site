@@ -54,7 +54,7 @@ if($ads=='true' && config('app.env')!='local'){
                             </script>
                         </div>
                     @endif
-                    <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array(config('app.url'),urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
+                    <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
                         <p><strong>Click here</strong></p>
                     </a>
                 </div>

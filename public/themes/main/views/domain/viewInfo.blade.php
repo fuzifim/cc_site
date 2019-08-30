@@ -130,7 +130,7 @@ if($ads=='true' && config('app.env')!='local'){
                                 $scheme='http';
                             }
                         ?>
-                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',array(config('app.url'),$scheme.'://'.$domain['domain'])) !!}" rel="nofollow" target="_blank">Visit to site click here
+                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',array('go.cungcap.net',$scheme.'://'.$domain['domain'])) !!}" rel="nofollow" target="_blank">Visit to site click here
                             <p><strong>{!! $domain['domain'] !!}</strong></p>
                         </a>
                     </div>
