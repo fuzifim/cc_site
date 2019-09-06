@@ -130,9 +130,15 @@ if($ads=='true' && config('app.env')!='local'){
                                 $scheme='http';
                             }
                         ?>
-                        <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',array('go.cungcap.net',$scheme.'://'.$domain['domain'])) !!}" rel="nofollow" target="_blank">Visit to site click here
-                            <p><strong>{!! $domain['domain'] !!}</strong></p>
-                        </a>
+                        @if($ads=='true')
+                            <a class="btn btn-primary btn-block siteLink" id="linkContinue" href="{!! route('go.to.url',array('go.cungcap.net',$scheme.'://'.$domain['domain'])) !!}" rel="nofollow" target="_blank">Visit to site click here
+                                <p><strong>{!! $domain['domain'] !!}</strong></p>
+                            </a>
+                        @else
+                            <a class="btn btn-primary btn-block" id="linkContinue" href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" rel="nofollow" target="_blank">Visit to site click here
+                                <p><strong>{!! $domain['domain'] !!}</strong></p>
+                            </a>
+                        @endif
                     </div>
                     <div class="form-group mt-2">
                         <div class="alert alert-info p-2">

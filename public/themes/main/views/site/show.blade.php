@@ -54,9 +54,15 @@ if($ads=='true' && config('app.env')!='local'){
                             </script>
                         </div>
                     @endif
-                    <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
-                        <p><strong>Click here</strong></p>
-                    </a>
+                    @if($ads=='true')
+                        <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
+                            <p><strong>Click here</strong></p>
+                        </a>
+                    @else
+                        <a class="btn btn-primary btn-block" id="" href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
+                            <p><strong>Click here</strong></p>
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="form-group mt-2">
