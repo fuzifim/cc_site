@@ -49,7 +49,7 @@ if($ads=='true' && config('app.env')!='local'){
 ?>
 <section>
     <div class="mainpanel">
-    {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
+    {!!Theme::partial('headerbar_domain', array('title' => 'Header'))!!}
         <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
             <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i> <span class="hidden-xs" itemprop="name">Cung Cấp</span></a></li>
             <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
@@ -353,6 +353,46 @@ if($ads=='true' && config('app.env')!='local'){
         </div>
     </div>
 </section>
+<div class="modal fade" id="ModalFacebook">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4>Like trang và chia sẻ để thấy nội dung</h4>
+            </div>
+            <div class="modal-body text-center">
+                <p>Nhấn vào nút <strong>thích</strong> để thấy và theo dõi nội dung! </p>
+                <div class="fb-like" data-href="https://www.facebook.com/cungcap.net/" data-width="" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span id="timeLeft"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+$dependencies = array();
+$channel['theme']->asset()->writeScript('customScript','
+    jQuery(document).ready(function(){
+        "use strict";
+        $(window).on("load",function(){
+            $("#ModalFacebook").modal("show");
+        });
+        var count = 30;
+        setInterval(function(){
+            document.getElementById("timeLeft").innerHTML = count;
+            if (count == 0) {
+                $("#ModalFacebook").modal("hide");
+                document.getElementById("timeLeft").innerHTML = "Đóng";
+            }
+            count--;
+        },1000);
+        $("#ModalFacebook").modal({backdrop: "static", keyboard: false});
+    });
+', []);
+?>
 @if($channel['security']==true)
 <?php
 $dependencies = array();
