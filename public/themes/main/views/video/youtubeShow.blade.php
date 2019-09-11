@@ -3,6 +3,9 @@ Theme::setTitle('Video '.$video['title']);
 Theme::setDescription($video['description']);
 Theme::setImage('https:'.$video['image']);
 Theme::setCanonical(route('video.youtube.view.id.slug',array('v.cungcap.net',$video['yid'],str_slug(mb_substr($video['title'], 0, \App\Model\Mongo_video::MAX_LENGTH_SLUG),'-'))));
+Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
+Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
 $ads='true';
 if($ads=='true' && config('app.env')!='local'){
     Theme::setAds('true');
