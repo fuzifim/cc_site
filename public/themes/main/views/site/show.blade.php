@@ -85,3 +85,40 @@ if($ads=='true' && config('app.env')!='local'){
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="ModalFacebook">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="timeLeft">&times;</span>
+                </button>
+                <h4>Like trang và chia sẻ để thấy nội dung</h4>
+            </div>
+            <div class="modal-body text-center">
+                <p>Nhấn vào nút <strong>thích</strong> để thấy và theo dõi nội dung! </p>
+                <div class="fb-like" data-href="https://www.facebook.com/cungcap.net/" data-width="" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+$channel['theme']->asset()->writeScript('customScript','
+    jQuery(document).ready(function(){
+        "use strict";
+        $(window).on("load",function(){
+            $("#ModalFacebook").modal("show");
+        });
+        var count = 30;
+        setInterval(function(){
+            document.getElementById("timeLeft").innerHTML = count;
+            if (count == 0) {
+                $("#ModalFacebook").modal("hide");
+                document.getElementById("timeLeft").innerHTML = "&times;";
+            }
+            count--;
+        },1000);
+        $("#ModalFacebook").modal({backdrop: "static", keyboard: false});
+    });
+', []);
+?>
