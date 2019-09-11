@@ -60,6 +60,9 @@ class DomainController extends ConstructController
             if(($parsedUrl['host'] != 'd.cungcap.net') && (config('app.env')!='local')){
                 return redirect()->to('https://d.cungcap.net/d/'.$this->_domainInfo,301);
             }
+            if($parsedUrl['scheme']!='https' && (config('app.env')!='local')){
+                return redirect()->secure($request->getRequestUri())->send();
+            }
             $domain = Cache::store('memcached')->remember('infoDomain_'.base64_encode($this->_domainInfo), 1, function()
             {
                 return DB::connection('mongodb')->collection('mongo_domain')

@@ -84,6 +84,9 @@ class KeywordsController extends ConstructController
                 if($parsedUrl['host'] !='k.cungcap.net' && (config('app.env')!='local')){
                     return redirect()->route('keyword.show.id',array('k.cungcap.net',$getKeyword['_id'],str_slug(mb_substr($getKeyword['keyword'], 0, Mongo_keyword::MAX_LENGTH_SLUG),'-')));
                 }
+                if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
+                    return redirect()->secure($request->getRequestUri())->send();
+                }
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('base_64',base64_encode($this->_keyword))
                     ->increment('view', 1);
@@ -160,6 +163,9 @@ class KeywordsController extends ConstructController
                 $parsedUrl=parse_url($request->url());
                 if($parsedUrl['host'] !='k.cungcap.net' && (config('app.env')!='local')){
                     return redirect()->route('keyword.show.id',array('k.cungcap.net',$getKeyword['_id'],str_slug(mb_substr($getKeyword['keyword'], 0, Mongo_keyword::MAX_LENGTH_SLUG),'-')));
+                }
+                if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
+                    return redirect()->secure($request->getRequestUri())->send();
                 }
                 DB::connection('mongodb')->collection('mongo_keyword')
                     ->where('_id',$this->_parame['id'])
