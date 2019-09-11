@@ -128,7 +128,8 @@ if($ads=='true' && config('app.env')!='local'){
                 <h4>Like trang và chia sẻ để thấy nội dung</h4>
             </div>
             <div class="modal-body text-center">
-                <p>Nhấn vào nút <strong>thích</strong> để thấy và theo dõi nội dung! </p>
+                <p>Nhấn vào nút <strong>thích</strong> để thấy nội dung {!! $video['title'] !!}! </p>
+                <p>Hoặc nhấn <a href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" target="_blank" rel="nofollow" class="btn btn-sm btn-success">vào đây</a> và sau đó xác nhận đăng ký kênh bấm vào <strong>Đăng ký</strong> để xem nội dung {!! $video['title'] !!}</p>
                 <div class="fb-like" data-href="https://www.facebook.com/cungcap.net/" data-width="" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
             </div>
         </div>
@@ -141,7 +142,7 @@ $channel['theme']->asset()->writeScript('customScript','
         $(window).on("load",function(){
             $("#ModalFacebook").modal("show");
         });
-        var count = 30;
+        var count = 50;
         setInterval(function(){
             document.getElementById("timeLeft").innerHTML = count;
             if (count == 0) {
