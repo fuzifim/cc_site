@@ -113,7 +113,7 @@ $channel['theme']->asset()->writeScript('customScript','
         $(window).on("load",function(){
             $("#ModalFacebook").modal("show");
         });
-        var count = 30;
+        var count = 50;
         setInterval(function(){
             document.getElementById("timeLeft").innerHTML = count;
             if (count == 0) {
