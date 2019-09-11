@@ -167,18 +167,6 @@
 				<p>Nhấn vào nút <strong>thích trang</strong> để thấy nội dung <strong>{!! $keyword['keyword'] !!}</strong> </p>
 				<div class="fb-page" data-href="https://www.facebook.com/cungcap.net/" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/cungcap.net/" class="fb-xfbml-parse-ignore"></blockquote></div>
 				<p>Hoặc nhấn <a href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" target="_blank" rel="nofollow" class="label label-success"><i class="glyphicon glyphicon-hand-right"></i> vào đây</a> và sau đó xác nhận đăng ký kênh bấm vào <strong>Đăng ký</strong> để xem nội dung {!! $keyword['keyword'] !!}</p>
-				@if($ads=='true' && config('app.env')!='local')
-					<div class="container form-group">
-						<ins class="adsbygoogle"
-							 style="display:block"
-							 data-ad-client="ca-pub-6739685874678212"
-							 data-ad-slot="7536384219"
-							 data-ad-format="auto"></ins>
-						<script>
-							(adsbygoogle = window.adsbygoogle || []).push({});
-						</script>
-					</div>
-				@endif
 			</div>
 		</div>
 	</div>
