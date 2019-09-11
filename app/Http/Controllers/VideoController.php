@@ -25,13 +25,17 @@ class VideoController extends ConstructController
     public function __construct(){
         parent::__construct();
     }
-    public function viewVideoYoutubeById(){
+    public function viewVideoYoutubeById(Request $request){
         $video = Cache::store('memcached')->remember('infoVideoYoutube_'.$this->_parame['yId'], 1, function()
         {
             return DB::connection('mongodb')->collection('mongo_video')
                 ->where('yid',$this->_parame['yId'])->first();
         });
         if(!empty($video['yid'])){
+            $parsedUrl=parse_url($request->url());
+            if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
+                return redirect()->secure($request->getRequestUri())->send();
+            }
             $videoParent=[];
             if(!empty($video['parent'])){
                 $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent_'.base64_encode($video['parent']).'_'.$video['_id'], 1, function() use($video)
@@ -51,7 +55,7 @@ class VideoController extends ConstructController
             return Theme::view('404',[]);
         }
     }
-    public function videoShowByIdSlug(){
+    public function videoShowByIdSlug(Request $request){
         if(!empty($this->_parame['yId'])){
             $video = Cache::store('memcached')->remember('infoVideoYoutube_'.$this->_parame['yId'], 1, function()
             {
@@ -59,6 +63,10 @@ class VideoController extends ConstructController
                     ->where('yid',$this->_parame['yId'])->first();
             });
             if(!empty($video['yid'])){
+                $parsedUrl=parse_url($request->url());
+                if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
+                    return redirect()->secure($request->getRequestUri())->send();
+                }
                 $videoParent=[];
                 if(!empty($video['parent'])){
                     $videoParent = Cache::store('memcached')->remember('infoVideoYoutube_parent_'.base64_encode($video['parent']).'_'.$video['_id'], 1, function() use($video)
