@@ -135,7 +135,7 @@ if($ads=='true' && config('app.env')!='local'){
                 <div class="fb-page" data-href="https://www.facebook.com/cungcap.net/" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/cungcap.net/" class="fb-xfbml-parse-ignore"></blockquote></div>
             </div>
             @if($ads=='true' && config('app.env')!='local')
-                <div class="modal-footer">
+                <div class="modal-footer text-center">
                     <div class="container form-group">
                         <ins class="adsbygoogle"
                              style="display:block"
