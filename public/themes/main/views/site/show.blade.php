@@ -99,8 +99,8 @@ if($ads=='true' && config('app.env')!='local'){
                 <h4>Like trang và chia sẻ để thấy nội dung</h4>
             </div>
             <div class="modal-body text-center">
-                <p>Nhấn vào nút <strong>thích</strong> để thấy nội dung <strong>{!! $site['title_full'] !!}</strong> </p>
-                <div class="fb-like" data-href="https://www.facebook.com/cungcap.net/" data-width="" data-layout="button_count" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+                <p>Nhấn vào nút <strong>thích trang</strong> để thấy nội dung <strong>{!! $site['title_full'] !!}</strong> </p>
+                <div class="fb-page" data-href="https://www.facebook.com/cungcap.net/" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/cungcap.net/" class="fb-xfbml-parse-ignore"></blockquote></div>
                 <p>Hoặc nhấn <a href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" target="_blank" rel="nofollow" class="btn btn-sm btn-success">vào đây</a> và sau đó xác nhận đăng ký kênh bấm vào <strong>Đăng ký</strong> để xem nội dung <strong>{!! $site['title_full'] !!}</strong></p>
             </div>
         </div>
