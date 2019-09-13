@@ -63,11 +63,13 @@ class ConstructController extends Controller
 	public $_pieces=array(); 
 	public $_rulesDomain;
 	public $_newKeyword=array();
+	public $_detectLang = 'vn';
 	public function __construct(){
         $this->middleware(function ($request, $next) {
             $this->userSecurity();
             return $next($request);
         });
+        $this->_detectLang = strtolower($_SERVER['GEOIP_COUNTRY_CODE']);
 		$this->_parame=Route::current()->parameters(); 
 		$this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
 		{
@@ -222,6 +224,7 @@ class ConstructController extends Controller
     private function viewShare(){
         view()->share(
             'channel',array(
+                'detectLang'=>$this->_detectLang,
                 'region'=>$this->_region,
                 'financeUserTotal'=>$this->_financeUserTotal,
                 'limitSize'=>$this->_limitSize,

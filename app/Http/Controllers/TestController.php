@@ -99,8 +99,8 @@ class TestController extends ConstructController
 		return response()->json();
 	}
 	public function test(){
-        $geoip_country_name = getenv(GEOIP_COUNTRY_NAME);
-        dd($geoip_country_name);
+        //$geoip_country_name = $_SERVER['GEOIP_COUNTRY_CODE'];
+        dd($this->_detectLang);
     }
     public function test1231242(){
 	    $ip=DB::connection('mongodb')->collection('mongo_ip')->where('description','exists',false)->first();
