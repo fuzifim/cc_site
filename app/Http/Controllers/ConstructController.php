@@ -69,7 +69,9 @@ class ConstructController extends Controller
             $this->userSecurity();
             return $next($request);
         });
-        $this->_detectLang = (!empty(strtolower($_SERVER['GEOIP_COUNTRY_CODE'])) ? strtolower($_SERVER['GEOIP_COUNTRY_CODE']) : $this->_detectLang);
+        if(strtolower($_SERVER['GEOIP_COUNTRY_CODE'])!='vn'){
+            $this->_detectLang = 'en';
+        }
 		$this->_parame=Route::current()->parameters(); 
 		$this->_rulesDomain = Cache::store('file')->rememberForever('rulesDomain', function()
 		{
