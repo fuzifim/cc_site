@@ -360,12 +360,12 @@ if($ads=='true' && config('app.env')!='local'){
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id="timeLeft">&times;</span>
                 </button>
-                <h4>Like trang và chia sẻ để thấy nội dung</h4>
+                <h4>{{ trans('base.like_and_share_to_see_content') }}</h4>
             </div>
             <div class="modal-body text-center">
-                <p>Nhấn vào nút <strong>thích trang</strong> để thấy nội dung <strong>{!! $domain['domain'] !!}</strong></p>
+                <p>{!! trans('base.click_button_to_see_content',['content'=>$domain['domain']]) !!} </p>
                 <div class="fb-page" data-href="https://www.facebook.com/cungcap.net/" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/cungcap.net/" class="fb-xfbml-parse-ignore"></blockquote></div>
-                <p>Hoặc nhấn <a href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" target="_blank" rel="nofollow" class="label label-success"><i class="glyphicon glyphicon-hand-right"></i> vào đây</a> và sau đó xác nhận đăng ký kênh bấm vào <strong>Đăng ký</strong> để xem nội dung {!! $domain['domain'] !!}</p>
+                <p>{!! trans('base.or_click_sub_youtube',['content'=>$domain['domain']]) !!}</p>
                 @if($ads=='true' && config('app.env')!='local')
                     <div class="modal-footer text-center">
                         <div class="container form-group">

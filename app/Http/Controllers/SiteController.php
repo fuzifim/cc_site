@@ -26,6 +26,7 @@ class SiteController extends ConstructController
         parent::__construct();
     }
     public function siteShowByIdSlug(){
+        \App::setLocale($this->_detectLang);
         if(!empty($this->_parame['id'])){
             $site = Cache::store('memcached')->remember('infoSite_'.$this->_parame['id'], 1, function()
             {

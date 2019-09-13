@@ -74,6 +74,7 @@ class KeywordsController extends ConstructController
 		return $this->_theme->scope('keyword.list', $return)->render();
 	}
 	public function show(Request $request){
+        \App::setLocale($this->_detectLang);
         $this->_keyword=str_replace('+', ' ', $this->_parame['slug']);
         $this->_keyword=WebService::keywordDecodeBase64($this->_keyword);
 		if(WebService::is_valid_url($this->_keyword)!=true) {
@@ -156,6 +157,7 @@ class KeywordsController extends ConstructController
         }
 	}
 	public function showById(Request $request){
+        \App::setLocale($this->_detectLang);
 	    if(!empty($this->_parame['id'])){
             $getKeyword = DB::connection('mongodb')->collection('mongo_keyword')
                 ->where('_id', $this->_parame['id'])->first();

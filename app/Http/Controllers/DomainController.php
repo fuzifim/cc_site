@@ -54,6 +54,7 @@ class DomainController extends ConstructController
 	}
 	/*-- new --*/
     public function DomainInfo(Request $request){
+        \App::setLocale($this->_detectLang);
         $this->_domainInfo=$this->_parame['domain'];
         if(!empty($this->_domainInfo)){
             $parsedUrl=parse_url($request->url());

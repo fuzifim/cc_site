@@ -41,6 +41,10 @@
 		@endif
     </head>
 	<div id="fb-root"></div>
+	@if($channel['detectLang']=='vn')
 	<script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v4.0&appId=1506437109671064&autoLogAppEvents=1"></script>
-    <body class="">
+    @else
+		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=1506437109671064&autoLogAppEvents=1"></script>
+	@endif
+	<body class="">
 	<!-- Preloader -->

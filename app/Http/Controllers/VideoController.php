@@ -26,6 +26,7 @@ class VideoController extends ConstructController
         parent::__construct();
     }
     public function viewVideoYoutubeById(Request $request){
+        \App::setLocale($this->_detectLang);
         $video = Cache::store('memcached')->remember('infoVideoYoutube_'.$this->_parame['yId'], 1, function()
         {
             return DB::connection('mongodb')->collection('mongo_video')
@@ -56,6 +57,7 @@ class VideoController extends ConstructController
         }
     }
     public function videoShowByIdSlug(Request $request){
+        \App::setLocale($this->_detectLang);
         if(!empty($this->_parame['yId'])){
             $video = Cache::store('memcached')->remember('infoVideoYoutube_'.$this->_parame['yId'], 1, function()
             {
