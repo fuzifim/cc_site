@@ -73,6 +73,22 @@ if($ads=='true' && config('app.env')!='local'){
                             </script>
                         </div>
                     @endif
+                    <div class="form-group mt-2">
+                        <div class="row row-pad-5">
+                            <div class="col-md-6">
+                                <div class="alert alert-info p-2">
+                                    <strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
+                                    <p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
+                                </div>
+                                <a class="btn btn-success btn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/kGaGrI8dkLI?&autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @if(count($videoParent))
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -149,7 +165,6 @@ if($ads=='true' && config('app.env')!='local'){
                     </div>
                 </div>
             @endif
-            <div id="showVideo"></div>
         </div>
     </div>
 </div>
@@ -161,17 +176,12 @@ $channel['theme']->asset()->writeScript('customScript','
             $("#ModalFacebook").modal("show");
         });
         var count = 100;
-        var timeShowVideo=3;
         setInterval(function(){
             document.getElementById("timeLeft").innerHTML = count;
             if (count == 0) {
                 $("#ModalFacebook").modal("hide");
                 document.getElementById("timeLeft").innerHTML = "&times;";
             }
-            if(timeShowVideo==0){
-				$("#showVideo").append("<div class=\"embed-responsive embed-responsive-16by9\"><iframe class=\"embed-responsive-item\" src=\"https://www.youtube.com/watch?v=kGaGrI8dkLI?&autoplay=1&mute=1\" frameborder=\”0\″ allowfullscreen></iframe></div>");
-			}
-			timeShowVideo--;
             count--;
         },1000);
         $("#ModalFacebook").modal({backdrop: "static", keyboard: false});
