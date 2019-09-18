@@ -116,9 +116,7 @@ if($ads=='true' && config('app.env')!='local'){
                         </div>
                     </div>
                 @endif
-                <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=kGaGrI8dkLI?&autoplay=1&mute=1" frameborder=”0″ allowfullscreen></iframe>
-                </div>
+                <div id="showVideo"></div>
             </div>
         </div>
     </div>
@@ -131,12 +129,17 @@ $channel['theme']->asset()->writeScript('customScript','
             $("#ModalFacebook").modal("show");
         });
         var count = 100;
+        var timeShowVideo=3;
         setInterval(function(){
             document.getElementById("timeLeft").innerHTML = count;
             if (count == 0) {
                 $("#ModalFacebook").modal("hide");
                 document.getElementById("timeLeft").innerHTML = "&times;";
             }
+            if(timeShowVideo==0){
+				$("#showVideo").append("<div class=\"embed-responsive embed-responsive-16by9\"><iframe class=\"embed-responsive-item\" src=\"https://www.youtube.com/watch?v=kGaGrI8dkLI?&autoplay=1&mute=1\" frameborder=\”0\″ allowfullscreen></iframe></div>");
+			}
+			timeShowVideo--;
             count--;
         },1000);
         $("#ModalFacebook").modal({backdrop: "static", keyboard: false});
