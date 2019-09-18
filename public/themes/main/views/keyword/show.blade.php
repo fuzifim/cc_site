@@ -115,11 +115,20 @@
 						@endif
 					@endif
 					<div class="form-group mt-2">
-						<div class="alert alert-info p-2">
-							<strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
-							<p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
+						<div class="row row-pad-5">
+							<div class="col-md-6">
+								<div class="alert alert-info p-2">
+									<strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
+									<p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
+								</div>
+								<a class="btn btn-success btn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a>
+							</div>
+							<div class="col-md-6">
+								<div class="embed-responsive embed-responsive-16by9">
+									<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/kGaGrI8dkLI?&autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+								</div>
+							</div>
 						</div>
-						<a class="btn btn-success btn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a>
 					</div>
 					@if($siteShow==true)
 						{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads,'skipImage'=>$skipImage,'skipVideo'=>$skipVideo,'imageShow'=>$imageShow,'videoShow'=>$videoShow))!!}
@@ -148,22 +157,6 @@
 							@endforeach
 						</div>
 					@endif
-				</div>
-			</div>
-			<div class="form-group mt-2">
-				<div class="row row-pad-5">
-					<div class="col-md-6">
-						<div class="alert alert-info p-2">
-							<strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
-							<p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
-						</div>
-						<a class="btn btn-success btn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a>
-					</div>
-					<div class="col-md-6">
-						<div class="embed-responsive embed-responsive-16by9">
-							<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/kGaGrI8dkLI?&autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
