@@ -149,6 +149,9 @@ if($ads=='true' && config('app.env')!='local'){
                     </div>
                 </div>
             @endif
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=kGaGrI8dkLI?&autoplay=1&mute=1" frameborder=”0″ allowfullscreen></iframe>
+            </div>
         </div>
     </div>
 </div>
