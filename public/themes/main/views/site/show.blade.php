@@ -135,6 +135,9 @@ $channel['theme']->asset()->writeScript('customScript','
             $("#ModalFacebook").modal("show");
         });
         var count = 100;
+        $("#click_here_youtube").click(function(){
+            count=10;
+        });
         setInterval(function(){
             document.getElementById("timeLeft").innerHTML = count;
             if (count == 0) {
