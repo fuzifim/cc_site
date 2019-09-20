@@ -173,8 +173,6 @@
 				<h4>{{ trans('base.like_and_share_to_see_content') }}</h4>
 			</div>
 			<div class="modal-body text-center">
-				<p>{!! trans('base.click_button_to_see_content',['content'=>$keyword['keyword']]) !!} </p>
-				<div class="fb-page" data-href="https://www.facebook.com/cungcap.net/" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/cungcap.net/" class="fb-xfbml-parse-ignore"></blockquote></div>
 				<p>{!! trans('base.or_click_sub_youtube',['content'=>$keyword['keyword']]) !!}</p>
 				@if($ads=='true' && config('app.env')!='local')
 					<div class="modal-footer text-center">
