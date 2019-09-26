@@ -11,6 +11,7 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
 }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
     $ads='false';
 }
+$ads='false';
 if($ads=='true' && config('app.env')!='local'){
     Theme::setAds('true');
 }

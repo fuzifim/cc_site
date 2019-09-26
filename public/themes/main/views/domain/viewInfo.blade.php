@@ -40,6 +40,7 @@ if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'
 }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
     $ads='false';
 }
+$ads='false';
 Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
