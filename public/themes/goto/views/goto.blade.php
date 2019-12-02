@@ -1,5 +1,5 @@
 <?
-	Theme::setTitle('Url Redirect to '.$url);
+	Theme::setTitle('Url Redirect to '.str_replace('https://fast.accesstrade.com.vn/deep_link/4883621352765649682?url=','',$url));
 ?>
 
 @if($ads=='true')
