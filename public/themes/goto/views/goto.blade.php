@@ -1,5 +1,5 @@
 <?
-	Theme::setTitle('Url Redirect to '.$url);
+	Theme::setTitle('Url Redirect to '.str_replace('https://fast.accesstrade.com.vn/deep_link/4883621352765649682?url=','',$url));
 ?>
 
 @if($ads=='true')
@@ -31,7 +31,7 @@
 		</div>
 		@endif
 		<div class="form-group">
-		<a class="btn btn-success btn-block" id="linkContinue" href="">Click here to continue <span id="timeLeft">5</span></a>
+		<a class="btn btn-success btn-block" id="linkContinue" href="">Click here to continue <span id="timeLeft"></span></a>
 		</div>
 	</div>
 </div>
@@ -41,9 +41,9 @@
 
 	jQuery(document).ready(function(){
 		jQuery("#linkContinue").attr("href",redirUrl);
-		jQuery("#linkUrl").html(redirUrl);
+		jQuery("#linkUrl").html(redirUrl.replace("https://fast.accesstrade.com.vn/deep_link/4883621352765649682?url=", ""));
 	});
-	var count = 5;
+	var count = 1;
 	setInterval(function(){
 		document.getElementById('timeLeft').innerHTML = count;
 		if (count == 0) {
