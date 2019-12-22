@@ -65,6 +65,9 @@ class VideoController extends ConstructController
                     ->where('yid',$this->_parame['yId'])->first();
             });
             if(!empty($video['yid'])){
+                if($video['yid'] == 'jmvDroujV9U' || $video['yid'] == 'sT046V3AdtU'){
+                    $video->delete(); 
+                }
                 $parsedUrl=parse_url($request->url());
                 if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
                     return redirect()->secure($request->getRequestUri())->send();
