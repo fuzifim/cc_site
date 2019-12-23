@@ -58,29 +58,26 @@ if($ads=='true' && config('app.env')!='local'){
                             </script>
                         </div>
                     @endif
-                    @if($ads=='true')
-                        <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
-                            <p><strong>Click here</strong></p>
-                        </a>
-                    @else
-                        <a class="btn btn-primary btn-block" id="" href="https://www.youtube.com/channel/UCTR65Hn65TWPupGBWUMkzuA?sub_confirmation=1" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
-                            <p><strong>Click here</strong></p>
-                        </a>
-                    @endif
+                    <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
+                        <p><strong>Click here</strong></p>
+                    </a>
                 </div>
             </div>
             <div class="form-group mt-2">
-                <div class="row row-pad-5">
-                    <div class="col-md-6">
-                        <div class="alert alert-info p-2">
-                            <strong>Cung Cấp đến mọi người ⭐ ⭐ ⭐ ⭐ ⭐</strong>
-                            <p>Đăng tin lên Cung Cấp để cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người hoàn toàn miễn phí! </p>
+                <div class="alert alert-info text-center">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img class="img-responsive" src="{{ asset('assets/img/trang-web.png') }}">
                         </div>
-                        <a class="btn btn-success btn-block" href="https://soc.cungcap.net" target="_blank"><h4>Đăng tin miễn phí</h4></a>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/kGaGrI8dkLI?&autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="col-md-6">
+                            <i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
+                            <div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
+                            <<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
+                            <h2 class="">
+                                <strong><i class="glyphicon glyphicon-earphone"></i> <a class="text-danger" href="tel:0903706288">0903 706 288</a> </strong> -
+                                <strong><a href="http://zalo.me/0903706288" target="_blank" rel="nofollow"><i class="glyphicon glyphicon-comment"></i> Zalo</a></strong> -
+                                <strong><a href="https://m.me/cungcap.net" target="_blank" rel="nofollow"><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a> </strong>
+                            </h2>
                         </div>
                     </div>
                 </div>
@@ -98,56 +95,7 @@ if($ads=='true' && config('app.env')!='local'){
         </div>
     </div>
 </section>
-
-<div class="modal fade" id="ModalFacebook">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id="timeLeft">&times;</span>
-                </button>
-                <h4>{{ trans('base.like_and_share_to_see_content') }}</h4>
-            </div>
-            <div class="modal-body text-center">
-                <p>{!! trans('base.or_click_sub_youtube',['content'=>$site['title_full']]) !!}</p>
-                @if($ads=='true' && config('app.env')!='local')
-                    <div class="modal-footer text-center">
-                        <div class="container form-group">
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-6739685874678212"
-                                 data-ad-slot="7536384219"
-                                 data-ad-format="auto"></ins>
-                            <script>
-                                setTimeout(function(){(adsbygoogle = window.adsbygoogle || []).push({})}, 1000);
-                            </script>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
 <?php
 $channel['theme']->asset()->writeScript('customScript','
-    jQuery(document).ready(function(){
-        "use strict";
-        $(window).on("load",function(){
-            $("#ModalFacebook").modal("show");
-        });
-        var count = 100;
-        $("#click_here_youtube").click(function(){
-            count=10;
-        });
-        setInterval(function(){
-            document.getElementById("timeLeft").innerHTML = count;
-            if (count == 0) {
-                $("#ModalFacebook").modal("hide");
-                document.getElementById("timeLeft").innerHTML = "&times;";
-            }
-            count--;
-        },1000);
-        $("#ModalFacebook").modal({backdrop: "static", keyboard: false});
-    });
 ', []);
 ?>
