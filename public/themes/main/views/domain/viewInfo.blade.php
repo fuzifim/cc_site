@@ -141,7 +141,7 @@ if($ads=='true' && config('app.env')!='local'){
                             <i class="fas fa-money-check-alt"></i> Tiếp cận đến hàng triệu người sử dụng internet bằng máy tính, điện thoại đều biết đến sản phẩm, dịch vụ thông qua website.
                             <div class="text-center"><h3><strong>Chỉ với 100k/ tháng</strong></h3></div>
                             <h2 class="">
-                                <strong>Hotline: <i class="glyphicon glyphicon-earphone"></i> <a class="text-danger" href="tel:0903706288">0903 706 288</a> </strong> -
+                                <strong><i class="glyphicon glyphicon-earphone"></i> <a class="text-danger" href="tel:0903706288">0903 706 288</a> </strong> -
                                 <strong><a href="http://zalo.me/0903706288" target="_blank" rel="nofollow"><i class="glyphicon glyphicon-comment"></i> Zalo</a></strong> -
                                 <strong><a href="https://m.me/cungcap.net" target="_blank" rel="nofollow"><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a> </strong>
                             </h2>
