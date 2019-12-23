@@ -137,15 +137,23 @@ if($ads=='true' && config('app.env')!='local'){
                     </div>
                     <div class="form-group mt-2">
                         <div class="alert alert-info text-center">
-                            <i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh, cực rẻ để quảng cáo sản phẩm dịch vụ đến mọi người!<br>
-                            <i class="fas fa-money-check-alt"></i> Tiếp cận đến hàng triệu người sử dụng internet bằng máy tính, điện thoại đều biết đến sản phẩm, dịch vụ thông qua website.
-                            <div class="text-center"><h3><strong>Chỉ với 100k/ tháng</strong></h3></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img class="img-responsive" src="http://img.cungcap.net/media/2018/04/20/1524218907-tf7041524218907-dich-vu-cung-cap-website-cho-doanh-nghiep.png">
+                                </div>
+                                <div class="col-md-6">
+                                    <strong><i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh, cực rẻ để quảng cáo sản phẩm dịch vụ đến mọi người!<br>
+                                        <i class="fas fa-money-check-alt"></i> Tiếp cận đến hàng triệu người sử dụng internet bằng máy tính, điện thoại đều biết đến sản phẩm, dịch vụ thông qua website.</strong>
+                                    <div class="text-center"><h3><strong>Chỉ với 100k/ tháng</strong></h3></div><a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a></div>
+                            </div>
+
+
                             <h2 class="">
                                 <strong><i class="glyphicon glyphicon-earphone"></i> <a class="text-danger" href="tel:0903706288">0903 706 288</a> </strong> -
                                 <strong><a href="http://zalo.me/0903706288" target="_blank" rel="nofollow"><i class="glyphicon glyphicon-comment"></i> Zalo</a></strong> -
                                 <strong><a href="https://m.me/cungcap.net" target="_blank" rel="nofollow"><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a> </strong>
                             </h2>
-                            <a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
+
                         </div>
                     </div>
                     @if(!empty($domain['attribute']['whois']))
