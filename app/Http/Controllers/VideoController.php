@@ -66,7 +66,7 @@ class VideoController extends ConstructController
             });
             if(!empty($video['yid'])){
                 if($video['yid'] == 'jmvDroujV9U' || $video['yid'] == 'sT046V3AdtU'){
-                    $video->delete(); 
+                    $video->delete();
                 }
                 $parsedUrl=parse_url($request->url());
                 if(config('app.env')!='local' && $parsedUrl['scheme']!='https'){
