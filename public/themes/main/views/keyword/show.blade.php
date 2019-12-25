@@ -124,11 +124,6 @@
 									<i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
 									<div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
 									<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
-									<h2 class="">
-										<strong><i class="glyphicon glyphicon-earphone"></i> <a class="text-danger" href="tel:0903706288">0903 706 288</a> </strong> -
-										<strong><a href="http://zalo.me/0903706288" target="_blank" rel="nofollow"><i class="glyphicon glyphicon-comment"></i> Zalo</a></strong> -
-										<strong><a href="https://m.me/cungcap.net" target="_blank" rel="nofollow"><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a> </strong>
-									</h2>
 								</div>
 							</div>
 						</div>
