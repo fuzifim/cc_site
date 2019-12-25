@@ -116,16 +116,9 @@
 					@endif
 					<div class="form-group mt-2">
 						<div class="alert alert-info text-center">
-							<div class="row">
-								<div class="col-md-6">
-									<img class="img-responsive" src="{{ asset('assets/img/trang-web.png') }}">
-								</div>
-								<div class="col-md-6">
-									<i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
-									<div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
-									<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
-								</div>
-							</div>
+							<i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
+							<div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
+							<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
 						</div>
 					</div>
 					@if($siteShow==true)
