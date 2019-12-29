@@ -71,7 +71,13 @@
 		</ul>
 	</div><!-- header-right -->
 
-</div><!-- headerbar -->
+</div>
+
+@if($channel['info']->id === 31061)
+	<a href="https://docs.google.com/forms/d/e/1FAIpQLSdi2O6634V7Gc7AjSk9VylAz9ZM-oK3AslbY9sW_hpAkG1F9w/viewform" rel="nofollow"><img src="{{asset('assets/img/tiep-nhan-yeu-cau-small.jpg')}}" class="img-responsive"></a>
+@endif
+
+<!-- headerbar -->
 @if(Auth::check())
 	@if(Auth::user()->user_status!='active' && !empty(Auth::user()->email))
 		<div class="alert alert-warning">
