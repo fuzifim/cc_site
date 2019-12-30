@@ -98,10 +98,12 @@ if($ads=='true' && config('app.env')!='local'){
                     @if($channel['security']==true)
                         <p>
                             <span style="cursor: pointer;" class="label label-success" id="update_info">update info</span>
-                            @if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable')
+                            @if(!empty($domain['ads_status']) && $domain['ads_status']=='active')
+                                <span style="cursor: pointer;" class="label label-danger" id="disable_ads">Disable ads</span>
+                            @elseif(!empty($domain['ads_status']) && $domain['ads_status']=='disable')
                                 <span style="cursor: pointer;" class="label label-success" id="active_ads">Active ads</span>
                             @else
-                                <span style="cursor: pointer;" class="label label-danger" id="disable_ads">Disable ads</span>
+                                <span style="cursor: pointer;" class="label label-success" id="active_ads">Active ads</span>
                             @endif
                         </p>
                     @endif
