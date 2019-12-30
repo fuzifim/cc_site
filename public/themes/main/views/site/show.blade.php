@@ -5,13 +5,12 @@ Theme::setCanonical(route('site.show.id',array('s.cungcap.net',$site['_id'],str_
 Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));
 Theme::asset()->container('footer')->usePath()->add('bootstrap', 'js/bootstrap.min.js', array('core-script'));
-$ads='true';
-if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
-    $ads='false';
+$ads='false';
+if(!empty($domain['ads_status']) && $domain['ads_status']=='active'){
+    $ads='true';
 }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
     $ads='false';
 }
-$ads='false';
 if($ads=='true' && config('app.env')!='local'){
     Theme::setAds('true');
 }
