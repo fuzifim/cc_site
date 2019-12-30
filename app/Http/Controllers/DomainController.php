@@ -123,6 +123,7 @@ class DomainController extends ConstructController
         );
         return $this->_theme->scope('domain.topView', $view)->render();
     }
+
     public function activeAds(Request $request){
         $getDomain=$request->input('domain');
         if(!empty($getDomain)){
@@ -130,14 +131,11 @@ class DomainController extends ConstructController
                 ->where('base_64',base64_encode($getDomain))
                 ->first();
             if(!empty($domain['domain'])){
-                $domainAttribute=$domain['attribute'];
-                $noteMer=array('ads'=>'active');
-                $domainAttribute= array_merge($domainAttribute, $noteMer);
                 DB::connection('mongodb')->collection('mongo_domain')
                     ->where('_id',(string)$domain['_id'])
                     ->update(
                         [
-                            'attribute'=>$domainAttribute
+                            'ads_status'=>'active'
                         ]
                     );
                 return response()->json(['success'=>true,
@@ -161,14 +159,11 @@ class DomainController extends ConstructController
                 ->where('base_64',base64_encode($getDomain))
                 ->first();
             if(!empty($domain['domain'])){
-                $domainAttribute=$domain['attribute'];
-                $noteMer=array('ads'=>'disable');
-                $domainAttribute= array_merge($domainAttribute, $noteMer);
                 DB::connection('mongodb')->collection('mongo_domain')
                     ->where('_id',(string)$domain['_id'])
                     ->update(
                         [
-                            'attribute'=>$domainAttribute
+                            'ads_status'=>'disable'
                         ]
                     );
                 return response()->json(['success'=>true,
