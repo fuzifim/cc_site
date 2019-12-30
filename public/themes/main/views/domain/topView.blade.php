@@ -31,7 +31,7 @@ $channel['theme']->setDescription('cung cấp danh sách tên miền có lượt
                                 <p>
                                 @if(!empty($item['view']))<small><strong>Views: {!! $item['view'] !!}</strong></small>@endif
                                 @if($channel['security']==true)
-                                    @if(!empty($item['attribute']['ads']))<span class="label label-default">{!! $item['attribute']['ads'] !!}</span> @endif
+                                    @if(!empty($item['ads_status']))<span class="label label-default">{!! $item['ads_status'] !!}</span> @endif
                                 @endif
                                 </p>
                             </li>
