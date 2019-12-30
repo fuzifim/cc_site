@@ -1,6 +1,7 @@
 <?
 	$channel['theme']->setTitle('Đăng nhập');
 	$channel['theme']->setKeywords('Đăng nhập '.$channel['info']->channel_name);
+	$channel['theme']->setRootUrl('https://'.request()->getHost());
 	$channel['theme']->setDescription('');
 	Theme::asset()->container('footer')->usePath()->add('jquery', 'js/jquery-1.11.1.min.js', array('core-script'));
 	Theme::asset()->container('footer')->usePath()->add('jquery-migrate', 'js/jquery-migrate-1.2.1.min.js', array('core-script'));

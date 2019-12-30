@@ -8,7 +8,8 @@
 		@if(!empty(Theme::get('canonical')))<link rel="canonical" href="{!! Theme::get('canonical') !!}" />@endif 
 		@if(!empty(Theme::get('amp')))<link rel="amphtml" href="{!! Theme::get('amp') !!}" />@endif
 		<meta name="author" content="{{$channel['domainPrimary']}}" />
-		<meta name="root" content="{{route('channel.home',$channel['domainPrimary'])}}" />
+		@if(!empty(Theme::get('rootUrl')))<meta name="root" content="{!! Theme::get('rootUrl') !!}" />@else<meta name="root" content="{{route('channel.home',$channel['domainPrimary'])}}" />@endif
+
 		<link rel="icon" href="{!!Theme::asset()->url('img/favicon.png')!!}?v=3" />
 		<meta name="_token" content="{{ csrf_token() }}">
 		<meta name="copyright" content="Copyright &copy {{date('Y')}} {{$channel['domainPrimary']}}.　All Right Reserved." />
