@@ -119,7 +119,7 @@
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4">
 						<div class="pull-right pull-right-md pull-right-lg">
-							<a href="{{route('channel.home',config('app.url'))}}"><i class="glyphicon glyphicon-ok"></i> Cung Cấp</a>
+							<a href="https://cungcap.net"><i class="glyphicon glyphicon-ok"></i> Cung Cấp</a>
 						</div>
 					</div>
 				</div>
