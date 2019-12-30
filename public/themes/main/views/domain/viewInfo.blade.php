@@ -368,7 +368,7 @@ $channel['theme']->asset()->writeScript('customDomain','
             var formData = new FormData();
             formData.append("domain", "'.$domain['domain'].'");
             $.ajax({
-                url: "'.route('domain.update.info',array(config('app.url'),$domain['domain'])).'",
+                url: "'.route('domain.update.info',array('d.cungcap.net',$domain['domain'])).'",
                 headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                 type: "POST",
                 cache: false,
@@ -391,7 +391,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 var formData = new FormData();
                 formData.append("domain", "'.$domain['domain'].'");
                 $.ajax({
-                    url: "'.route('domain.disable.ads',array(config('app.url'),$domain['domain'])).'",
+                    url: "'.route('domain.disable.ads',array('d.cungcap.net',$domain['domain'])).'",
                     headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                     type: "POST",
                     cache: false,
@@ -416,7 +416,7 @@ $channel['theme']->asset()->writeScript('customDomain','
                 var formData = new FormData();
                 formData.append("domain", "'.$domain['domain'].'");
                 $.ajax({
-                    url: "'.route('domain.active.ads',array(config('app.url'),$domain['domain'])).'",
+                    url: "'.route('domain.active.ads',array('d.cungcap.net',$domain['domain'])).'",
                     headers: {"X-CSRF-TOKEN": $("meta[name=_token]").attr("content")},
                     type: "POST",
                     cache: false,
