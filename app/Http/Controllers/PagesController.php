@@ -45,15 +45,15 @@ class PagesController extends ConstructController
 		$this->_theme=Theme::uses('goto')->layout('default'); 
 		$url=$this->_parame['url'];
         $parsedUrl=parse_url($this->_parame['url']);
-        $ads='true';
         if(!empty($parsedUrl['host'])){
             $domain = Cache::store('memcached')->remember('infoDomain_'.base64_encode($parsedUrl['host']), 1, function() use($parsedUrl)
             {
                 return DB::connection('mongodb')->collection('mongo_domain')
                     ->where('base_64',base64_encode($parsedUrl['host']))->first();
             });
-            if(!empty($domain['attribute']['ads']) && $domain['attribute']['ads']=='disable'){
-                $ads='false';
+            $ads='false';
+            if(!empty($domain['ads_status']) && $domain['ads_status']=='active'){
+                $ads='true';
             }else if($domain['status']=='blacklist' && $domain['status']=='disable' && $domain['status']=='delete'){
                 $ads='false';
             }
