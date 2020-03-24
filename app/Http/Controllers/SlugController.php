@@ -310,19 +310,16 @@ class SlugController extends ConstructController
 							}
 						}
 					}
-					$getPost = Cache::store('memcached')->remember('post_category'.$category->id, 5, function() use($categoryId)
-						{
-							return Posts::where('posts.posts_status','=','active')
-								->join('posts_join_category','posts_join_category.posts_id','=','posts.id')
-								->whereIn('posts_join_category.category_id',$categoryId)
-								->join('posts_attribute','posts_attribute.posts_parent_id','=','posts.id')
-								->where('posts_attribute.posts_attribute_type','=','gallery')
-								->groupBy('posts.id')
-								->orderBy('posts.posts_updated_at','desc')
-								->select('posts.*')
-								->paginate(9); 
-						});
-					if(count($getPost)>0){
+					$getPost = Posts::where('posts.posts_status','=','active')
+                        ->join('posts_join_category','posts_join_category.posts_id','=','posts.id')
+                        ->whereIn('posts_join_category.category_id',$categoryId)
+                        ->join('posts_attribute','posts_attribute.posts_parent_id','=','posts.id')
+                        ->where('posts_attribute.posts_attribute_type','=','gallery')
+                        ->groupBy('posts.id')
+                        ->orderBy('posts.posts_updated_at','desc')
+                        ->select('posts.*')
+                        ->paginate(9);
+                    if(count($getPost)>0){
 						if(count($getPost)==1){
 							if(!empty($getPost[0]->getSlug->slug_value)){
 								return Redirect::route('channel.slug',array($this->_domain->domain,$getPost[0]->getSlug->slug_value));
