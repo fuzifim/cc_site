@@ -56,6 +56,14 @@ if($ads=='true' && config('app.env')!='local'){
                                 (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
+                    @else
+                        <div class="form-group">
+                            <!-- Composite Start -->
+                            <div id="M572724ScriptRootC883235">
+                            </div>
+                            <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                            <!-- Composite End -->
+                        </div>
                     @endif
                     <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
                         <p><strong>Click here</strong></p>

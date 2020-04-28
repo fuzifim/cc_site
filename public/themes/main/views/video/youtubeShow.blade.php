@@ -72,6 +72,14 @@ if($ads=='true' && config('app.env')!='local'){
                                 (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
+                    @else
+                        <div class="form-group">
+                            <!-- Composite Start -->
+                            <div id="M572724ScriptRootC883235">
+                            </div>
+                            <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                            <!-- Composite End -->
+                        </div>
                     @endif
                     <div class="form-group mt-2">
                         <div class="alert alert-info text-center">
@@ -114,6 +122,14 @@ if($ads=='true' && config('app.env')!='local'){
                                 <script>
                                     (adsbygoogle = window.adsbygoogle || []).push({});
                                 </script>
+                            </div>
+                        @else
+                            <div class="form-group">
+                                <!-- Composite Start -->
+                                <div id="M572724ScriptRootC883235">
+                                </div>
+                                <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                                <!-- Composite End -->
                             </div>
                         @endif
                         <div class="panel panel-primary">

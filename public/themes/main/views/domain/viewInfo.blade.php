@@ -123,6 +123,12 @@ if($ads=='true' && config('app.env')!='local'){
                                 (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
+                    @else
+                        <!-- Composite Start -->
+                            <div id="M572724ScriptRootC883235">
+                            </div>
+                            <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                            <!-- Composite End -->
                     @endif
                     <div class="form-group">
                         <?php
@@ -187,6 +193,13 @@ if($ads=='true' && config('app.env')!='local'){
                                                 </div>
                                             </div>
                                         @else
+                                        <div class="form-group">
+                                            <!-- Composite Start -->
+                                            <div id="M572724ScriptRootC883235">
+                                            </div>
+                                            <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                                            <!-- Composite End -->
+                                        </div>
                                             {!!$domainContent->basic_info!!}
                                         @endif
                                     </div>
@@ -281,6 +294,14 @@ if($ads=='true' && config('app.env')!='local'){
                             <script>
                                 (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
+                        </div>
+                    @else
+                        <div class="form-group">
+                            <!-- Composite Start -->
+                            <div id="M572724ScriptRootC883235">
+                            </div>
+                            <script src="https://jsc.mgid.com/c/u/cungcap.net.883235.js" async></script>
+                            <!-- Composite End -->
                         </div>
                     @endif
                     @if(!empty($domain['contents']))
