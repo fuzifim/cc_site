@@ -17,8 +17,18 @@
 {!!Theme::partial('headerbar', array('title' => 'Header'))!!}
 {!!Theme::partial('formSearch', array('region' => $channel['region']))!!}
 	<ol class="breadcrumb mb10" itemscope="" itemtype="http://schema.org/BreadcrumbList">
-		<li class="breadcrumb-item" itemprop="itemListElement"><i class="flag flag-16 flag-{{mb_strtolower($region->iso)}}"></i> <a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalSubRegion"><span itemprop="name">{!!$subregion->subregions_name!!}</span> <span class="glyphicon glyphicon-menu-down"></span></a></li>
-		<li class="breadcrumb-item active" itemprop="itemListElement"><a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalRegionDistrict"><span itemprop="name">Quận/ huyện</span> <span class="glyphicon glyphicon-menu-down"></span></a></li>
+		<li class="breadcrumb-item" itemprop="itemListElement"><i class="flag flag-16 flag-{{mb_strtolower($region->iso)}}"></i>
+			<a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalSubRegion">
+				<span itemprop="name">{!!$subregion->subregions_name!!}</span> <span class="glyphicon glyphicon-menu-down"></span>
+			</a>
+			<meta itemprop="position" content="1" />
+		</li>
+		<li class="breadcrumb-item active" itemprop="itemListElement">
+			<a href="#" itemprop="item" class="" data-toggle="modal" data-target="#modalRegionDistrict">
+				<span itemprop="name">Quận/ huyện</span> <span class="glyphicon glyphicon-menu-down"></span>
+			</a>
+			<meta itemprop="position" content="2" />
+		</li>
 	</ol>
 	<div class="pageheader">
 		<h1>{!! Theme::get('title') !!}</h1>
