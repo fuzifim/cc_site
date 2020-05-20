@@ -136,11 +136,20 @@
 					@endif
 					<div class="form-group mt-2">
 						<div class="alert alert-info text-center">
-							<i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
-							<div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
-							<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
+							<i class="glyphicon glyphicon-globe"></i> Cung cấp thông tin, cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người<br>
+							<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Cung Cấp</strong></h4></a>
 						</div>
 					</div>
+						@if($ads=='true' && config('app.env')!='local')
+							<ins class="adsbygoogle"
+								 style="display:block"
+								 data-ad-client="ca-pub-6739685874678212"
+								 data-ad-slot="7536384219"
+								 data-ad-format="auto"></ins>
+							<script>
+								(adsbygoogle = window.adsbygoogle || []).push({});
+							</script>
+						@endif
 					@if($siteShow==true)
 						{!!Theme::partial('keyword.listSite', array('keyword' => $keyword,'ads'=>$ads,'skipImage'=>$skipImage,'skipVideo'=>$skipVideo,'imageShow'=>$imageShow,'videoShow'=>$videoShow))!!}
 					@else
