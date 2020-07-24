@@ -10,24 +10,28 @@ $ads='true';
 if($ads=='true' && config('app.env')!='local'){
     Theme::setAds('true');
 }
+if(!empty($video['parent'])){
+    $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
+        ->where('base_64', base64_encode($video['parent']))->first();
+    DB::connection('mongodb')->collection('mongo_video')
+        ->where('_id',(string)$video['_id'])
+        ->update(
+            [
+                'parent_id'=>(string)$parentKey['_id']
+            ]
+        );
+
+    if($parentKey['_id'] ==='5cb3c98f45f4c906266afebc'){
+        Theme::setAds('false');
+        $ads='false';
+    }
+}
 ?>
 <section>
     <div class="mainpanel">
         {!!Theme::partial('headerbar_domain', array('title' => 'Header'))!!}
         @if(!empty($video['parent']))
             @if(empty($video['parent_id']))
-                <?php
-                $parentKey = DB::connection('mongodb')->collection('mongo_keyword')
-                    ->where('base_64', base64_encode($video['parent']))->first();
-                DB::connection('mongodb')->collection('mongo_video')
-                    ->where('_id',(string)$video['_id'])
-                    ->update(
-                        [
-                            'parent_id'=>(string)$parentKey['_id']
-                        ]
-                    );
-
-                ?>
                 <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
                     <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
                         <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i>
