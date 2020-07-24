@@ -108,7 +108,7 @@ class ConstructController extends Controller
                 });
                 $this->_domain = Cache::store('memcached')->remember('thisDomain'.$checkDomain, 5, function() use($checkDomain)
                 {
-                    return Domain::where('domain_encode','=',base64_encode($checkDomain))->first();
+                    return Domain::where('domain','=',$checkDomain)->first();
                 });
                 if(!empty($this->_domain->domain)){
                     $this->_siteSuccess='infoChannel';
