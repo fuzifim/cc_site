@@ -25,11 +25,10 @@ if(!empty($video['parent'])){
         Theme::setAds('false');
         $ads='false';
     }
-}else{
-    if($video['parent_id'] === '5cb3c98f45f4c906266afebc'){
-        Theme::setAds('false');
-        $ads='false';
-    }
+}
+if($video['parent_id'] === '5cb3c98f45f4c906266afebc'){
+    Theme::setAds('false');
+    $ads='false';
 }
 ?>
 <section>
