@@ -53,7 +53,6 @@ if($ads=='true' && config('app.env')!='local'){
                     <i class="glyphicon glyphicon-globe"></i> Nhập từ khóa tìm {!! $site['title'] !!}<br>
                     <script async src="https://cse.google.com/cse.js?cx=010523811584912180996:5rmshldbg3a"></script>
                     <div class="gcse-search"></div>
-                    @yield('content')
                     <script>
                         window.onload = function(){
                             document.getElementById('gsc-i-id1').placeholder = 'Search... (Tìm kiếm...)';
