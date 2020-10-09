@@ -119,20 +119,21 @@
 					@if($showEmpty==true)
 						Từ khóa {!! $keyword['keyword'] !!} chưa có bất kỳ thông tin trang web, hình ảnh, video nào!
 					@endif
-					@if(count($postSearch))
-						<div class="PostlistItem">
-							{!!Theme::partial('listPostChannelSlider', array('postSearch' => $postSearch,'keyword'=>$keyword))!!}
-						</div>
-						@if($ads=='true' && config('app.env')!='local')
-							<ins class="adsbygoogle"
-								 style="display:block"
-								 data-ad-client="ca-pub-6739685874678212"
-								 data-ad-slot="7536384219"
-								 data-ad-format="auto"></ins>
-							<script>
-								(adsbygoogle = window.adsbygoogle || []).push({});
-							</script>
-						@endif
+{{--					@if(count($postSearch))--}}
+{{--						<div class="PostlistItem">--}}
+{{--							{!!Theme::partial('listPostChannelSlider', array('postSearch' => $postSearch,'keyword'=>$keyword))!!}--}}
+{{--						</div>--}}
+{{--						--}}
+{{--					@endif--}}
+					@if($ads=='true' && config('app.env')!='local')
+						<ins class="adsbygoogle"
+							 style="display:block"
+							 data-ad-client="ca-pub-6739685874678212"
+							 data-ad-slot="7536384219"
+							 data-ad-format="auto"></ins>
+						<script>
+							(adsbygoogle = window.adsbygoogle || []).push({});
+						</script>
 					@endif
 					<div class="form-group mt-2">
 						<div class="alert alert-info text-center">
