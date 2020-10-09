@@ -26,7 +26,7 @@ if(!empty($video['parent'])){
         $ads='false';
     }
 }
-if($video['parent_id'] === '5cb3c98f45f4c906266afebc'){
+if($video['parent_id'] === '5cb3c98f45f4c906266afebc' || $video['parent_id'] === '5cb2ea6a45f4c941f93f4926'){
     Theme::setAds('false');
     $ads='false';
 }

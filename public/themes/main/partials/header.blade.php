@@ -31,7 +31,7 @@
 		<link rel="alternate" type="application/rss+xml" title="Cung Cấp RSS" href="https://{{config('app.url')}}/rss/" />
         {!! Theme::asset()->styles() !!}
 		<link media="all" type="text/css" rel="stylesheet" href="{!!Theme::asset()->url('css/style.default.css')!!}?v=90">
-		@if(!empty(Theme::get('ads')))
+		@if(!empty(Theme::get('ads')) && Theme::get('ads') === 'true')
 			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 			<script>
 				(adsbygoogle = window.adsbygoogle || []).push({
