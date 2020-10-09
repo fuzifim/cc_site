@@ -73,8 +73,8 @@
 				?>
 				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
 					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-						<a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',config('app.url'))}}"><i class="fa fa-home"></i>
-							<span class="hidden-xs" itemprop="name">Cung Cấp Website</span>
+						<a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="https://cungcap.net"><i class="fa fa-home"></i>
+							<span class="hidden-xs" itemprop="name">Cung Cấp</span>
 						</a>
 						<meta itemprop="position" content="1" />
 					</li>
@@ -88,8 +88,8 @@
 			@else
 				<ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
 					<li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-						<a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',config('app.url'))}}"><i class="fa fa-home"></i>
-							<span class="hidden-xs" itemprop="name">Cung Cấp Website</span>
+						<a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="https://cungcap.net"><i class="fa fa-home"></i>
+							<span class="hidden-xs" itemprop="name">Cung Cấp</span>
 						</a>
 						<meta itemprop="position" content="1" />
 					</li>
@@ -136,8 +136,15 @@
 					@endif
 					<div class="form-group mt-2">
 						<div class="alert alert-info text-center">
-							<i class="glyphicon glyphicon-globe"></i> Cung cấp thông tin, cung cấp sản phẩm, dịch vụ kinh doanh đến mọi người<br>
-							<a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Cung Cấp</strong></h4></a>
+							<i class="glyphicon glyphicon-globe"></i> Nhập từ khóa tìm {!! $keyword['keyword'] !!}<br>
+							<script async src="https://cse.google.com/cse.js?cx=010523811584912180996:5rmshldbg3a"></script>
+							<div class="gcse-search"></div>
+							@yield('content')
+							<script>
+								window.onload = function(){
+									document.getElementById('gsc-i-id1').placeholder = 'Search... (Tìm kiếm...)';
+								};
+							</script>
 						</div>
 					</div>
 						@if($ads=='true' && config('app.env')!='local')

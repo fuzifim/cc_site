@@ -20,8 +20,8 @@ if($ads=='true' && config('app.env')!='local'){
         {!!Theme::partial('headerbar_domain', array('title' => 'Header'))!!}
         <ol class="breadcrumb mb5" itemscope itemtype="http://schema.org/BreadcrumbList">
             <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-                <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="{{route('channel.home',$channel['domainPrimary'])}}"><i class="fa fa-home"></i>
-                    <span class="hidden-xs" itemprop="name">Cung Cấp Website</span>
+                <a itemscope itemtype="http://schema.org/Thing" itemprop="item" href="https://cungcap.net"><i class="fa fa-home"></i>
+                    <span class="hidden-xs" itemprop="name">Cung Cấp</span>
                 </a>
                 <meta itemprop="position" content="1" />
             </li>
@@ -48,6 +48,19 @@ if($ads=='true' && config('app.env')!='local'){
             <small>Updated at {!! $updated_at !!}</small> @if(!empty($site['view']))<small><strong>Views: {!! $site['view'] !!}</strong></small>@endif
         </div>
         <div class="container">
+            <div class="form-group mt-2">
+                <div class="alert alert-info text-center">
+                    <i class="glyphicon glyphicon-globe"></i> Nhập từ khóa tìm {!! $site['title'] !!}<br>
+                    <script async src="https://cse.google.com/cse.js?cx=010523811584912180996:5rmshldbg3a"></script>
+                    <div class="gcse-search"></div>
+                    @yield('content')
+                    <script>
+                        window.onload = function(){
+                            document.getElementById('gsc-i-id1').placeholder = 'Search... (Tìm kiếm...)';
+                        };
+                    </script>
+                </div>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     infomation for {!! $site['domain'] !!}: {!! $site['title'] !!}
@@ -78,15 +91,6 @@ if($ads=='true' && config('app.env')!='local'){
                     <a class="btn btn-primary btn-block" id="" href="{!! route('go.to.url',array('go.cungcap.net',urlencode($site['link']))) !!}" rel="nofollow" target="_blank">Visit to {!! $site['title'] !!}
                         <p><strong>Click here</strong></p>
                     </a>
-                </div>
-            </div>
-            <div class="form-group mt-2">
-                <div class="alert alert-info text-center">
-                    <div class="alert alert-info text-center">
-                        <i class="glyphicon glyphicon-globe"></i> Tạo website bán hàng, website giới thiệu công ty, website kinh doanh dịch vụ cực nhanh và tiện lợi!<br>
-                        <div class="text-center"><h3><strong>MIỄN PHÍ</strong></h3></div>
-                        <a class="btn btn-success btn-block" href="https://cungcap.net" target="_blank"><h4><strong><i class="glyphicon glyphicon-hand-right"></i> Vào tạo website</strong></h4></a>
-                    </div>
                 </div>
             </div>
             @if(count($siteRelate))
