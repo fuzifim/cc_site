@@ -92,23 +92,24 @@ class KeywordsController extends ConstructController
                     ->where('base_64',base64_encode($this->_keyword))
                     ->increment('view', 1);
                 $postList=[];
+                $postSearch=array();
                 $paginate=6;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
-                try{
-                    $postSearch=Posts::searchByQuery([
-                        'bool'=>[
-                            'must'=>[
-                                'multi_match' => [
-                                    'query' => $getKeyword['keyword'],
-                                    'fields' => ['posts_title','posts_title_convert']
-                                ]
-                            ]
-                        ]
-                    ], null, null, $paginate, $offSet);
-                }catch (\Exception $e) {
-                    $postSearch=array();
-                }
+//                try{
+//                    $postSearch=Posts::searchByQuery([
+//                        'bool'=>[
+//                            'must'=>[
+//                                'multi_match' => [
+//                                    'query' => $getKeyword['keyword'],
+//                                    'fields' => ['posts_title','posts_title_convert']
+//                                ]
+//                            ]
+//                        ]
+//                    ], null, null, $paginate, $offSet);
+//                }catch (\Exception $e) {
+//                    $postSearch=array();
+//                }
                 if(count($postSearch)){
                     $listId=[];
                     foreach($postSearch as $post){
@@ -173,23 +174,24 @@ class KeywordsController extends ConstructController
                     ->where('_id',$this->_parame['id'])
                     ->increment('view', 1);
                 $postList=[];
+                $postSearch=array();
                 $paginate=6;
                 $page = $request->has('page') ? $request->query('page') : 1;
                 $offSet = ($page * $paginate) - $paginate;
-                try{
-                    $postSearch=Posts::searchByQuery([
-                        'bool'=>[
-                            'must'=>[
-                                'multi_match' => [
-                                    'query' => $getKeyword['keyword'],
-                                    'fields' => ['posts_title','posts_title_convert']
-                                ]
-                            ]
-                        ]
-                    ], null, null, $paginate, $offSet);
-                }catch (\Exception $e) {
-                    $postSearch=array();
-                }
+//                try{
+//                    $postSearch=Posts::searchByQuery([
+//                        'bool'=>[
+//                            'must'=>[
+//                                'multi_match' => [
+//                                    'query' => $getKeyword['keyword'],
+//                                    'fields' => ['posts_title','posts_title_convert']
+//                                ]
+//                            ]
+//                        ]
+//                    ], null, null, $paginate, $offSet);
+//                }catch (\Exception $e) {
+//                    $postSearch=array();
+//                }
                 if(count($postSearch)){
                     $listId=[];
                     foreach($postSearch as $post){
