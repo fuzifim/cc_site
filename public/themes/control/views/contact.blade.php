@@ -35,7 +35,7 @@ Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.m
 				@if(count($channel['info']->joinAddress)>0)
 					<div class="form-group">
 						<div id="googleMap" style="width:100%; height:300px;">
-							<iframe title="{{ $place['name'] }}" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC0VIzBsP4HTtHVp8Z1G2i8apmirMa27U8&amp;center=0,0&amp;zoom=16&amp;q={{ $address }}" style="height: 300px; width: 100%; border: 0px;"></iframe>
+							<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC0VIzBsP4HTtHVp8Z1G2i8apmirMa27U8&amp;center=0,0&amp;zoom=16&amp;q={{ $address }}" style="height: 300px; width: 100%; border: 0px;"></iframe>
 						</div>
 					</div>
 				@endif
