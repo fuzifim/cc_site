@@ -28,35 +28,15 @@ Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.m
 		<h1>{!! Theme::get('keywords') !!}</h1>
 		<span><small>{!! Theme::get('description') !!}</small></span>
 	</div>
-		<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyC0VIzBsP4HTtHVp8Z1G2i8apmirMa27U8&sensor=false">
-        </script>
-	<script>
-          //Khoi tao Map
-          function initialize() {
-            var mapCanvas = document.getElementById("googleMap");
-			var myCenter = new google.maps.LatLng({{$lat}}, {{$lng}}); 
-			var mapOptions = {center: myCenter, zoom: 15};
-			var map = new google.maps.Map(mapCanvas,mapOptions);
-			var marker = new google.maps.Marker({
-				position: myCenter,
-				animation: google.maps.Animation.BOUNCE
-			});
-			marker.setMap(map);
-			var infowindow = new google.maps.InfoWindow({
-			  content:"<div class=''><p><strong>@if(!empty($channel['info']->companyJoin->company)){{$channel['info']->companyJoin->company->company_name}}@else{{$channel['info']->channel_name}}@endif</strong></p><p>{{$address}}</p><p><i class='glyphicon glyphicon-globe'></i> Website: <a href='{{route('channel.home',$channel['domainPrimary'])}}'>http://{!!$channel['domainPrimary']!!}</a> @if(count($channel['info']->joinPhone)>0) <i class='glyphicon glyphicon-earphone'></i> <a href='tel:{{$channel['info']->joinPhone[0]->phone->phone_number}}'>{{$channel['info']->joinPhone[0]->phone->phone_number}}</a> @endif</p></div>"
-			  });
-
-			infowindow.open(map,marker);
-          }
-          google.maps.event.addDomListener(window, 'load', initialize);
-        </script>
 	
 	<div class="contentpanel">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				@if(count($channel['info']->joinAddress)>0)
 					<div class="form-group">
-						<div id="googleMap" style="width:100%; height:300px;"></div>
+						<div id="googleMap" style="width:100%; height:300px;">
+							<iframe title="{{ $place['name'] }}" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC0VIzBsP4HTtHVp8Z1G2i8apmirMa27U8&amp;center=0,0&amp;zoom=16&amp;q={{ $address }}" style="height: 300px; width: 100%; border: 0px;"></iframe>
+						</div>
 					</div>
 				@endif
 				<div class="row">
