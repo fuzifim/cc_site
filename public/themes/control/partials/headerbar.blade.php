@@ -75,6 +75,8 @@
 
 @if($channel['info']->id === 31061)
 	<a href="https://docs.google.com/forms/d/e/1FAIpQLSdi2O6634V7Gc7AjSk9VylAz9ZM-oK3AslbY9sW_hpAkG1F9w/viewform" rel="nofollow" target="_blank"><img src="{{asset('assets/img/tiep-nhan-yeu-cau-small.jpg')}}" class="img-responsive"></a>
+	<br>
+	<a href="https://kontumba.atalink.com/sign-up" target="_blank"><img src="{{asset('assets/img/cong-ho-tro-doanh-nghiep-chuyen-doi-so.jpg')}}"></a>
 @endif
 
 <!-- headerbar -->
