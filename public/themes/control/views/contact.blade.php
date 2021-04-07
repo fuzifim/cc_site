@@ -28,7 +28,7 @@ Theme::asset()->container('footer')->usePath()->add('select2.min', 'js/select2.m
 		<h1>{!! Theme::get('keywords') !!}</h1>
 		<span><small>{!! Theme::get('description') !!}</small></span>
 	</div>
-		<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCM2jXT6Qh_1TstAbhTY02-Kx97MCXZP1k&sensor=false">
+		<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyC0VIzBsP4HTtHVp8Z1G2i8apmirMa27U8&sensor=false">
         </script>
 	<script>
           //Khoi tao Map
