@@ -87,6 +87,9 @@
 			@endif
 		</div>
 	</div>
+	<div>
+		<a href="https://cungcap.vn">Cung Cấp</a> - <a href="https://dolog.net">Dolog.Net</a>
+	</div>
 	<a href="#" id="back-to-top" title="Back to top"><i class="glyphicon glyphicon-chevron-up"></i></a>
 	<div class="footerFixel">
 		<div class="footerFixelIcon">
