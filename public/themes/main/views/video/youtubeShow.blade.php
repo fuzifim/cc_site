@@ -89,6 +89,13 @@ if($video['parent_id'] === '5cb3c98f45f4c906266afebc' || $video['parent_id'] ===
                             <p>{!! $video['description'] !!}</p>
                         </div>
                     </div>
+                    <div class="mt-2"></div>
+                    <div class="alert alert-info" role="alert">
+                        Đăng tin mua bán & Quảng cáo rao vặt miễn phí, tin được hiển thị ở mọi nơi.
+                        <a class="btn btn-success btn-block" target="_blank" href="https://muabanquangcao.com/">
+                            Đăng tin quảng cáo miễn phí
+                        </a>
+                    </div>
                     @if($ads=='true' && config('app.env')!='local')
                         <div class="form-group">
                             <ins class="adsbygoogle"
@@ -109,6 +116,7 @@ if($video['parent_id'] === '5cb3c98f45f4c906266afebc' || $video['parent_id'] ===
                             <!-- Composite End -->
                         </div>
                     @endif
+
                     <div class="form-group mt-2">
                         <div class="alert alert-info text-center">
                             <div class="alert alert-info text-center">

@@ -36,7 +36,7 @@
 			</ul>
 		  </li>
 		@else
-				<li class=""><a href="https://cungcap.net" class="" target="_blank"><i class="glyphicon glyphicon-edit"></i><span class=""> Đăng tin</span></a></li>
+				<li class=""><a href="https://muabanquangcao.com/" class="" target="_blank"><i class="glyphicon glyphicon-edit"></i><span class=""> Đăng tin</span></a></li>
 			<li class="active"><a href="https://soc.cungcap.net" class="" target="_blank"><i class="glyphicon glyphicon-user"></i><span class=""> Đăng nhập</span></a></li>
 			<li class=""><a href="https://soc.cungcap.net" class="" target="_blank"><i class="glyphicon glyphicon-plus-sign"></i><span class=""> Đăng ký</span></a></li>
 		@endif

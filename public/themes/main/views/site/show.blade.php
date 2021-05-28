@@ -60,6 +60,13 @@ if($ads=='true' && config('app.env')!='local'){
                     </script>
                 </div>
             </div>
+            <div class="mt-2"></div>
+            <div class="alert alert-info" role="alert">
+                Đăng tin mua bán & Quảng cáo rao vặt miễn phí, tin được hiển thị ở mọi nơi.
+                <a class="btn btn-success btn-block" target="_blank" href="https://muabanquangcao.com/">
+                    Đăng tin quảng cáo miễn phí
+                </a>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     infomation for {!! $site['domain'] !!}: {!! $site['title'] !!}
